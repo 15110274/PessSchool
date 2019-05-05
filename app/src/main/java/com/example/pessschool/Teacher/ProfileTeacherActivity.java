@@ -1,9 +1,10 @@
 package com.example.pessschool.Teacher;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.pessschool.R;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class ProfileTeacherActivity extends AppCompatActivity {
 
