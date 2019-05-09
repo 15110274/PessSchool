@@ -1,9 +1,12 @@
 package com.example.pessschool;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
 
+import com.example.pessschool.Parent.HocPhiActivity;
+import com.example.pessschool.Parent.ProfileParentActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.microsoft.appcenter.AppCenter;
@@ -85,8 +88,12 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.photoalbum) {
             // Handle the camera action
-//        } else if (id == R.id.nav_gallery) {
-//
+            Intent intent=new Intent(MainActivity.this, HocPhiActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.parent) {
+            Intent intent=new Intent(MainActivity.this, ProfileParentActivity.class);
+            startActivity(intent);
+
 //        } else if (id == R.id.nav_slideshow) {
 //
 //        } else if (id == R.id.nav_manage) {
