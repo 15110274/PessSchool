@@ -3,15 +3,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_red_dark"
+    android:layoutDirection="ltr"
     android:orientation="vertical"
     tools:context=".ChatFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <!--<ListView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent">-->
 
-    </ListView>
+    <!--</ListView>-->
+
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:text="ạdhasdkjahsd"
+        android:textColor="@color/red"
+        android:layout_height="wrap_content" />
+    <Button
+        android:layout_width="120dp"
+        android:text="ádjaksjdhaksdjhad"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

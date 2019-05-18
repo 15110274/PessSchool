@@ -2,11 +2,13 @@
 <resources>
     <color name="buttonColor">#FF5722</color>
     <color name="colorPrimary">#FFA000</color>
-    <color name="colorPrimaryDark">#FF8000</color>
+    <color name="colorPrimaryDark">#FF8722</color>
     <color name="colorAccent">#FFA000</color>
-    <color name="background">#F5F6F7</color>
-    <color name="textcolor">#000</color>
+    <color name="background">#ffffff</color>
+    <color name="backgroundDark">#F5F6F7</color>
+    <color name="textcolor">#212121</color>
     <color name="hintcolor">#aaa</color>
     <!--<color name="nonecolor"></color>-->
     <color name="red">#f44336</color>
+    <color name="editText">#EEEEEE</color>
 </resources>

@@ -25,7 +25,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:id="@+id/txtClassName"
@@ -33,11 +33,8 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="left"
-                    android:layout_marginEnd="120dp"
+                    android:gravity="center"
                     android:text="CLASSNAME"
                     android:textSize="20dp"
                     android:textColor="@android:color/white" />
@@ -61,7 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/background_light"
-            app:tabIndicatorColor="@android:color/holo_orange_dark" >
+            app:tabIndicatorColor="@color/colorPrimary" >
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

@@ -16,6 +16,6 @@ public class ProfileParentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile_parent);
 
         ActionBar actionBar= getSupportActionBar();
-        actionBar.setTitle(R.string.parent);
+        actionBar.setTitle(R.string.parent_profile);
     }
 }

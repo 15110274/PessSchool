@@ -7,29 +7,53 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/icon"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
+        android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Parent.HocPhiActivity"
-            android:theme="@style/AppThemeActionbar"
-            android:parentActivityName=".MainActivity"/>
-
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".TimeLine.PostActivity"></activity>
+        <activity android:name=".RegisterActivity" />
+        <activity
+            android:name=".ChangeClassActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".CameraActivity"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".EventsActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".HelpActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".Password.ResetPassworkActivity" />
+        <activity android:name=".Password.ChangePasswordActivity" />
+        <activity android:name=".Parent.AlbumActivity" />
+        <activity
+            android:name=".Setting.SettingActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".Parent.HocPhiActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppThemeActionbar" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/AppTheme" />
         <activity android:name=".RegisterDemoActivity" />
-        <activity android:name=".LoginActivity">
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Parent.ProfileParentActivity"
-            android:theme="@style/AppThemeActionbar"
-            android:parentActivityName=".MainActivity"/>
-
+        <activity
+            android:name=".Parent.ProfileParentActivity"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppThemeActionbar" />
         <activity android:name=".Teacher.ProfileTeacherActivity" />
     </application>
 

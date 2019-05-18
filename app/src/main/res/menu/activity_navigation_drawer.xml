@@ -5,41 +5,46 @@
 
     <item
         android:id="@+id/photoalbum"
-        android:title="Photo Albums"
-        android:icon="@drawable/ic_photoalbum"></item>
+        android:title="@string/photo_album"
+        android:icon="@drawable/ic_photoalbum"
+        ></item>
     <item
         android:id="@+id/parent"
-        android:title="Parent"
+        android:title="@string/parent"
         android:icon="@drawable/ic_parent"></item>
     <item
         android:id="@+id/curriculum"
-        android:title="Curriculum"
+        android:title="@string/curriculum"
         android:icon="@drawable/ic_curriculum"></item>
     <item
         android:id="@+id/camera"
-        android:title="Camera"
+        android:title="@string/camera"
         android:icon="@drawable/ic_camera"></item>
     <item
         android:id="@+id/homework"
-        android:title="Homework"
+        android:title="@string/homework"
         android:icon="@drawable/ic_homework"></item>
     <item
         android:id="@+id/profile"
-        android:title="Profile"
+        android:title="@string/profile"
         android:icon="@drawable/ic_parent"></item>
     <item
         android:id="@+id/event"
-        android:title="Event"
+        android:title="@string/event"
         android:icon="@drawable/ic_event"></item>
     <item
         android:id="@+id/changeclass"
-        android:title="Change/Join class"
+        android:title="@string/change_join_class"
         android:icon="@drawable/ic_changeclass"></item>
     <item
         android:id="@+id/help"
-        android:title="Help"
+        android:title="@string/help"
         android:icon="@drawable/ic_help"></item>
     <item android:id="@+id/setting"
-        android:title="Setting"
+        android:title="@string/setting"
         android:icon="@drawable/ic_settings"></item>
+    <item android:id="@+id/logout"
+        android:title="@string/logout"
+        android:icon="@drawable/ic_settings"></item>
+
 </menu>

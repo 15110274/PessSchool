@@ -2,8 +2,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,6 +23,8 @@
             android:src="@drawable/logo"/>
 
         <TextView
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,32 +36,39 @@
             android:textSize="26sp" />
 
         <EditText
-            android:id="@+id/txtUsername"
+            android:id="@+id/login_email"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="50dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
+            android:text="@string/testMail"
+            android:drawableEnd="@drawable/ic_mail"
             android:textColorHint="@color/hintcolor"
             android:textColor="@color/textcolor"
             android:hint="@string/email" />
 
         <EditText
-            android:id="@+id/txtPass"
+            android:id="@+id/login_password"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
-            android:textColorHint="@color/hintcolor"
+            android:hint="@string/password"
+            android:drawableEnd="@drawable/ic_lock"
+            android:password="true"
+            android:text="@string/testPass"
             android:textColor="@color/textcolor"
-            android:hint="@string/password" />
+            android:textColorHint="@color/hintcolor"
+            android:textIsSelectable="false" />
 
         <Button
-            android:id="@+id/btnFogotPass"
+            android:id="@+id/fogot_password"
             android:layout_width="120dp"
             android:layout_height="30dp"
             android:layout_gravity="end"
             android:layout_marginEnd="30dp"
+            android:textAllCaps="false"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
             android:background="@android:color/transparent"
@@ -68,7 +78,7 @@
             android:textSize="10dp" />
 
         <Button
-            android:id="@+id/btnSignIn"
+            android:id="@+id/login_button"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginStart="40dp"
@@ -76,30 +86,35 @@
             android:layout_marginEnd="40dp"
             android:layout_marginBottom="0dp"
             android:text="@string/sign_in"
-            android:background="@drawable/buttonshape"
+            android:background="@drawable/shape_button"
             android:textColor="@color/background" />
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="match_parent"
-            android:layout_height="15dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="70dp"
-            android:text="Don't have an account?"
+            android:text="@string/dontHaveAccount"
             android:textColor="@color/textcolor"
             android:textAlignment="center" />
 
         <TextView
-            android:id="@+id/txtCreateNewAcc"
+            android:id="@+id/register_account_link"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:text="Create new account"
+            android:text="@string/createNewAccount"
             android:textAlignment="center"
             android:onClick="createNewAcc"
             android:textColor="@color/red" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp">
+        </LinearLayout>
+
     </LinearLayout>
 
 
