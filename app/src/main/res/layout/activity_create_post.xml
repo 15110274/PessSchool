@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CreatePostActivity"
+    >
+    <ImageButton
+        android:id="@+id/select_post_image"
+        android:layout_width="match_parent"
+        android:layout_height="318dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="289dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/select_image" />
+
+    <EditText
+        android:id="@+id/post_description"
+        android:layout_width="match_parent"
+        android:layout_height="63dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="165dp"
+        android:background="@drawable/input_shape"
+        android:textSize="25dp"
+        android:ems="10"
+        android:hint="What's on your mind?"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/update_post_button"
+        android:layout_width="300dp"
+        android:layout_height="59dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="56dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/buttonshape"
+
+        android:text="Post"
+        android:textColor="@android:color/background_light" />
+</RelativeLayout>

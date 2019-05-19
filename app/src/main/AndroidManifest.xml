@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.pessschool">
+    package="com.example.preschool">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -13,48 +15,57 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".TimeLine.PostActivity"></activity>
-        <activity android:name=".RegisterActivity" />
+        <activity android:name="com.example.preschool.CommentsActivity"></activity>
         <activity
-            android:name=".ChangeClassActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.example.preschool.PostActivity"
+            android:parentActivityName="com.example.preschool.MainActivity" />
+        <activity android:name="com.example.preschool.SetupActivity" >
+
+        </activity>
         <activity
-            android:name=".CameraActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:name="com.example.preschool.ChangeClassActivity"
+            android:parentActivityName="com.example.preschool.MainActivity" />
         <activity
-            android:name=".EventsActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.example.preschool.CameraActivity"
+            android:parentActivityName="com.example.preschool.MainActivity" />
         <activity
-            android:name=".HelpActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".Password.ResetPassworkActivity" />
-        <activity android:name=".Password.ChangePasswordActivity" />
-        <activity android:name=".Parent.AlbumActivity" />
+            android:name="com.example.preschool.EventsActivity"
+            android:parentActivityName="com.example.preschool.MainActivity" />
         <activity
-            android:name=".Setting.SettingActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name="com.example.preschool.HelpActivity"
+            android:parentActivityName="com.example.preschool.MainActivity" />
+        <activity android:name="com.example.preschool.Password.ResetPassworkActivity" />
+        <activity android:name="com.example.preschool.Password.ChangePasswordActivity" />
+        <activity android:name="com.example.preschool.Parent.AlbumActivity" />
         <activity
-            android:name=".Parent.HocPhiActivity"
-            android:parentActivityName=".MainActivity"
+            android:name="com.example.preschool.Setting.SettingActivity"
+            android:parentActivityName="com.example.preschool.MainActivity" />
+        <activity
+            android:name="com.example.preschool.Parent.HocPhiActivity"
+            android:parentActivityName="com.example.preschool.MainActivity"
             android:theme="@style/AppThemeActionbar" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.preschool.MainActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".RegisterDemoActivity" />
+        <activity android:name="com.example.preschool.RegisterDemoActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.example.preschool.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
-            android:name=".Parent.ProfileParentActivity"
-            android:parentActivityName=".MainActivity"
+            android:name="com.example.preschool.Parent.ProfileParentActivity"
+            android:parentActivityName="com.example.preschool.MainActivity"
             android:theme="@style/AppThemeActionbar" />
-        <activity android:name=".Teacher.ProfileTeacherActivity" />
+        <activity android:name="com.example.preschool.Teacher.ProfileTeacherActivity" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
     </application>
 
 </manifest>

@@ -3,7 +3,7 @@ apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.pessschool"
+        applicationId "com.example.preschool"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -50,5 +50,6 @@ dependencies {
     dependencies {
         api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
     }
-//    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

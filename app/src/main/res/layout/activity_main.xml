@@ -3,12 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
-    android:layoutDirection="rtl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:supportsRtl="true"
     android:fitsSystemWindows="true"
-    tools:openDrawer="right">
+    tools:openDrawer="right"
+   >
 
     <include
         layout="@layout/app_bar_navigation"
@@ -18,7 +17,7 @@
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         app:itemIconPadding="@dimen/space24"
-        android:layoutDirection="ltr"
+
         app:itemTextAppearance="@style/MyActionBar.MenuTextStyle"
         android:layout_width="160dp"
         android:layout_height="match_parent"
