@@ -217,10 +217,10 @@ public class SetupActivity extends AppCompatActivity {
             userMap.put("username", username);
             userMap.put("fullname", fullname);
             userMap.put("address", address);
-//            userMap.put("status", "Hey there, i am using Poster Social Network, developed by Coding Cafe.");
-//            userMap.put("gender", "none");
-//            userMap.put("dob", "none");
-//            userMap.put("relationshipstatus", "none");
+            userMap.put("status", "Hey there, i am using Press School App, developed by AlohaTeam");
+            userMap.put("gender", "none");
+            userMap.put("dob", "none");
+            userMap.put("relationshipstatus", "none");
             UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
 
                 public void onComplete(@NonNull Task task)

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 
 import com.example.preschool.Notification.NotificationFragment;
@@ -41,7 +42,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private FirebaseAuth mAuth;
     private DatabaseReference UsersRef, ClassRef;
-
+    private TextView findButton;
     String currentUserID;
     private Toolbar toolbar;
     private DrawerLayout drawer;
@@ -61,6 +62,14 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        findButton=findViewById(R.id.find_button);
+        findButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SendUserToFindFriendActivity();
+            }
+        });
 
         mViewPager = findViewById(R.id.viewPager);
         final TabLayout tabLayout = findViewById(R.id.tablayout);
@@ -122,6 +131,26 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+    private void SendUserToFindFriendActivity() {
+        Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
+        startActivity(friendsIntent);
+
+    }
+
+    //
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser currentUser=mAuth.getCurrentUser();
+        if(currentUser==null){
+            SendUserToLoginActivity();
+        }
+        else
+        {
+            CheckUserExistence();
+        }
+    }
+
     //Kiểm tra user đã setup profile hay chưa
     private void CheckUserExistence() {
 
@@ -143,22 +172,6 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
-
-    //
-    @Override
-    protected void onStart() {
-        super.onStart();
-        FirebaseUser currentUser=mAuth.getCurrentUser();
-        if(currentUser==null){
-            SendUserToLoginActivity();
-        }
-        else
-        {
-            CheckUserExistence();
-        }
-    }
-
-
 
     private void SendUserToSetupActivity() {
         Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);

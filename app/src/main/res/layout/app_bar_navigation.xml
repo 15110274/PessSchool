@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
-    
+
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -27,18 +27,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/txtClassName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerHorizontal="true"
-                    android:gravity="center"
-                    android:text="CLASSNAME"
-                    android:textSize="20dp"
-                    android:textColor="@android:color/white" />
-
                 <ImageView
                     android:id="@+id/toolbar_logo"
                     android:layout_width="wrap_content"
@@ -48,17 +36,33 @@
                     android:background="@drawable/ic_toolbar_lego"
                     android:padding="15dp" />
 
+                <TextView
+                    android:id="@+id/find_button"
+                    android:layout_width="280dp"
+                    android:layout_height="30dp"
+
+                    android:hint=" Tìm kiếm "
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="27dp"
+                    android:layout_marginEnd="50dp"
+                    android:background="@android:color/white" />
             </RelativeLayout>
 
         </androidx.appcompat.widget.Toolbar>
 
         <com.google.android.material.tabs.TabLayout
-            android:layoutDirection="ltr"
             android:id="@+id/tablayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/background_light"
-            app:tabIndicatorColor="@color/colorPrimary" >
+            android:layoutDirection="ltr"
+            app:tabIndicatorColor="@color/colorPrimary">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
@@ -78,7 +82,6 @@
 
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
-
 
 
     <include layout="@layout/content_navigation" />
