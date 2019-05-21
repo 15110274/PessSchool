@@ -26,6 +26,11 @@ import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -55,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         mAuth=FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-
+        updateUserStatus("online");
         // Xamrin Test Cloud
         AppCenter.start(getApplication(), "74bc89c2-9212-4cc3-9b55-6fc10baf76bb", Analytics.class, Crashes.class);
 
@@ -131,6 +136,7 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
     private void SendUserToFindFriendActivity() {
         Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
         startActivity(friendsIntent);
@@ -254,7 +260,9 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.logout:
+                updateUserStatus("offline");
                 mAuth.signOut();
+
                 intent=new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 break;
@@ -264,7 +272,25 @@ public class MainActivity extends AppCompatActivity
 
         return true;
     }
+    public void updateUserStatus(String state){
+        String currentUserID=mAuth.getCurrentUser().getUid();
+        String saveCurrentDate,saveCurrentTime;
+        Calendar calForDate=Calendar.getInstance();
+        SimpleDateFormat currentDate= new SimpleDateFormat("MM dd,yyyy");
+        saveCurrentDate=currentDate.format(calForDate.getTime());
 
+        Calendar calForTime=Calendar.getInstance();
+        SimpleDateFormat currentTime=new SimpleDateFormat("hh:mm a");
+        saveCurrentTime=currentTime.format(calForTime.getTime());
+
+        Map currentStateMap=new HashMap();
+        currentStateMap.put("time",saveCurrentTime);
+        currentStateMap.put("date",saveCurrentDate);
+        currentStateMap.put("type",state);
+
+        UsersRef.child(currentUserID).child("userState")
+                .updateChildren(currentStateMap);
+    }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {

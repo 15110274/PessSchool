@@ -80,19 +80,19 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateUserStatus("online");
+        //updateUserStatus("online");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        updateUserStatus("offline");
+        //updateUserStatus("offline");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        updateUserStatus("offline");
+        //updateUserStatus("offline");
 
     }
     private void DisplayAllFriends() {

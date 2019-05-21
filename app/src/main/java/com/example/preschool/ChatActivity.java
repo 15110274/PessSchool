@@ -173,9 +173,9 @@ public class ChatActivity extends AppCompatActivity {
                     final String lastDate = dataSnapshot.child("userState").child("date").getValue().toString();
                     final String lastTime = dataSnapshot.child("userState").child("time").getValue().toString();
                     if (type.equals("online")) {
-                        userLastSeen.setText("Last seen " + lastTime + " " + lastDate);
-                    } else {
                         userLastSeen.setText("Online");
+                    } else {
+                        userLastSeen.setText("Last seen " + lastTime + " " + lastDate);
                     }
                     Picasso.get().load(profileImage).placeholder(R.drawable.ic_person_black_50dp).into(receiverProfileImage);
                 }

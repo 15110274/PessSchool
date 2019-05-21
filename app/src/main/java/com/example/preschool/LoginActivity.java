@@ -55,8 +55,10 @@ public class LoginActivity extends AppCompatActivity {
 
         if(currentUser != null) {
             SendUserToMainActivity();
+
         }
     }
+
 
     private void addEvents() {
 

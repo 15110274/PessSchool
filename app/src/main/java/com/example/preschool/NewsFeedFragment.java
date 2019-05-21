@@ -26,6 +26,8 @@ import org.w3c.dom.Comment;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -165,8 +167,9 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         };
         adapter.startListening();
         postList.setAdapter(adapter);
-        // set user online
+
     }
+
     public static class PostsViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
