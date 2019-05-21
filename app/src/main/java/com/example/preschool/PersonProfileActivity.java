@@ -61,7 +61,7 @@ public class PersonProfileActivity extends AppCompatActivity {
                     String myGender = dataSnapshot.child("gender").getValue().toString();
                     String myRelationWithChldren = dataSnapshot.child("relationshipstatus").getValue().toString();
 
-                    Picasso.get().load(myProfileImage).placeholder(R.drawable.profile).into(userProfileImage);
+                    Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
 
                     userName.setText("@" + myUserName);
                     userProfName.setText(myProfileName);

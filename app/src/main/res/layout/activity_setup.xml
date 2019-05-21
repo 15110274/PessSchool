@@ -19,7 +19,7 @@
         android:layout_marginBottom="430dp"
         app:civ_border_color="@color/colorPrimaryDark"
         app:civ_border_width="2dp"
-        android:src="@drawable/profile"/>
+        android:src="@drawable/ic_person_black_50dp"/>
     <EditText
         android:id="@+id/setup_username"
         android:layout_width="match_parent"

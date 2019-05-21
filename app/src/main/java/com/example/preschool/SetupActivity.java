@@ -94,7 +94,7 @@ public class SetupActivity extends AppCompatActivity {
                         String image = dataSnapshot.child("profileimage").getValue().toString();
                         Picasso.get()
                                 .load(image)
-                                .placeholder(R.drawable.profile)
+                                .placeholder(R.drawable.ic_person_black_50dp)
                                 .into(ProfileImage);
 
                     }

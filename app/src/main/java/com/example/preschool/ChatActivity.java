@@ -44,29 +44,30 @@ public class ChatActivity extends AppCompatActivity {
     private EditText userMessageInput;
 
     private RecyclerView userMessageList;
-    private final List<Messages> messagesList=new ArrayList<>();
+    private final List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager;
     private MessagesAdapter messagesAdapter;
 
-    private String messageReceiverID, messageReceiverName,messageSenderID,saveCurrentDate,saveCurrentTime;
+    private String messageReceiverID, messageReceiverName, messageSenderID, saveCurrentDate, saveCurrentTime;
 
     private TextView receiverName, userLastSeen;
     private CircleImageView receiverProfileImage;
-    private DatabaseReference RootRef,UserRef;
+    private DatabaseReference RootRef, UserRef;
     private FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        mAuth=FirebaseAuth.getInstance();
-        messageSenderID=mAuth.getCurrentUser().getUid();
-        RootRef= FirebaseDatabase.getInstance().getReference();
-        UserRef= FirebaseDatabase.getInstance().getReference().child("Users");
+        mAuth = FirebaseAuth.getInstance();
+        messageSenderID = mAuth.getCurrentUser().getUid();
+        RootRef = FirebaseDatabase.getInstance().getReference();
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
-        messageReceiverID=getIntent().getExtras().get("visit_user_id").toString();
-        messageReceiverName=getIntent().getExtras().get("userName").toString();
+        messageReceiverID = getIntent().getExtras().get("visit_user_id").toString();
+        messageReceiverName = getIntent().getExtras().get("userName").toString();
 
         IntializeFields();
         DisplayReceiverInfo();
@@ -78,13 +79,14 @@ public class ChatActivity extends AppCompatActivity {
         });
         FetchMessages();
     }
+
     private void FetchMessages() {
         RootRef.child("Messages").child(messageSenderID).child(messageReceiverID)
                 .addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        if(dataSnapshot.exists()){
-                            Messages messages=dataSnapshot.getValue(Messages.class);
+                        if (dataSnapshot.exists()) {
+                            Messages messages = dataSnapshot.getValue(Messages.class);
                             messagesList.add(messages);
                             messagesAdapter.notifyDataSetChanged();
                         }
@@ -111,20 +113,20 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
     }
+
     private void SendMessage() {
 
-        String messageText=userMessageInput.getText().toString();
-        if(TextUtils.isEmpty(messageText)){
-            Toast.makeText(this,"please type message first...",Toast.LENGTH_SHORT).show();
+        String messageText = userMessageInput.getText().toString();
+        if (TextUtils.isEmpty(messageText)) {
+            Toast.makeText(this, "please type message first...", Toast.LENGTH_SHORT).show();
 
-        }
-        else {
-            String message_sender_ref="Messages/"+messageSenderID+"/"+messageReceiverID;
-            String message_receiver_ref="Messages/"+messageReceiverID+"/"+messageSenderID;
+        } else {
+            String message_sender_ref = "Messages/" + messageSenderID + "/" + messageReceiverID;
+            String message_receiver_ref = "Messages/" + messageReceiverID + "/" + messageSenderID;
 
-            DatabaseReference user_message_key=RootRef.child("Messages").child(messageSenderID)
+            DatabaseReference user_message_key = RootRef.child("Messages").child(messageSenderID)
                     .child(messageReceiverID).push();
-            String message_push_id=user_message_key.getKey();
+            String message_push_id = user_message_key.getKey();
             Calendar calFordDate = Calendar.getInstance();
             SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
             saveCurrentDate = currentDate.format(calFordDate.getTime());
@@ -133,26 +135,25 @@ public class ChatActivity extends AppCompatActivity {
             SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm aa");
             saveCurrentTime = currentTime.format(calFordDate.getTime());
 
-            Map messageTextBody=new HashMap();
-            messageTextBody.put("message",messageText);
-            messageTextBody.put("time",saveCurrentTime);
-            messageTextBody.put("date",saveCurrentDate);
-            messageTextBody.put("type","text");
-            messageTextBody.put("from",messageSenderID);
+            Map messageTextBody = new HashMap();
+            messageTextBody.put("message", messageText);
+            messageTextBody.put("time", saveCurrentTime);
+            messageTextBody.put("date", saveCurrentDate);
+            messageTextBody.put("type", "text");
+            messageTextBody.put("from", messageSenderID);
 
-            Map messageBodyDetails=new HashMap();
-            messageBodyDetails.put(message_sender_ref+"/"+message_push_id,messageTextBody);
-            messageBodyDetails.put(message_receiver_ref+"/"+message_push_id,messageTextBody);
+            Map messageBodyDetails = new HashMap();
+            messageBodyDetails.put(message_sender_ref + "/" + message_push_id, messageTextBody);
+            messageBodyDetails.put(message_receiver_ref + "/" + message_push_id, messageTextBody);
             RootRef.updateChildren(messageBodyDetails).addOnCompleteListener(new OnCompleteListener() {
                 @Override
                 public void onComplete(@NonNull Task task) {
-                    if(task.isSuccessful()){
-                        Toast.makeText(ChatActivity.this,"Message sent successfully",Toast.LENGTH_SHORT).show();
+                    if (task.isSuccessful()) {
+                        Toast.makeText(ChatActivity.this, "Message sent successfully", Toast.LENGTH_SHORT).show();
                         userMessageInput.setText("");
-                    }
-                    else{
-                        String message=task.getException().getMessage();
-                        Toast.makeText(ChatActivity.this,"Error"+message,Toast.LENGTH_SHORT).show();
+                    } else {
+                        String message = task.getException().getMessage();
+                        Toast.makeText(ChatActivity.this, "Error" + message, Toast.LENGTH_SHORT).show();
                         userMessageInput.setText("");
                     }
 
@@ -166,18 +167,17 @@ public class ChatActivity extends AppCompatActivity {
         RootRef.child("Users").child(messageReceiverID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    final String profileImage=dataSnapshot.child("profileimage").getValue().toString();
-                    final String type=dataSnapshot.child("userState").child("type").getValue().toString();
-                    final String lastDate=dataSnapshot.child("userState").child("date").getValue().toString();
-                    final String lastTime=dataSnapshot.child("userState").child("time").getValue().toString();
-                    if(type.equals("online")){
-                        userLastSeen.setText("online");
+                if (dataSnapshot.exists()) {
+                    final String profileImage = dataSnapshot.child("profileimage").getValue().toString();
+                    final String type = dataSnapshot.child("userState").child("type").getValue().toString();
+                    final String lastDate = dataSnapshot.child("userState").child("date").getValue().toString();
+                    final String lastTime = dataSnapshot.child("userState").child("time").getValue().toString();
+                    if (type.equals("online")) {
+                        userLastSeen.setText("Last seen " + lastTime + " " + lastDate);
+                    } else {
+                        userLastSeen.setText("Online");
                     }
-                    else{
-                        userLastSeen.setText("last seen "+lastTime+" "+lastDate);
-                    }
-                    Picasso.get().load(profileImage).placeholder(R.drawable.profile).into(receiverProfileImage);
+                    Picasso.get().load(profileImage).placeholder(R.drawable.ic_person_black_50dp).into(receiverProfileImage);
                 }
             }
 
@@ -187,26 +187,27 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
     }
+
     private void IntializeFields() {
         //hiển thị tên và ảnh đại diện của người nhận tin nhắn
-        ActionBar actionBar=getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayShowHomeEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
-        LayoutInflater layoutInflater=(LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View action_bar_view=layoutInflater.inflate(R.layout.chat_custom_bar,null);
+        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View action_bar_view = layoutInflater.inflate(R.layout.chat_custom_bar, null);
         actionBar.setCustomView(action_bar_view);
 
-        receiverName=findViewById(R.id.custom_profile_name);
-        userLastSeen=findViewById(R.id.custom_user_last_seen);
-        receiverProfileImage=findViewById(R.id.custom_profile_image);
+        receiverName = findViewById(R.id.custom_profile_name);
+        userLastSeen = findViewById(R.id.custom_user_last_seen);
+        receiverProfileImage = findViewById(R.id.custom_profile_image);
 
-        SendMessageButton=findViewById(R.id.send_message_button);
-        SendImagefileButton=findViewById(R.id.send_image_file_button);
-        userMessageInput=findViewById(R.id.input_message);
+        SendMessageButton = findViewById(R.id.send_message_button);
+        SendImagefileButton = findViewById(R.id.send_image_file_button);
+        userMessageInput = findViewById(R.id.input_message);
 
-        messagesAdapter=new MessagesAdapter(messagesList);
-        userMessageList=findViewById(R.id.messages_list_users);
-        linearLayoutManager=new LinearLayoutManager(this);
+        messagesAdapter = new MessagesAdapter(messagesList);
+        userMessageList = findViewById(R.id.messages_list_users);
+        linearLayoutManager = new LinearLayoutManager(this);
         userMessageList.setHasFixedSize(true);
         userMessageList.setLayoutManager(linearLayoutManager);
         userMessageList.setAdapter(messagesAdapter);

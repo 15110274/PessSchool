@@ -61,7 +61,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String image=dataSnapshot.child("profileimage").getValue().toString();
-                Picasso.get().load(image).placeholder(R.drawable.profile).into(holder.receiverProfileImage);
+                Picasso.get().load(image).placeholder(R.drawable.ic_person_black_50dp).into(holder.receiverProfileImage);
 
             }
 
@@ -84,7 +84,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
                 holder.ReceiverMessageText.setVisibility(View.VISIBLE);
                 holder.receiverProfileImage.setVisibility(View.VISIBLE);
                 holder.ReceiverMessageText.setBackgroundResource(R.drawable.receiver_message_text_background);
-                holder.ReceiverMessageText.setTextColor(Color.WHITE);
+                holder.ReceiverMessageText.setTextColor(Color.parseColor("#737678"));
                 holder.ReceiverMessageText.setGravity(Gravity.LEFT);
                 holder.ReceiverMessageText.setText(messages.getMessage());
             }

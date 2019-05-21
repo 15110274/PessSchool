@@ -187,7 +187,7 @@ public class FriendsFragment extends Fragment {
         }
         public void setProfileImage(String profileimage) {
             CircleImageView myImage = mView.findViewById(R.id.all_users_profile_image);
-            Picasso.get().load(profileimage).placeholder(R.drawable.profile).into(myImage);
+            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).into(myImage);
 
         }
 
