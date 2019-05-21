@@ -41,6 +41,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     private FirebaseAuth mAuth;
     Boolean LikeChecker=false;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -105,13 +106,14 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
                 String saveCurrentTime = currentTime.format(calFordTime.getTime());
 
-
-
                 postsViewHolder.setMinute(posts.getTime());
 //                postsViewHolder.setDate(posts.getDate());
 //                postsViewHolder.SetTime(posts.getTime());
+
                 postsViewHolder.setLikeButtonStatus(PostKey);
+
                 //click post activity chua lm
+
                 //cmt
                 postsViewHolder.CommentPostButton.setOnClickListener(new View.OnClickListener() {
                     @Override

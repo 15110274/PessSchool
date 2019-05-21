@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import de.hdodenhof.circleimageview.CircleImageView;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -34,15 +38,37 @@ public class CommentsActivity extends AppCompatActivity {
     private RecyclerView CommentsList;
     private ImageButton PostCommentButton;
     private EditText CommentInputText;
-    private DatabaseReference UsersRef,PostsRef;
+    private DatabaseReference UsersRef,PostsRef,LikesRef;
+    private ImageView PostImage;
+    private TextView PostDescription;
+    private CircleImageView PostProfileImage;
+    private TextView PostTime;
+    private TextView LikeButton,CommentButton;
+
+    private DatabaseReference clickPostRef;
 
     private String Post_Key, current_user_id;
     private FirebaseAuth mAuth;
+    private String postimage,profileimage,description,time;
+    Boolean LikeChecker=false;
+
+    private TextView DisplayNoOfLikes;
+    int countLikes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
+
+        PostImage=findViewById(R.id.post_image);
+        PostDescription=findViewById(R.id.post_description);
+        PostProfileImage=findViewById(R.id.post_profile_image);
+        PostTime=findViewById(R.id.post_minute);
+        LikeButton=findViewById(R.id.like_button);
+        CommentButton=findViewById(R.id.comment_button);
+        DisplayNoOfLikes=findViewById(R.id.display_no_of_likes);
+
+
         mAuth= FirebaseAuth.getInstance();
         current_user_id=mAuth.getCurrentUser().getUid();
         UsersRef= FirebaseDatabase.getInstance().getReference().child("Users");
@@ -50,6 +76,9 @@ public class CommentsActivity extends AppCompatActivity {
         PostsRef= FirebaseDatabase.getInstance().getReference().child("Posts").child(Post_Key).child("Comments");
 
 
+
+        clickPostRef= FirebaseDatabase.getInstance().getReference().child("Posts").child(Post_Key);
+        LikesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
 
         CommentsList=findViewById(R.id.comments_list);
         CommentsList.setHasFixedSize(true);
@@ -81,7 +110,89 @@ public class CommentsActivity extends AppCompatActivity {
                 });
             }
         });
+        clickPostRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    setLikeButtonStatus(Post_Key);
+                    description=dataSnapshot.child("description").getValue().toString();
+                    postimage=dataSnapshot.child("postimage").getValue().toString();
+                    profileimage=dataSnapshot.child("profileimage").getValue().toString();
+                    time=dataSnapshot.child("time").getValue().toString();
+
+                    PostDescription.setText(description);
+                    Picasso.get().load(postimage).into(PostImage);
+                    Picasso.get().load(profileimage).into(PostProfileImage);
+                    PostTime.setText(time);
+                    CommentButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            CommentInputText.requestFocus();
+                        }
+                    });
+                    LikeButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            LikeChecker=true;
+                            LikesRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(LikeChecker.equals(true)){
+                                        if(dataSnapshot.child(Post_Key).hasChild(current_user_id)){
+                                            LikesRef.child(Post_Key).child(current_user_id).removeValue();
+                                            LikeChecker=false;
+                                        }
+                                        else{
+                                            LikesRef.child(Post_Key).child(current_user_id).setValue(true);
+                                            LikeChecker=false;
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
+    public void setLikeButtonStatus(final String PostKey){
+
+        LikesRef.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child(PostKey).hasChild(current_user_id)){
+                    countLikes=(int)dataSnapshot.child(PostKey).getChildrenCount();
+                    LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp,0,0,0);
+                    DisplayNoOfLikes.setText((Integer.toString(countLikes)+" Likes"));
+                    LikeButton.setTextColor(Color.parseColor("#FF5722"));
+                }
+                else{
+                    countLikes=(int)dataSnapshot.child(PostKey).getChildrenCount();
+                    LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp,0,0,0);
+                    DisplayNoOfLikes.setText((Integer.toString(countLikes)+" Likes"));
+                    LikeButton.setTextColor(Color.parseColor("#959292"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     protected void onStart() {
         super.onStart();
         FirebaseRecyclerOptions<Comments> options = new FirebaseRecyclerOptions.Builder<Comments>().setQuery(PostsRef, Comments.class).build();
