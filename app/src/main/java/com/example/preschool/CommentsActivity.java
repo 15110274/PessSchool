@@ -40,26 +40,27 @@ public class CommentsActivity extends AppCompatActivity {
     private EditText CommentInputText;
     private DatabaseReference UsersRef,PostsRef,LikesRef;
     private ImageView PostImage;
-    private TextView PostDescription;
+    private TextView PostDescription,PostName;
     private CircleImageView PostProfileImage;
     private TextView PostTime;
     private TextView LikeButton,CommentButton;
 
-    private DatabaseReference clickPostRef;
+    private DatabaseReference clickPostRef,CommentsRef;
 
     private String Post_Key, current_user_id;
     private FirebaseAuth mAuth;
-    private String postimage,profileimage,description,time;
+    private String postimage,profileimage,description,time,postname;
     Boolean LikeChecker=false;
 
-    private TextView DisplayNoOfLikes;
-    int countLikes;
+    private TextView DisplayNoOfLikes,DisplayNoOfComments;
+    int countLikes,countComments;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
+        PostName=findViewById(R.id.post_user_name);
         PostImage=findViewById(R.id.post_image);
         PostDescription=findViewById(R.id.post_description);
         PostProfileImage=findViewById(R.id.post_profile_image);
@@ -90,6 +91,10 @@ public class CommentsActivity extends AppCompatActivity {
         CommentInputText=findViewById(R.id.comment_input);
         PostCommentButton=findViewById(R.id.post_comment_btn);
 
+        DisplayNoOfComments=findViewById(R.id.display_no_of_comments);
+
+        CommentsRef=FirebaseDatabase.getInstance().getReference().child("Posts");
+
         PostCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,11 +120,14 @@ public class CommentsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     setLikeButtonStatus(Post_Key);
+                    setCommentPostButtonStatus(Post_Key);
+                    postname=dataSnapshot.child("fullname").getValue().toString();
                     description=dataSnapshot.child("description").getValue().toString();
                     postimage=dataSnapshot.child("postimage").getValue().toString();
                     profileimage=dataSnapshot.child("profileimage").getValue().toString();
                     time=dataSnapshot.child("time").getValue().toString();
 
+                    PostName.setText(postname);
                     PostDescription.setText(description);
                     Picasso.get().load(postimage).into(PostImage);
                     Picasso.get().load(profileimage).into(PostProfileImage);
@@ -165,6 +173,26 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
 
+    }
+    public void setCommentPostButtonStatus(final String PostKey){
+        CommentsRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child(PostKey).child("Comments").hasChild(current_user_id)){
+                    countComments=(int)dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                    DisplayNoOfComments.setText((Integer.toString(countComments)+" Comments"));
+                }
+                else{
+                    countComments=(int)dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                    DisplayNoOfComments.setText((Integer.toString(countComments)+" Comments"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
     public void setLikeButtonStatus(final String PostKey){
 

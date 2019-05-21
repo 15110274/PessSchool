@@ -22,6 +22,8 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Comment;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -111,6 +113,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 //                postsViewHolder.SetTime(posts.getTime());
 
                 postsViewHolder.setLikeButtonStatus(PostKey);
+                postsViewHolder.setCommentPostButtonStatus(PostKey);
 
                 //click post activity chua lm
 
@@ -168,10 +171,13 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         View mView;
         TextView LikePostButton,CommentPostButton;
-        TextView DisplayNoOfLikes;
+        TextView DisplayNoOfLikes,DisplayNoOfComments;
         int countLikes;
+        int countComments;
+
         String currentUserId;
         DatabaseReference LikesRef;
+        DatabaseReference CommentsRef;
 
         public PostsViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -179,8 +185,31 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             LikePostButton=mView.findViewById(R.id.like_button);
             CommentPostButton=mView.findViewById(R.id.comment_button);
             DisplayNoOfLikes=mView.findViewById(R.id.display_no_of_likes);
+            DisplayNoOfComments=mView.findViewById(R.id.display_no_of_comments);
+
             LikesRef=FirebaseDatabase.getInstance().getReference().child("Likes");
+            CommentsRef=FirebaseDatabase.getInstance().getReference().child("Posts");
             currentUserId=FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
+        public void setCommentPostButtonStatus(final String PostKey){
+            CommentsRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.child(PostKey).child("Comments").hasChild(currentUserId)){
+                        countComments=(int)dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                        DisplayNoOfComments.setText((Integer.toString(countComments)+" Comments"));
+                    }
+                    else{
+                        countComments=(int)dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                        DisplayNoOfComments.setText((Integer.toString(countComments)+" Comments"));
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
         }
         //set like button status
         public void setLikeButtonStatus(final String PostKey){
