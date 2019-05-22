@@ -5,14 +5,14 @@
     android:layout_height="wrap_content">
 
     <Button
-        android:padding="16dp"
+        android:padding="8dp"
         android:layout_margin="8dp"
         android:layout_width="match_parent"
         android:background="@drawable/background_whats_on_your_mind"
         android:drawableRight="@drawable/ic_camera_alt_24dp"
         android:textAlignment="textStart"
         android:text="What's on your mind ?"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textAllCaps="false"
         android:textColor="@android:color/darker_gray"
         android:layout_height="wrap_content" />

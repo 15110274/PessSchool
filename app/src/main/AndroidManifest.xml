@@ -17,8 +17,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".PersonProfileActivity"></activity>
         <activity android:name=".FindFriendsActivity" />
-        <activity android:name=".ChatActivity"
-            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".ChatActivity" />
         <activity android:name=".CommentsActivity" />
         <activity
             android:name=".PostActivity"

@@ -1,6 +1,7 @@
 package com.example.preschool;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -97,6 +98,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             @Override
             protected void onBindViewHolder(@NonNull PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
                 final String PostKey=getRef(position).getKey();
+
                 postsViewHolder.setFullname(posts.getFullname());
                 postsViewHolder.setDescription(posts.getDescription());
                 postsViewHolder.setProfileImage(posts.getProfileimage());
@@ -271,7 +273,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         public void setPostImage (String postImage){
             ImageView postImages = (ImageView) mView.findViewById(R.id.post_image);
-            Picasso.get().load(postImage).into(postImages);
+            Picasso.get().load(postImage).fit().into(postImages);
+
         }
 
     }

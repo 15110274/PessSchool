@@ -40,7 +40,7 @@ import java.util.Map;
 public class ChatActivity extends AppCompatActivity {
 
 
-    private ImageButton SendMessageButton, SendImagefileButton;
+    private ImageButton SendMessageButton, SendImagefileButton, BackButton, InfoButton;
     private EditText userMessageInput;
 
     private RecyclerView userMessageList;
@@ -59,6 +59,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
 
         mAuth = FirebaseAuth.getInstance();
         messageSenderID = mAuth.getCurrentUser().getUid();
@@ -190,12 +191,21 @@ public class ChatActivity extends AppCompatActivity {
 
     private void IntializeFields() {
         //hiển thị tên và ảnh đại diện của người nhận tin nhắn
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowHomeEnabled(true);
-        actionBar.setDisplayShowCustomEnabled(true);
-        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View action_bar_view = layoutInflater.inflate(R.layout.chat_custom_bar, null);
-        actionBar.setCustomView(action_bar_view);
+//        ActionBar actionBar = getSupportActionBar();
+//        actionBar.setTitle("");
+//        actionBar.setDisplayShowHomeEnabled(true);
+//        actionBar.setDisplayShowCustomEnabled(true);
+//        LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View action_bar_view = layoutInflater.inflate(R.layout.chat_custom_bar, null);
+//        actionBar.setCustomView(action_bar_view);
+
+        this.getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setCustomView(R.layout.chat_custom_bar);
+        getSupportActionBar().setElevation(0);
+
+        BackButton=findViewById(R.id.button_back);
+        InfoButton=findViewById(R.id.info_user);
 
         receiverName = findViewById(R.id.custom_profile_name);
         userLastSeen = findViewById(R.id.custom_user_last_seen);
@@ -211,5 +221,23 @@ public class ChatActivity extends AppCompatActivity {
         userMessageList.setHasFixedSize(true);
         userMessageList.setLayoutManager(linearLayoutManager);
         userMessageList.setAdapter(messagesAdapter);
+
+        BackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        InfoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // gửi tới trang profile
+            }
+        });
     }
+
+
+
+
 }

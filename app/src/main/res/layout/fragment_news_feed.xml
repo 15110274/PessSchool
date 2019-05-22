@@ -12,15 +12,15 @@
         android:id="@+id/add_new_post_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="7dp"
         android:background="@drawable/background_whats_on_your_mind"
         android:drawableRight="@drawable/ic_camera_alt_24dp"
-        android:padding="16dp"
+        android:padding="8dp"
+        android:layout_margin="8dp"
         android:text="What's on your mind ?"
         android:textAlignment="textStart"
+        android:textSize="18sp"
         android:textAllCaps="false"
-        android:textColor="@color/hintcolor"
-        android:textSize="20sp" />
+        android:textColor="@color/hintcolor" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/all_users_post_list"

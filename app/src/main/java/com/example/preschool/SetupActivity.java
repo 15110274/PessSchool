@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.preschool.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -57,24 +58,22 @@ public class SetupActivity extends AppCompatActivity {
         UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
         UserName = findViewById(R.id.setup_username);
-        FullName =  findViewById(R.id.setup_fullname);
-        Address =  findViewById(R.id.setup_address);
-        SaveInformationbuttion =  findViewById(R.id.setup_information_button);
+        FullName = findViewById(R.id.setup_fullname);
+        Address = findViewById(R.id.setup_address);
+        SaveInformationbuttion = findViewById(R.id.setup_information_button);
         ProfileImage = findViewById(R.id.setup_profile_image);
         loadingBar = new ProgressDialog(this);
 
         SaveInformationbuttion.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 SaveAccountSetupInformation();
             }
         });
         //chọn ảnh đại diện
         ProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 Toast.makeText(SetupActivity.this, "Please select profile image first.", Toast.LENGTH_SHORT).show();
 
                 Intent galleryIntent = new Intent();
@@ -85,21 +84,16 @@ public class SetupActivity extends AppCompatActivity {
         });
         UsersRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                if(dataSnapshot.exists())
-                {
-                    if (dataSnapshot.hasChild("profileimage"))
-                    {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    if (dataSnapshot.hasChild("profileimage")) {
                         String image = dataSnapshot.child("profileimage").getValue().toString();
                         Picasso.get()
                                 .load(image)
                                 .placeholder(R.drawable.ic_person_black_50dp)
                                 .into(ProfileImage);
 
-                    }
-                    else
-                    {
+                    } else {
                         Toast.makeText(SetupActivity.this, "Please select profile image first.", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -115,12 +109,10 @@ public class SetupActivity extends AppCompatActivity {
     @Override
 
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==Gallery_Pick && resultCode==RESULT_OK && data!=null)
-        {
+        if (requestCode == Gallery_Pick && resultCode == RESULT_OK && data != null) {
             Uri ImageUri = data.getData();
 
             CropImage.activity(ImageUri)
@@ -129,12 +121,10 @@ public class SetupActivity extends AppCompatActivity {
                     .start(this);
         }
 
-        if(requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
-        {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
-            if(resultCode == RESULT_OK)
-            {
+            if (resultCode == RESULT_OK) {
                 loadingBar.setTitle("Profile Image");
                 loadingBar.setMessage("Please wait, while we updating your profile image...");
                 loadingBar.show();
@@ -146,9 +136,8 @@ public class SetupActivity extends AppCompatActivity {
 
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
-                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task)
-                    {
-                        if(task.isSuccessful()) {
+                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
 
                             Toast.makeText(SetupActivity.this, "Profile Image stored successfully to Firebase storage...", Toast.LENGTH_SHORT).show();
 
@@ -181,33 +170,27 @@ public class SetupActivity extends AppCompatActivity {
                         }
                     }
                 });
-            }
-            else {
+            } else {
                 Toast.makeText(SetupActivity.this, "Error Occured: Image can not be cropped. Try Again.", Toast.LENGTH_SHORT).show();
                 loadingBar.dismiss();
             }
         }
     }
-    private void SaveAccountSetupInformation()
-    {
+
+    private void SaveAccountSetupInformation() {
         String username = UserName.getText().toString();
         String fullname = FullName.getText().toString();
         String address = Address.getText().toString();
 
-        if(TextUtils.isEmpty(username))
-        {
+        if (TextUtils.isEmpty(username)) {
             Toast.makeText(this, "Please write your username...", Toast.LENGTH_SHORT).show();
         }
-        if(TextUtils.isEmpty(fullname))
-        {
+        if (TextUtils.isEmpty(fullname)) {
             Toast.makeText(this, "Please write your full name...", Toast.LENGTH_SHORT).show();
         }
-        if(TextUtils.isEmpty(address))
-        {
+        if (TextUtils.isEmpty(address)) {
             Toast.makeText(this, "Please write your address...", Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
+        } else {
             loadingBar.setTitle("Saving Information");
             loadingBar.setMessage("Please wait, while we are creating your new Account...");
             loadingBar.show();
@@ -223,17 +206,13 @@ public class SetupActivity extends AppCompatActivity {
             userMap.put("relationshipstatus", "none");
             UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
 
-                public void onComplete(@NonNull Task task)
-                {
-                    if(task.isSuccessful())
-                    {
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
                         SendUserToMainActivity();
                         Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
                         loadingBar.dismiss();
-                    }
-                    else
-                    {
-                        String message =  task.getException().getMessage();
+                    } else {
+                        String message = task.getException().getMessage();
                         Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
                         loadingBar.dismiss();
                     }
@@ -241,8 +220,8 @@ public class SetupActivity extends AppCompatActivity {
             });
         }
     }
-    private void SendUserToMainActivity()
-    {
+
+    private void SendUserToMainActivity() {
         Intent mainIntent = new Intent(SetupActivity.this, MainActivity.class);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(mainIntent);

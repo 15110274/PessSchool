@@ -129,7 +129,7 @@ public class CommentsActivity extends AppCompatActivity {
 
                     PostName.setText(postname);
                     PostDescription.setText(description);
-                    Picasso.get().load(postimage).into(PostImage);
+                    Picasso.get().load(postimage).fit().into(PostImage);
                     Picasso.get().load(profileimage).into(PostProfileImage);
                     PostTime.setText(time);
                     CommentButton.setOnClickListener(new View.OnClickListener() {
