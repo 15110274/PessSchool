@@ -68,7 +68,7 @@ public class ChatFragment extends Fragment {
                 setQuery(MessagesRef, Messages.class).build();
         FirebaseRecyclerAdapter<Messages, MessagesViewHolder> adapterMessages = new FirebaseRecyclerAdapter<Messages, MessagesViewHolder>(optionsMessages) {
             @Override
-            protected void onBindViewHolder(@NonNull final MessagesViewHolder messagesViewHolder, final int position, @NonNull Messages messages) {
+            protected void onBindViewHolder(@NonNull final MessagesViewHolder messagesViewHolder, final int position, @NonNull final Messages messages) {
                 final String chatWithIDs = getRef(position).getKey();
                 ////////////////////////////////////////////////////////////
                 ////////////////////////////////////////////////////////////
@@ -105,6 +105,25 @@ public class ChatFragment extends Fragment {
 
                     }
                 });
+                UsersRef.child(chatWithIDs).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            final String type = dataSnapshot.child("userState").child("type").getValue().toString();
+                            if (type.equals("online")) {
+                                messagesViewHolder.fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
+
+                            } else {
+                                messagesViewHolder.fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.backgroundDark)));
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                 UsersRef.child(chatWithIDs).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -113,7 +132,7 @@ public class ChatFragment extends Fragment {
 
                             final String userName = dataSnapshot.child("fullname").getValue().toString();
                             final String profileImage = dataSnapshot.child("profileimage").getValue().toString();
-                            final String type = dataSnapshot.child("userState").child("type").getValue().toString();
+
                             messagesViewHolder.setFullname(userName);
                             messagesViewHolder.setProfileImage(profileImage);
                             messagesViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -127,12 +146,7 @@ public class ChatFragment extends Fragment {
                                 }
                             });
 
-                            if (type.equals("online")) {
-                                messagesViewHolder.fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorAccent)));
 
-                            } else {
-                                messagesViewHolder.fab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.hintcolor)));
-                            }
 
                         }
                     }
@@ -176,7 +190,6 @@ public class ChatFragment extends Fragment {
         public void setProfileImage(String profileimage) {
             CircleImageView myImage = mView.findViewById(R.id.all_messages_profile_image);
             Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).into(myImage);
-            FloatingActionButton fab = mView.findViewById(R.id.online);
         }
 
         public void setFullname(String fullname) {

@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".AddEventActivity"></activity>
         <activity android:name=".PersonProfileActivity"></activity>
         <activity android:name=".FindFriendsActivity" />
         <activity android:name=".ChatActivity" />
@@ -31,12 +32,10 @@
             android:parentActivityName=".MainActivity" />
         <activity
             android:name=".EventsActivity"
-            android:parentActivityName=".MainActivity" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".HelpActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".Password.ResetPassworkActivity" />
-        <activity android:name=".Password.ChangePasswordActivity" />
         <activity android:name=".Parent.AlbumActivity" />
         <activity
             android:name=".Setting.SettingActivity"
