@@ -128,8 +128,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     postsViewHolder.CommentPostButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent commentsIntent = new Intent(getActivity(), CommentsActivity.class);
-                            commentsIntent.putExtra("PostKey", PostKey);
+                            Intent commentsIntent=new Intent(getActivity(),CommentsActivity.class);
+                            commentsIntent.putExtra("PostKey",PostKey);
                             startActivity(commentsIntent);
                         }
                     });
@@ -137,17 +137,18 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     postsViewHolder.LikePostButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            LikeChecker = true;
+                            LikeChecker=true;
                             LikesRef.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (LikeChecker.equals(true)) {
-                                        if (dataSnapshot.child(PostKey).hasChild(currentUserID)) {
+                                    if(LikeChecker.equals(true)){
+                                        if(dataSnapshot.child(PostKey).hasChild(currentUserID)){
                                             LikesRef.child(PostKey).child(currentUserID).removeValue();
-                                            LikeChecker = false;
-                                        } else {
+                                            LikeChecker=false;
+                                        }
+                                        else{
                                             LikesRef.child(PostKey).child(currentUserID).setValue(true);
-                                            LikeChecker = false;
+                                            LikeChecker=false;
                                         }
                                     }
                                 }
@@ -231,16 +232,17 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
         }
 
-        public void setCommentPostButtonStatus(final String PostKey) {
+        public void setCommentPostButtonStatus(final String PostKey){
             CommentsRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child(PostKey).child("Comments").hasChild(currentUserId)) {
-                        countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
-                        DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
-                    } else {
-                        countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
-                        DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
+                    if(dataSnapshot.child(PostKey).child("Comments").hasChild(currentUserId)){
+                        countComments=(int)dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                        DisplayNoOfComments.setText((Integer.toString(countComments)+" Comments"));
+                    }
+                    else{
+                        countComments=(int)dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                        DisplayNoOfComments.setText((Integer.toString(countComments)+" Comments"));
                     }
                 }
 
@@ -252,19 +254,20 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
 
         //set like button status
-        public void setLikeButtonStatus(final String PostKey) {
+        public void setLikeButtonStatus(final String PostKey){
             LikesRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child(PostKey).hasChild(currentUserId)) {
-                        countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
-                        LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp, 0, 0, 0);
-                        DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
+                    if(dataSnapshot.child(PostKey).hasChild(currentUserId)){
+                        countLikes=(int)dataSnapshot.child(PostKey).getChildrenCount();
+                        LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp,0,0,0);
+                        DisplayNoOfLikes.setText((Integer.toString(countLikes)+" Likes"));
                         LikePostButton.setTextColor(Color.parseColor("#FF5722"));
-                    } else {
-                        countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
-                        LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp, 0, 0, 0);
-                        DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
+                    }
+                    else{
+                        countLikes=(int)dataSnapshot.child(PostKey).getChildrenCount();
+                        LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp,0,0,0);
+                        DisplayNoOfLikes.setText((Integer.toString(countLikes)+" Likes"));
                         LikePostButton.setTextColor(Color.parseColor("#959292"));
                     }
                 }
@@ -277,19 +280,18 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
 
 
-        public void setFullname(String fullname) {
+        public void setFullname (String fullname){
             TextView username = (TextView) itemView.findViewById(R.id.post_user_name);
             username.setText(fullname);
         }
 
-        public void setProfileImage(String profileimage) {
+        public void setProfileImage (String profileimage){
             CircleImageView image = (CircleImageView) itemView.findViewById(R.id.post_profile_image);
             Picasso.get().load(profileimage).into(image);
         }
-
-        public void setMinute(String minute) {
-            TextView PostMinute = itemView.findViewById(R.id.post_minute);
-            PostMinute.setText(minute + " min ago");
+        public void setMinute(String minute){
+            TextView PostMinute=itemView.findViewById(R.id.post_minute);
+            PostMinute.setText(minute+" min ago");
         }
 //        public void SetTime (String time){
 //            TextView PostTime = (TextView) mView.findViewById(R.id.post_time);
@@ -301,12 +303,12 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 //            postDate.setText("     "+date);
 //        }
 
-        public void setDescription(String description) {
+        public void setDescription (String description){
             TextView postDescription = (TextView) itemView.findViewById(R.id.post_description);
             postDescription.setText(description);
         }
 
-        public void setPostImage(String postImage) {
+        public void setPostImage (String postImage){
             ImageView postImages = (ImageView) itemView.findViewById(R.id.post_image);
             Picasso.get().load(postImage).resize(400, 300)
                     .centerInside().into(postImages);
