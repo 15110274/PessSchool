@@ -41,7 +41,8 @@
                     android:id="@+id/find_button"
                     android:layout_width="280dp"
                     android:layout_height="30dp"
-
+                    android:gravity="left"
+                    android:paddingEnd="35dp"
                     android:hint=" Tìm kiếm "
                     android:textColor="@android:color/darker_gray"
                     android:textSize="20sp" />

@@ -17,7 +17,6 @@
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         app:itemIconPadding="@dimen/space24"
-
         app:itemTextAppearance="@style/MyActionBar.MenuTextStyle"
         android:layout_width="160dp"
         android:layout_height="match_parent"

@@ -7,38 +7,4 @@
     android:orientation="vertical"
     tools:context=".EventsActivity">
 
-
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></CalendarView>
-
-
-    <androidx.cardview.widget.CardView
-
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        app:cardBackgroundColor="#ffffff">
-
-        <TextView
-            android:id="@+id/myDate"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="hfhdfhdshfhd"
-            android:textColor="#000000"></TextView>
-
-    </androidx.cardview.widget.CardView>
-
-    <Button
-        android:id="@+id/add_event"
-        android:layout_width="90dp"
-        android:layout_height="60dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="20dp"
-        android:background="@color/colorPrimary"
-        android:text="Add Event" />
 </LinearLayout>
