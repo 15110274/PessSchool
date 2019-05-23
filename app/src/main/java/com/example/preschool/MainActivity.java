@@ -262,7 +262,6 @@ public class MainActivity extends AppCompatActivity
             case R.id.logout:
                 updateUserStatus("offline");
                 mAuth.signOut();
-
                 intent=new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
                 break;

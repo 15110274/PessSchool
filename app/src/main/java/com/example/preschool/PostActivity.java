@@ -45,12 +45,12 @@ public class PostActivity extends AppCompatActivity {
     private String Description;
     private static final int Gallery_Pick = 1;
 
-    private StorageReference PostsImagesRefrence;
-    private DatabaseReference UsersRef, PostsRef;
+    private StorageReference PostsImagesRefrence ;
+    private DatabaseReference UsersRef, PostsRef,sttPostRef;
     private FirebaseAuth mAuth;
 
     private String  saveCurrentDate, saveCurrentTime, postRandomName,downloadUrl, current_user_id;
-    private long countPosts=0;
+    private int countPosts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +65,24 @@ public class PostActivity extends AppCompatActivity {
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
 
+
         SelectPostImage =  findViewById(R.id.select_post_image);
         UpdatePostButton =  findViewById(R.id.update_post_button);
         PostDescription = findViewById(R.id.post_description);
         loadingBar = new ProgressDialog(this);
 
+        sttPostRef=FirebaseDatabase.getInstance().getReference().child("sttPost");
+        sttPostRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                countPosts=Integer.parseInt(dataSnapshot.getValue().toString());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         SelectPostImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -82,8 +95,12 @@ public class PostActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 ValidatePostInfo();
+                sttPostRef.setValue(countPosts+1);
             }
         });
+
+
+
     }
     @Nullable
 
@@ -127,7 +144,7 @@ public class PostActivity extends AppCompatActivity {
         saveCurrentDate = currentDate.format(calFordDate.getTime());
 
         Calendar calFordTime = Calendar.getInstance();
-        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
         saveCurrentTime = currentTime.format(calFordDate.getTime());
 
         postRandomName = saveCurrentDate + saveCurrentTime;
@@ -136,15 +153,15 @@ public class PostActivity extends AppCompatActivity {
 
         StorageReference filePath = PostsImagesRefrence.child("Post Images").child(ImageUri.getLastPathSegment() + postRandomName + ".jpg");
         //dem count post
+
         PostsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    countPosts=dataSnapshot.getChildrenCount();
+                   
+
                 }
-                else{
-                    countPosts=0;
-                }
+
             }
 
             @Override
@@ -201,6 +218,7 @@ public class PostActivity extends AppCompatActivity {
                                 postsMap.put("fullname", userFullName);
 
                                 postsMap.put("counter",countPosts);
+
                                 PostsRef.child(childString).updateChildren(postsMap)
                                         .addOnCompleteListener(new OnCompleteListener() {
                                             @Override
@@ -208,6 +226,7 @@ public class PostActivity extends AppCompatActivity {
                                             {
                                                 if(task.isSuccessful())
                                                 {
+
                                                     SendUserToNewsFeedActivity();
                                                     Toast.makeText(PostActivity.this, "New Post is updated successfully.", Toast.LENGTH_SHORT).show();
                                                     loadingBar.dismiss();
