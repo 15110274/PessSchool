@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
+    tools:context=".PhotoAlbum.NewAlbumActivity">
+
+    <EditText
+        android:id="@+id/add_title_album"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:inputType="textCapSentences"
+        android:hint="Add a title"
+        android:paddingStart="10dp"
+        android:textSize="26sp"
+        android:textColor="@color/textcolor"
+        android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/image_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp" />
+    <TextView
+        android:id="@+id/add_photos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ADD PHOTOS"/>
+
+    <Button
+        android:id="@+id/select_photos"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:padding="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Select photos"
+        android:textAlignment="textStart"
+        android:drawablePadding="15dp"
+        android:textSize="20sp"
+        android:textStyle="normal"
+        android:textAllCaps="false"
+        android:textColor="@android:color/black"
+        android:drawableLeft="@drawable/ic_add_black_24dp"
+        android:background="@drawable/item_background_post"/>
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/upload_image"
+        android:layout_width="wrap_content"
+        android:background="@drawable/buttonshape"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Upload"/>
+
+</LinearLayout>

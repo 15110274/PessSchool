@@ -293,15 +293,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             TextView PostMinute=itemView.findViewById(R.id.post_minute);
             PostMinute.setText(minute+" min ago");
         }
-//        public void SetTime (String time){
-//            TextView PostTime = (TextView) mView.findViewById(R.id.post_time);
-//            PostTime.setText("     "+time);
-//        }
-//
-//        public void setDate (String date){
-//            TextView postDate = (TextView) mView.findViewById(R.id.post_date);
-//            postDate.setText("     "+date);
-//        }
 
         public void setDescription (String description){
             TextView postDescription = (TextView) itemView.findViewById(R.id.post_description);

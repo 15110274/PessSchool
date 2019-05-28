@@ -1,0 +1,265 @@
+package com.example.preschool.PhotoAlbum;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.preschool.PhotoAlbum.Adapter.Album;
+import com.example.preschool.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+public class NewAlbumActivity extends AppCompatActivity {
+
+    private static final int PICK_IMG = 1;
+    private static final int PICK_IMAGE_REQUEST = 1;
+
+    private Button mButtonChooseImage;
+    private Button mButtonUpload;
+    private EditText mEditTextAlbumName;
+    private ImageView mImageView;
+    private TextView addPhotos;
+    private ProgressBar mProgressBar;
+    private Uri mImageUri;
+    private int uploads = 0;
+
+    private ArrayList<Uri> uriList = new ArrayList<Uri>();
+    private ArrayList<String> imageUrlList = new ArrayList<String>();
+
+    private StorageReference mStorageRef;
+    private DatabaseReference mDatabaseRef;
+
+    private StorageTask mUploadTask;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_album);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Tạo album mới");
+
+        mButtonChooseImage = findViewById(R.id.select_photos);
+        mButtonUpload = findViewById(R.id.upload_image);
+        mEditTextAlbumName = findViewById(R.id.add_title_album);
+        mImageView = findViewById(R.id.image_view);
+        mProgressBar = findViewById(R.id.progress_bar);
+        addPhotos = findViewById(R.id.add_photos);
+
+        mStorageRef = FirebaseStorage.getInstance().getReference("Albums");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Albums");
+
+        mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFileChooser1();
+            }
+        });
+
+        mButtonUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mUploadTask != null && mUploadTask.isInProgress()) {
+                    Toast.makeText(NewAlbumActivity.this, "Image in progress", Toast.LENGTH_SHORT).show();
+                } else {
+                    uploadFile();
+                }
+            }
+        });
+
+//        mTextViewShowUploads.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                openImagesActivity();
+//            }
+//        });
+    }
+
+
+    private void SendLink(String url) {
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("link", url);
+        mDatabaseRef.push().setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+//                progressDialog.dismiss();
+//                textView.setText("Image Uploaded Successfully");
+//                send.setVisibility(View.GONE);
+                uriList.clear();
+            }
+        });
+
+
+    }
+
+    private void openFileChooser1() {
+        //we will pick images
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);// Buộc phải chọn 2 hình trở lên
+        startActivityForResult(intent, PICK_IMG);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMG) {
+            if (resultCode == RESULT_OK) {
+                if (data.getClipData() != null) {
+                    int count = data.getClipData().getItemCount();
+
+                    int CurrentImageSelect = 0;
+
+                    while (CurrentImageSelect < count) {
+                        Uri imageuri = data.getClipData().getItemAt(CurrentImageSelect).getUri();
+                        uriList.add(imageuri);
+                        CurrentImageSelect = CurrentImageSelect + 1;
+                    }
+                    addPhotos.setText("You Have Selected " + uriList.size() + " Pictures");
+                    mImageUri = data.getClipData().getItemAt(0).getUri();
+                    Picasso.get().load(mImageUri).into(mImageView);
+
+                }
+
+            }
+
+        }
+
+    }
+
+    private String getFileExtension(Uri uri) {
+        ContentResolver cR = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cR.getType(uri));
+    }
+
+
+    private void uploadeFile1() {
+//        textView.setText("Please Wait ... If Uploading takes Too much time please the button again ");
+//        progressDialog.show();
+        final StorageReference ImageFolder = FirebaseStorage.getInstance().getReference().child("AlbumsTest");
+        for (uploads = 0; uploads < uriList.size(); uploads++) {
+            Uri Image = uriList.get(uploads);
+            final StorageReference imagename = ImageFolder.child("image/" + Image.getLastPathSegment());
+
+            imagename.putFile(uriList.get(uploads)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    imagename.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            String url = String.valueOf(uri);
+                            SendLink(url);
+                        }
+                    });
+
+                }
+            });
+
+
+        }
+    }
+
+    public void uploadFile() {
+        final Album album = new Album();
+        if (uriList != null) {
+            for (int i = 0; i < uriList.size(); i++) {
+                StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + "." +
+                        getFileExtension(uriList.get(i)));
+
+                mUploadTask = fileReference.putFile(uriList.get(i))
+
+                        .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                            private static final String TAG = "PhotoAlbumActivity";
+
+                            @Override
+                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mProgressBar.setProgress(0);
+                                    }
+                                }, 500);
+                                Toast.makeText(NewAlbumActivity.this, "Image Successful", Toast.LENGTH_LONG).show();
+//***************************************************************************************************************
+                                Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
+                                while (!urlTask.isSuccessful()) ;
+                                Uri downloadUrl = urlTask.getResult();
+
+                                Log.d(TAG, "onSuccess: firebase download url: " + downloadUrl.toString());
+
+                                imageUrlList.add(downloadUrl.toString());
+
+//                                imageList.add(image);
+//                                album.setImageList(imageList);
+                                album.setName(mEditTextAlbumName.getText().toString());
+                                album.setImageUrlList(imageUrlList);
+                                if (imageUrlList.size()==uriList.size()) {
+                                    String uploadId = mDatabaseRef.push().getKey();
+                                    mDatabaseRef.child(uploadId).setValue(album);
+                                }
+
+                                finish();
+
+//**************************************************************************************************************
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(NewAlbumActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                                double progress = 100 * taskSnapshot.getBytesTransferred() / taskSnapshot.getTotalByteCount();
+                                mProgressBar.setProgress((int) progress);
+                            }
+                        });
+
+            }
+
+        } else {
+            Toast.makeText(this, "NO File Selected", Toast.LENGTH_SHORT).show();
+        }
+    }
+//    private void openImagesActivity() {
+//        Intent intent = new Intent(this, ImagesActivity.class);
+//        startActivity(intent);
+//    }
+}

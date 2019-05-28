@@ -10,5 +10,5 @@
     <color name="hintcolor">#aaa</color>
     <!--<color name="nonecolor"></color>-->
     <color name="red">#f44336</color>
-    <color name="editText">#EEEEEE</color>
+    <color name="editText">#3F3E3E</color>
 </resources>

@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -233,6 +234,9 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // gửi tới trang profile
+                Intent intent=new Intent(ChatActivity.this, PersonProfileActivity.class);
+                intent.putExtra("visit_user_id",messageReceiverID);
+                startActivity(intent);
             }
         });
     }
