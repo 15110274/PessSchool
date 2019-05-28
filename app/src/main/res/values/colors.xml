@@ -11,4 +11,6 @@
     <!--<color name="nonecolor"></color>-->
     <color name="red">#f44336</color>
     <color name="editText">#EEEEEE</color>
+    <color name="colorNotSeenMes">#d6e9fc</color>
+    <color name="colorMes">@android:color/darker_gray</color>
 </resources>

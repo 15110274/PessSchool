@@ -1,6 +1,8 @@
 package com.example.preschool;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -30,7 +32,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatFragment extends Fragment {
     private RecyclerView myMessagesList;
-    private DatabaseReference MessagesRef, UsersRef,FriendsRef;
+    private DatabaseReference MessagesRef, UsersRef;
     private FirebaseAuth mAuth;
     private String online_user_id;
 
@@ -41,7 +43,7 @@ public class ChatFragment extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         online_user_id = mAuth.getCurrentUser().getUid();
-        FriendsRef= FirebaseDatabase.getInstance().getReference().child("Friends").child(online_user_id);
+
         MessagesRef=FirebaseDatabase.getInstance().getReference().child("Messages").child(online_user_id);
 
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -64,8 +66,28 @@ public class ChatFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final MessagesViewHolder messagesViewHolder, final int position, @NonNull Messages messages) {
                 final String chatWithIDs=getRef(position).getKey();
-                ////////////////////////////////////////////////////////////
-                ////////////////////////////////////////////////////////////
+                final Intent chatIntent=new Intent(getActivity(),ChatActivity.class);
+                UsersRef.child(chatWithIDs).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()){
+
+                            final String userName=dataSnapshot.child("fullname").getValue().toString();
+                            final String profileImage=dataSnapshot.child("profileimage").getValue().toString();
+                            messagesViewHolder.setFullname(userName);
+                            messagesViewHolder.setProfileImage(profileImage);
+                            //gửi đến chatActivity
+                            chatIntent.putExtra("userName",userName);
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
                 MessagesRef=FirebaseDatabase.getInstance().getReference().child("Messages").child(online_user_id).child(chatWithIDs);
                 Query query=MessagesRef.orderByKey().limitToLast(1);
                 query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -74,13 +96,16 @@ public class ChatFragment extends Fragment {
 
                         if(dataSnapshot.exists()) {
                             for (DataSnapshot child: dataSnapshot.getChildren()) {
+
                                 final String contentMessage = child.child("message").getValue().toString();
                                 final String timeMessage = child.child("time").getValue().toString();
                                 final String senderMessage = child.child("from").getValue().toString();
                                 if(!senderMessage.equals(online_user_id)){
+                                    //ẩn chữ bạn đi
                                     messagesViewHolder.senderIsMe.setVisibility(View.GONE);
                                 }
                                 else{
+
                                     messagesViewHolder.senderIsMe.setVisibility(View.VISIBLE);
                                 }
                                 messagesViewHolder.setMessages(contentMessage);
@@ -98,36 +123,28 @@ public class ChatFragment extends Fragment {
 
                     }
                 });
-                UsersRef.child(chatWithIDs).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists()){
 
-                            final String userName=dataSnapshot.child("fullname").getValue().toString();
-                            final String profileImage=dataSnapshot.child("profileimage").getValue().toString();
-                            messagesViewHolder.setFullname(userName);
-                            messagesViewHolder.setProfileImage(profileImage);
-                            messagesViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String visit_user_id=getRef(position).getKey();
-                                    Intent profileIntent=new Intent(getActivity(),ChatActivity.class);
-                                    profileIntent.putExtra("visit_user_id",visit_user_id);
-                                    profileIntent.putExtra("userName",userName);
-                                    startActivity(profileIntent);
-                                }
-                            });
-                        }
-                    }
-
+                messagesViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                    public void onClick(View v) {
+                        //gửi đến chat activity
+                        String visit_user_id=getRef(position).getKey();
+                        chatIntent.putExtra("visit_user_id",visit_user_id);
+                        startActivity(chatIntent);
+
+                        //đổi màu là chưa đọc
+//                        messagesViewHolder.myMessage.setTextColor(Color.BLACK);
+//                        messagesViewHolder.myName.setTextSize(20);
+//                        messagesViewHolder.myMessage.setTypeface(null, Typeface.BOLD);
+//                        messagesViewHolder.itemView.setBackgroundColor(getResources().getColor(R.color.colorNotSeenMes));
+                        //đổi màu là đọc rồi
+//                        messagesViewHolder.myMessage.setTextColor(getResources().getColor(R.color.colorMes));
+//                        messagesViewHolder.myName.setTextSize(16);
+//                        messagesViewHolder.myMessage.setTypeface(null, Typeface.NORMAL);
+//                        messagesViewHolder.itemView.setBackgroundColor(getResources().getColor(R.color.background));
 
                     }
                 });
-
-
-
             }
 
             @NonNull
@@ -147,10 +164,15 @@ public class ChatFragment extends Fragment {
     public static class MessagesViewHolder extends RecyclerView.ViewHolder {
         View mView;
         TextView senderIsMe;
+        TextView myMessage;
+        TextView myName;
+
         public MessagesViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
             senderIsMe=mView.findViewById(R.id.all_messages_me);
+            myMessage = mView.findViewById(R.id.all_messages_final_chat);
+            myName = mView.findViewById(R.id.all_messages_full_name);
         }
 
 
@@ -161,11 +183,11 @@ public class ChatFragment extends Fragment {
         }
 
         public void setFullname(String fullname) {
-            TextView myName = mView.findViewById(R.id.all_messages_full_name);
+//            TextView myName = mView.findViewById(R.id.all_messages_full_name);
             myName.setText(fullname);
         }
         public void setMessages(String messages) {
-            TextView myMessage = mView.findViewById(R.id.all_messages_final_chat);
+//            TextView myMessage = mView.findViewById(R.id.all_messages_final_chat);
             myMessage.setText(messages);
         }
 
