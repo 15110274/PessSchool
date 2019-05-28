@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.preschool.PhotoAlbum.Adapter.Album;
 import com.example.preschool.R;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -74,7 +73,8 @@ public class PhotoAlbumActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
 //                        final String url = album.();
-                        Intent intent = new Intent(getApplicationContext(), UploadMultiImageActivity.class);
+
+                        Intent intent = new Intent(getApplicationContext(), ViewPhotoAlbumActivity.class);
 //                        intent.putExtra("id", url);
                         startActivity(intent);
                     }
@@ -121,7 +121,7 @@ public class PhotoAlbumActivity extends AppCompatActivity {
         }
         public void setImage(String image){
             ImageView imgAlbum = mView.findViewById(R.id.img_thumbnail);
-            Picasso.get().load(image).resize(100,100).into(imgAlbum);
+            Picasso.get().load(image).resize(500,0 ).into(imgAlbum);
         }
 
     }

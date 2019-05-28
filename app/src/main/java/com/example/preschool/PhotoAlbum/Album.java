@@ -1,4 +1,4 @@
-package com.example.preschool.PhotoAlbum.Adapter;
+package com.example.preschool.PhotoAlbum;
 
 
 import java.util.ArrayList;

@@ -16,13 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".PhotoAlbum.UploadMultiImageActivity"></activity>
         <activity android:name=".PhotoAlbum.ViewPhotoAlbumActivity"></activity>
         <activity android:name=".PhotoAlbum.PhotoAlbumActivity"></activity>
         <activity android:name=".PhotoAlbum.NewAlbumActivity" />
         <activity android:name=".Notification.TestNotifyActivity" />
         <activity android:name=".AddEventActivity" />
-        <activity android:name=".PersonProfileActivity" />
+        <activity android:name=".PersonProfileActivity" android:theme="@style/AppTheme" />
         <activity android:name=".FindFriendsActivity" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".CommentsActivity" />
@@ -56,7 +55,7 @@
         <activity android:name=".RegisterDemoActivity" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -301,8 +301,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         public void setPostImage (String postImage){
             ImageView postImages = (ImageView) itemView.findViewById(R.id.post_image);
-            Picasso.get().load(postImage).resize(400, 300)
-                    .centerInside().into(postImages);
+            Picasso.get().load(postImage).resize(600, 0).into(postImages);
         }
 
     }

@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,7 +20,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.preschool.PhotoAlbum.Adapter.Album;
 import com.example.preschool.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,7 +35,6 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class NewAlbumActivity extends AppCompatActivity {
 
@@ -82,7 +79,7 @@ public class NewAlbumActivity extends AppCompatActivity {
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openFileChooser1();
+                openFileChooser();
             }
         });
 
@@ -97,33 +94,10 @@ public class NewAlbumActivity extends AppCompatActivity {
             }
         });
 
-//        mTextViewShowUploads.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                openImagesActivity();
-//            }
-//        });
     }
 
 
-    private void SendLink(String url) {
-        HashMap<String, String> hashMap = new HashMap<>();
-        hashMap.put("link", url);
-        mDatabaseRef.push().setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-
-//                progressDialog.dismiss();
-//                textView.setText("Image Uploaded Successfully");
-//                send.setVisibility(View.GONE);
-                uriList.clear();
-            }
-        });
-
-
-    }
-
-    private void openFileChooser1() {
+    private void openFileChooser() {
         //we will pick images
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
@@ -166,33 +140,6 @@ public class NewAlbumActivity extends AppCompatActivity {
     }
 
 
-    private void uploadeFile1() {
-//        textView.setText("Please Wait ... If Uploading takes Too much time please the button again ");
-//        progressDialog.show();
-        final StorageReference ImageFolder = FirebaseStorage.getInstance().getReference().child("AlbumsTest");
-        for (uploads = 0; uploads < uriList.size(); uploads++) {
-            Uri Image = uriList.get(uploads);
-            final StorageReference imagename = ImageFolder.child("image/" + Image.getLastPathSegment());
-
-            imagename.putFile(uriList.get(uploads)).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    imagename.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-
-                            String url = String.valueOf(uri);
-                            SendLink(url);
-                        }
-                    });
-
-                }
-            });
-
-
-        }
-    }
-
     public void uploadFile() {
         final Album album = new Album();
         if (uriList != null) {
@@ -215,6 +162,7 @@ public class NewAlbumActivity extends AppCompatActivity {
                                     }
                                 }, 500);
                                 Toast.makeText(NewAlbumActivity.this, "Image Successful", Toast.LENGTH_LONG).show();
+//                                addPhotos.setText("Uploaded " + i/uriList.size() + " Pictures");
 //***************************************************************************************************************
                                 Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
                                 while (!urlTask.isSuccessful()) ;
@@ -224,16 +172,19 @@ public class NewAlbumActivity extends AppCompatActivity {
 
                                 imageUrlList.add(downloadUrl.toString());
 
-//                                imageList.add(image);
-//                                album.setImageList(imageList);
                                 album.setName(mEditTextAlbumName.getText().toString());
                                 album.setImageUrlList(imageUrlList);
                                 if (imageUrlList.size()==uriList.size()) {
                                     String uploadId = mDatabaseRef.push().getKey();
-                                    mDatabaseRef.child(uploadId).setValue(album);
-                                }
+                                    mDatabaseRef.child(uploadId).setValue(album).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            imageUrlList.clear();
+                                            finish();
+                                        }
+                                    });
 
-                                finish();
+                                }
 
 //**************************************************************************************************************
                             }
