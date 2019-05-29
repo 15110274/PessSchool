@@ -72,10 +72,8 @@ public class PhotoAlbumActivity extends AppCompatActivity {
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        final String url = album.();
-
                         Intent intent = new Intent(getApplicationContext(), ViewPhotoAlbumActivity.class);
-//                        intent.putExtra("id", url);
+                        intent.putExtra("POSITION_ALBUM", getRef(position).getKey());
                         startActivity(intent);
                     }
                 });

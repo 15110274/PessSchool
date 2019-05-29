@@ -16,7 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".PhotoAlbum.ViewPhotoAlbumActivity"></activity>
+        <activity android:name=".PhotoAlbum.ViewPhotoAlbumActivity"
+            android:parentActivityName=".PhotoAlbum.PhotoAlbumActivity">
+
+        </activity>
         <activity android:name=".PhotoAlbum.PhotoAlbumActivity"></activity>
         <activity android:name=".PhotoAlbum.NewAlbumActivity" />
         <activity android:name=".Notification.TestNotifyActivity" />
