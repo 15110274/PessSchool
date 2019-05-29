@@ -234,6 +234,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.parent:
                 break;
             case R.id.curriculum:
+                intent=new Intent(MainActivity.this, DonXinPhepActivity.class);
+                startActivity(intent);
                 break;
 //            case R.id.menu:
 //                break;

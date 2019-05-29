@@ -6,10 +6,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/backgroundDark</item>
         <!--<item name="colorPrimary">#46A89B</item>-->
         <!--<item name="colorPrimaryDark">#37857B</item>-->
         <!--<item name="colorAccent">#46A89B</item>-->
-        <!--<item name="colorControlNormal">@color/background</item>-->
+        <!--<item name="colorControlNormal">@color/backgroundDark</item>-->
         //toolbar back arrow color
         <item name="android:textColorSecondary">@color/background</item>
         //toolbar title color
