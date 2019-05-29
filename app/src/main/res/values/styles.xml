@@ -33,7 +33,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="colorControlNormal">@color/background</item>
+        <item name="colorControlNormal">@color/backgroundDark</item>
         //toolbar back arrow color
         <item name="android:textColorSecondary">@color/background</item>
         //toolbar title color
@@ -56,6 +56,7 @@
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
 
     </style>
+
 
 
 

@@ -1,16 +1,14 @@
-package com.example.preschool.Password;
+package com.example.preschool;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-import com.example.preschool.R;
-
-public class ResetPassworkActivity extends AppCompatActivity {
+public class AddEventActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reset_passwork);
+        setContentView(R.layout.activity_add_event);
     }
 }

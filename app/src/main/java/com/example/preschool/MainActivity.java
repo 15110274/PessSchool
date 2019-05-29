@@ -10,7 +10,10 @@ import android.view.View;
 import android.widget.TextView;
 
 
+import com.example.preschool.Notification.Notification;
 import com.example.preschool.Notification.NotificationFragment;
+import com.example.preschool.Notification.TestNotifyActivity;
+import com.example.preschool.PhotoAlbum.PhotoAlbumActivity;
 import com.example.preschool.Setting.SettingActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
@@ -225,7 +228,8 @@ public class MainActivity extends AppCompatActivity
 
         switch (id){
             case R.id.photoalbum:
-
+                intent=new Intent(MainActivity.this, PhotoAlbumActivity.class);
+                startActivity(intent);
                 break;
             case R.id.parent:
                 break;
@@ -238,8 +242,13 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.homework:
+                intent=new Intent(MainActivity.this, TestNotifyActivity.class);
+                startActivity(intent);
                 break;
             case R.id.profile:
+                intent=new Intent(MainActivity.this, PersonProfileActivity.class);
+                intent.putExtra("visit_user_id",currentUserID);
+                startActivity(intent);
                 break;
             case R.id.event:
                 intent= new Intent(MainActivity.this, EventsActivity.class);
@@ -261,9 +270,11 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.logout:
                 updateUserStatus("offline");
-                mAuth.signOut();
+
                 intent=new Intent(MainActivity.this, LoginActivity.class);
                 startActivity(intent);
+                mAuth.signOut();
+                finish();
                 break;
 
         }

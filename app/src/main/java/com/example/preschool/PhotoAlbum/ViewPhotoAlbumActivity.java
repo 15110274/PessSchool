@@ -1,4 +1,4 @@
-package com.example.preschool.Password;
+package com.example.preschool.PhotoAlbum;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -6,11 +6,11 @@ import android.os.Bundle;
 
 import com.example.preschool.R;
 
-public class ChangePasswordActivity extends AppCompatActivity {
+public class ViewPhotoAlbumActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_change_password);
+        setContentView(R.layout.activity_view_photo_album);
     }
 }

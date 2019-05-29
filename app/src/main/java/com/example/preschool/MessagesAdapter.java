@@ -60,7 +60,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         usersDatabaseRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String image=dataSnapshot.child("profileimage").getValue().toString();
+                String image=dataSnapshot.child("").getValue().toString();
                 Picasso.get().load(image).placeholder(R.drawable.ic_person_black_50dp).into(holder.receiverProfileImage);
 
             }
