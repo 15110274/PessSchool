@@ -37,6 +37,7 @@ public class ChatFragment extends Fragment {
     private String online_user_id;
 
     @Nullable
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chat, container, false);

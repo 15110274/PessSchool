@@ -17,9 +17,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
@@ -40,6 +42,8 @@ public class DonXinPhepActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener mDatePickerDialog;
     private DonXinNghi donXinNghi;
     private String userId;
+    private User user;
+    String mParentName;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +58,21 @@ public class DonXinPhepActivity extends AppCompatActivity {
         userId=FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         DonXinPhepRef=FirebaseDatabase.getInstance().getReference().child("DonXinNghi");
-        UserRef=FirebaseDatabase.getInstance().getReference().child(userId);
+        UserRef=FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
+
+
+        UserRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                user=dataSnapshot.getValue(User.class);
+                mParentName=user.getFullname();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
 
         mDatePickerDialog = new DatePickerDialog.OnDateSetListener() {
@@ -69,11 +87,9 @@ public class DonXinPhepActivity extends AppCompatActivity {
 
     public void ShowDanhSach(View view) {
 
-
     }
 
     public void guiDonXinPhep(View view) {
-        String mParentName=UserRef.child("fullname").getKey();
         String mKidName="";
         String mNgayNghi=ngayNghi.getText().toString();
         String mSoNgay=soNgayNghi.getText().toString();
