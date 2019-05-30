@@ -16,7 +16,6 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,13 +41,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private DatabaseReference UsersRef, PostsRef, LikesRef;
-    private DatabaseReference idClassRef,idTeacherRef,ClassRef;
-    private String idClass,idTeacher;
     private RecyclerView postList;
     String currentUserID;
     private FirebaseAuth mAuth;
     Boolean LikeChecker = false;
+
     FloatingActionButton addPost;
+
 
     @Nullable
     @Override
@@ -68,10 +67,9 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
         LikesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
-        UsersRef.keepSynced(true);
+
 
         postList = view.findViewById(R.id.all_users_post_list);
         postList.setHasFixedSize(true);
@@ -79,23 +77,31 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         postList.setLayoutManager(linearLayoutManager);
-        DisplayAllUsersPosts();
 
+        DisplayAllUsersPosts();
         return view;
 
     }
 
     //hiển thị bảng tin
     private void DisplayAllUsersPosts() {
-        //Query SortPostsInDecendingOrder=PostsRef.orderByChild("counter");
-        Query SortPostsInDecendingOrder=PostsRef.orderByChild("uid").startAt(idTeacher).endAt(idTeacher+"\uf8ff");
+        Query SortPostsInDecendingOrder=PostsRef.orderByChild("counter");
         FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>().setQuery(SortPostsInDecendingOrder, Posts.class).build();
         FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
-                ///////////////////////////////////////////////////////
-                final String PostKey = getRef(position).getKey();
 
+
+                if (position == 0) {
+                    postsViewHolder.WhatOnYourMind.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            SendUserToPostActivity();
+                        }
+                    });
+                } else if (position > 0) {
+
+                    final String PostKey = getRef(position).getKey();
                     postsViewHolder.setFullname(posts.getFullname());
                     postsViewHolder.setDescription(posts.getDescription());
                     postsViewHolder.setProfileImage(posts.getProfileimage());
@@ -116,6 +122,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     postsViewHolder.setLikeButtonStatus(PostKey);
                     postsViewHolder.setCommentPostButtonStatus(PostKey);
 
+                    //click post activity chua lm
 
                     //cmt
                     postsViewHolder.CommentPostButton.setOnClickListener(new View.OnClickListener() {
@@ -153,13 +160,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                             });
                         }
                     });
-
-
-
-            }///////////////////////////////////////////////////////
-
-
-
+                }
+            }
 
             @NonNull
             @Override
