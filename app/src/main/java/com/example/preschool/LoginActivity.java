@@ -19,6 +19,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -44,7 +50,9 @@ public class LoginActivity extends AppCompatActivity {
         addControlls();
 
         addEvents();
+
     }
+
     //Check user hiện tại đã đăng nhập app hay chưa
     @Override
     protected void onStart()
@@ -66,6 +74,7 @@ public class LoginActivity extends AppCompatActivity {
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 AllowingUserToLogin();
             }
         });
@@ -149,13 +158,8 @@ public class LoginActivity extends AppCompatActivity {
                 });
 
                 dialogFogotPass.show();
-
-
             }
         });
-
-
-
     }
 
     private void AllowingUserToLogin()
