@@ -1,6 +1,6 @@
-package com.example.preschool;
+package com.example.preschool.NghiPhep;
 
-public class DonXinNghi {
+public class DonNghiPhep {
     String userId,parentName,kidName,ngayNghi,soNgay,lyDo;
 
     public String getUserId() {
@@ -51,7 +51,7 @@ public class DonXinNghi {
         this.lyDo = lyDo;
     }
 
-    public DonXinNghi(String userId, String parentName, String kidName, String ngayNghi, String soNgay, String lyDo) {
+    public DonNghiPhep(String userId, String parentName, String kidName, String ngayNghi, String soNgay, String lyDo) {
         this.userId = userId;
         this.parentName = parentName;
         this.kidName = kidName;
@@ -60,6 +60,6 @@ public class DonXinNghi {
         this.lyDo = lyDo;
     }
 
-    public DonXinNghi() {
+    public DonNghiPhep() {
     }
 }

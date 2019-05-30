@@ -16,10 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".DonXinPhepActivity"
-            android:theme="@style/AppTheme">
-
-        </activity>
+        <activity android:name=".NghiPhep.DonNghiPhepViewActivity"></activity>
+        <activity android:name=".NghiPhep.DonNghiPhepFullViewActivity" />
+        <activity
+            android:name=".NghiPhep.DonNghiPhepActivity"
+            android:theme="@style/AppTheme" />
         <activity android:name=".ViewDonXinNghiActivity" />
         <activity
             android:name=".PhotoAlbum.ViewPhotoAlbumActivity"
@@ -37,7 +38,9 @@
         <activity
             android:name=".PostActivity"
             android:parentActivityName=".MainActivity" />
-        <activity android:name=".SetupActivity" />
+        <activity
+            android:name=".SetupActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ChangeClassActivity"
             android:parentActivityName=".MainActivity" />

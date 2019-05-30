@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 
-import com.example.preschool.Notification.Notification;
+import com.example.preschool.NghiPhep.DonNghiPhepActivity;
 import com.example.preschool.Notification.NotificationFragment;
 import com.example.preschool.Notification.TestNotifyActivity;
 import com.example.preschool.PhotoAlbum.PhotoAlbumActivity;
@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity
     String currentUserID;
     private Toolbar toolbar;
     private DrawerLayout drawer;
+    private boolean isTeacher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity
         mAuth=FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        ClassRef= FirebaseDatabase.getInstance().getReference().child("Class");
+
         updateUserStatus("online");
         // Xamrin Test Cloud
         AppCenter.start(getApplication(), "74bc89c2-9212-4cc3-9b55-6fc10baf76bb", Analytics.class, Crashes.class);
@@ -165,18 +169,17 @@ public class MainActivity extends AppCompatActivity
 
         final String current_user_id = mAuth.getCurrentUser().getUid();
 
-        UsersRef.addValueEventListener(new ValueEventListener() {
+        UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                if(!dataSnapshot.hasChild(current_user_id))
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChild("status"))
                 {
                     SendUserToSetupActivity();
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
@@ -234,7 +237,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.parent:
                 break;
             case R.id.curriculum:
-                intent=new Intent(MainActivity.this, DonXinPhepActivity.class);
+                //Nếu là teacher thì chuyển qua ViewDonXinNghiActivity
+                //Là phụ huynh thì chuyển qua DonNghiPhepActivity
+                intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
                 startActivity(intent);
                 break;
 //            case R.id.menu:

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:focusableInTouchMode="true"
-    tools:context=".DonXinPhepActivity">
+    tools:context=".NghiPhep.DonNghiPhepActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/bgHeader"

@@ -284,7 +284,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         public void setProfileImage (String profileimage){
             CircleImageView image = (CircleImageView) itemView.findViewById(R.id.post_profile_image);
-            Picasso.get().load(profileimage).into(image);
+            Picasso.get().load(profileimage).resize(200,0).into(image);
         }
         public void setMinute(String minute){
             TextView PostMinute=itemView.findViewById(R.id.post_minute);

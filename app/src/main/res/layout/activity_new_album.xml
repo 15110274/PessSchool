@@ -57,7 +57,7 @@
     <Button
         android:id="@+id/upload_image"
         android:layout_width="wrap_content"
-        android:background="@drawable/buttonshape"
+        android:background="@drawable/large_button"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Upload"/>

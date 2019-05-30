@@ -179,7 +179,7 @@ public class ChatFragment extends Fragment {
 
         public void setProfileImage(String profileimage) {
             CircleImageView myImage = mView.findViewById(R.id.all_messages_profile_image);
-            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).into(myImage);
+            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).resize(200,0).into(myImage);
 
         }
 

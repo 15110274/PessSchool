@@ -75,7 +75,7 @@
 
     <Button
         android:id="@+id/btnRegister"
-        android:background="@drawable/shape_button"
+        android:background="@drawable/large_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20dp"
