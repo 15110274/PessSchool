@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.preschool.Notification.Notification;
@@ -42,6 +43,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -52,20 +54,27 @@ public class MainActivity extends AppCompatActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private FirebaseAuth mAuth;
-    private DatabaseReference UsersRef;
+    private DatabaseReference UsersRef,ClassRef;
     private TextView findButton;
     String currentUserID;
     private Toolbar toolbar;
     private DrawerLayout drawer;
-
+    private User user;
+    private Class userClass;
+    private Intent NewFeedIntent;
+    private String idTeacher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         FirebaseApp.initializeApp(this);
         mAuth=FirebaseAuth.getInstance();
+
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
+
+
         updateUserStatus("online");
         AppCenter.start(getApplication(), "74bc89c2-9212-4cc3-9b55-6fc10baf76bb", Analytics.class, Crashes.class);
 
@@ -138,7 +147,33 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
+    private void guiIdTeacher(final Fragment fragment){
+        UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String idclass=dataSnapshot.child("idclass").getValue().toString();
+                ClassRef.child(idclass).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String idTeacher=dataSnapshot.child("teacher").getValue().toString();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("teacher",idTeacher);
+                        fragment.setArguments(bundle);
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
     private void SendUserToFindFriendActivity() {
         Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
         startActivity(friendsIntent);
@@ -314,17 +349,22 @@ public class MainActivity extends AppCompatActivity
             switch (position){
                 case 0:
                     fragment=new FriendsFragment();
+                    guiIdTeacher(fragment);
                     break;
                 case 1:
                     fragment=new NewsFeedFragment();
+                    guiIdTeacher(fragment);
                     break;
                 case 2:
                     fragment=new ChatFragment();
+                    guiIdTeacher(fragment);
                     break;
                 case 3:
                     fragment=new NotificationFragment();
+                    guiIdTeacher(fragment);
                     break;
             }
+            //guiIdTeacher(fragment);
             return fragment;
         }
 

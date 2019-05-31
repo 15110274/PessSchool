@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 public class HelpActivity extends AppCompatActivity {
 
@@ -22,6 +23,7 @@ public class HelpActivity extends AppCompatActivity {
         expandableTextView = findViewById(R.id.eTv);
         FragHelp adapter = new FragHelp(HelpActivity.this);
         expandableTextView.setAdapter(adapter);
+
 
     }
 }

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.preschool.TimeLine.Posts;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -47,7 +48,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     Boolean LikeChecker = false;
 
     FloatingActionButton addPost;
-
+    private String teacher="1";
 
     @Nullable
     @Override
@@ -63,7 +64,11 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
         });
 
-
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            teacher = bundle.getString("teacher");
+        }
+        Toast.makeText(getActivity(),"teacher"+teacher,Toast.LENGTH_LONG).show();
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -85,7 +90,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     //hiển thị bảng tin
     private void DisplayAllUsersPosts() {
-        Query SortPostsInDecendingOrder=PostsRef.orderByChild("counter");
+        Query SortPostsInDecendingOrder=PostsRef.orderByChild("uid").startAt(teacher).endAt(teacher+"\uf8ff");
         FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>().setQuery(SortPostsInDecendingOrder, Posts.class).build();
         FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
             @Override
