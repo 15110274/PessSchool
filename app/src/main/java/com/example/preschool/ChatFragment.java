@@ -1,5 +1,7 @@
 package com.example.preschool;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -12,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.preschool.Notification.MyNotification;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,6 +59,8 @@ public class ChatFragment extends Fragment {
         linearLayoutManager.setStackFromEnd(true);
         myMessagesList.setLayoutManager(linearLayoutManager);
         DisplayAllUserMessages();
+
+//        PendingIntent pendingIntent=PendingIntent.getActivity(this,j)
 
         return view;
     }
@@ -104,6 +109,10 @@ public class ChatFragment extends Fragment {
                                 if(!senderMessage.equals(online_user_id)){
                                     //ẩn chữ bạn đi
                                     messagesViewHolder.senderIsMe.setVisibility(View.GONE);
+//                                    MyNotification myNotification=new MyNotification(this);
+//                                    Notification.Builder builder=myNotification.getMyNotification("Tin nhắn",
+//                                            "Bạn có 1 tin nhắn mới"
+//                                            ,pe)
                                 }
                                 else{
 

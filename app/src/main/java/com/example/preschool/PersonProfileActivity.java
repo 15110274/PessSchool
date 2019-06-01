@@ -24,7 +24,7 @@ import java.util.Calendar;
 
 public class PersonProfileActivity extends AppCompatActivity {
 
-    private TextView userName, userProfName,userStatus,userCountry,userGender,userRelation,userDOB;
+    private TextView userName, userProfName,userClass,userParentof,userBirthDay;
     private CircleImageView userProfileImage;
 
     private Button SendFriendReqButton,DeclineFriendReqButton;
@@ -55,21 +55,17 @@ public class PersonProfileActivity extends AppCompatActivity {
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                     String myUserName = dataSnapshot.child("username").getValue().toString();
                     String myProfileName = dataSnapshot.child("fullname").getValue().toString();
-                    String myProfileStatus = dataSnapshot.child("status").getValue().toString();
-                    String myDOB = dataSnapshot.child("dob").getValue().toString();
-                    String myAdress = dataSnapshot.child("address").getValue().toString();
-                    String myGender = dataSnapshot.child("gender").getValue().toString();
-                    String myRelationWithChldren = dataSnapshot.child("relationshipstatus").getValue().toString();
+                    String myBirthday = dataSnapshot.child("birthday").getValue().toString();
+                    String myClass = dataSnapshot.child("classname").getValue().toString();
+                    String myParentOf = dataSnapshot.child("parentof").getValue().toString();
 
                     Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
 
-                    userName.setText("@" + myUserName);
+                    userName.setText(myUserName);
                     userProfName.setText(myProfileName);
-                    userStatus.setText(myProfileStatus);
-                    userDOB.setText("DOB: " + myDOB);
-                    userCountry.setText("Address: " + myAdress);
-                    userGender.setText("Gender: " + myGender);
-                    userRelation.setText("RelationShip with Children: " + myRelationWithChldren);
+                    userBirthDay.setText("Sinh nhật: " + myBirthday);
+                    userClass.setText("Lớp: " + myClass);
+                    userParentof.setText("Phụ huynh của bé: " + myParentOf);
                     MaintananceofButton();
                 }
             }
@@ -302,11 +298,10 @@ public class PersonProfileActivity extends AppCompatActivity {
         userProfileImage=findViewById(R.id.person_profile_pic);
         userName=findViewById(R.id.person_username);
         userProfName=findViewById(R.id.person_full_name);
-        userStatus=findViewById(R.id.person_profile_status);
-        userCountry=findViewById(R.id.person_address);
-        userGender=findViewById(R.id.person_gender);
-        userRelation=findViewById(R.id.relationship_with_children);
-        userDOB=findViewById(R.id.person_dob);
+        userParentof=findViewById(R.id.relationship_with_children);
+        userBirthDay=findViewById(R.id.person_birthday);
+        userClass=findViewById(R.id.person_class);
+
 
         SendFriendReqButton=findViewById(R.id.person_send_friend_request_btn);
         DeclineFriendReqButton=findViewById(R.id.person_decline_friend_request_btn);

@@ -4,15 +4,13 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
-import com.example.preschool.Notification.Notification;
+import com.example.preschool.NghiPhep.DonNghiPhepActivity;
 import com.example.preschool.Notification.NotificationFragment;
 import com.example.preschool.Notification.TestNotifyActivity;
 import com.example.preschool.PhotoAlbum.PhotoAlbumActivity;
@@ -26,7 +24,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
@@ -43,7 +40,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
@@ -194,26 +190,29 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    //Kiểm tra user đã setup profile hay chưa
+
+    /**
+     * Check xem user đã có full name hay chưa, nếu chưa gửi sang trang SetupActivity
+     */
     private void CheckUserExistence() {
 
         final String current_user_id = mAuth.getCurrentUser().getUid();
 
-        UsersRef.addValueEventListener(new ValueEventListener() {
+        UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot)
-            {
-                if(!dataSnapshot.hasChild(current_user_id))
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChild("fullname"))
                 {
                     SendUserToSetupActivity();
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+
     }
 
     private void SendUserToSetupActivity() {
@@ -268,7 +267,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.parent:
                 break;
             case R.id.curriculum:
-                intent=new Intent(MainActivity.this, DonXinPhepActivity.class);
+                //Nếu là phụ huynh thì chuyển sang DonNghiPhepActivity
+                //Nếu là giáo viên thì chuyển sang trang DonNghiPhepFullViewActivity
+                intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
                 startActivity(intent);
                 break;
 //            case R.id.menu:

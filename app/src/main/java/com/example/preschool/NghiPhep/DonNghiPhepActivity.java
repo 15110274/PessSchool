@@ -63,7 +63,7 @@ public class DonNghiPhepActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mParentName = dataSnapshot.child("fullname").getValue(String.class);
                 mKidName = dataSnapshot.child("relationshipstatus").getValue(String.class);
-                classId = dataSnapshot.child("idClass").getValue(String.class);
+                classId = dataSnapshot.child("idclass").getValue(String.class);
 
                 DonXinPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(classId).child("DonNghiPhep");
             }

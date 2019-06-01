@@ -179,7 +179,7 @@ public class ChatActivity extends AppCompatActivity {
                     } else {
                         userLastSeen.setText("Last seen " + lastTime + " " + lastDate);
                     }
-                    Picasso.get().load(profileImage).placeholder(R.drawable.ic_person_black_50dp).into(receiverProfileImage);
+                    Picasso.get().load(profileImage).resize(100,0).into(receiverProfileImage);
                 }
             }
 
@@ -220,7 +220,10 @@ public class ChatActivity extends AppCompatActivity {
         userMessageList = findViewById(R.id.messages_list_users);
         linearLayoutManager = new LinearLayoutManager(this);
         userMessageList.setHasFixedSize(true);
+        linearLayoutManager.setStackFromEnd(true);
         userMessageList.setLayoutManager(linearLayoutManager);
+
+
         userMessageList.setAdapter(messagesAdapter);
 
         BackButton.setOnClickListener(new View.OnClickListener() {

@@ -52,7 +52,6 @@
                 />
 
             <TextView
-                android:id="@+id/person_profile_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/person_username"
@@ -67,22 +66,7 @@
 
 
         <TextView
-            android:id="@+id/person_address"
-            android:layout_margin="8dp"
-            android:paddingStart="50dp"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:textColor="@color/textcolor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_addr"
-            android:paddingLeft="20dp"
-            android:text="Tam Bình - Thủ Đức -Hồ Chí Minh"
-            android:textStyle="bold" />
-
-
-        <TextView
-            android:id="@+id/person_dob"
+            android:id="@+id/person_birthday"
             android:layout_margin="8dp"
             android:paddingStart="50dp"
             android:drawablePadding="10dp"
@@ -97,7 +81,7 @@
 
 
         <TextView
-            android:id="@+id/person_gender"
+            android:id="@+id/person_class"
             android:gravity="center"
             android:layout_margin="8dp"
             android:paddingStart="50dp"
@@ -107,7 +91,7 @@
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_gender"
             android:paddingLeft="20dp"
-            android:text="Female"
+            android:text="Tên lớp học"
             android:textStyle="bold" />
 
 

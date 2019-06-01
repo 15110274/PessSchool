@@ -35,13 +35,14 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.util.HashMap;
 
 public class SetupActivity extends AppCompatActivity {
-    private EditText UserName, FullName, Address;
+    private EditText UserName, FullName, ParentOf, BirthDay, IdClass;
     private Button SaveInformationbuttion;
     private CircleImageView ProfileImage;
     private ProgressDialog loadingBar;
 
     private FirebaseAuth mAuth;
     private DatabaseReference UsersRef;
+    private DatabaseReference ClassRef;
     private StorageReference UserProfileImageRef;
 
     final static int Gallery_Pick = 1;
@@ -56,11 +57,14 @@ public class SetupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
         UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
         UserName = findViewById(R.id.setup_username);
         FullName = findViewById(R.id.setup_fullname);
-        Address = findViewById(R.id.setup_address);
+        ParentOf = findViewById(R.id.setup_parentofchild);
+        BirthDay = findViewById(R.id.setup_dayofbirth);
+        IdClass = findViewById(R.id.setup_idClass);
         SaveInformationbuttion = findViewById(R.id.setup_information_button);
         ProfileImage = findViewById(R.id.setup_profile_image);
         loadingBar = new ProgressDialog(this);
@@ -179,9 +183,15 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     private void SaveAccountSetupInformation() {
+
         String username = UserName.getText().toString();
         String fullname = FullName.getText().toString();
-        String address = Address.getText().toString();
+        String parentof = ParentOf.getText().toString();
+        String birthday = BirthDay.getText().toString();
+        final String idclass = IdClass.getText().toString();
+        final String[] classname = new String[1];
+
+
 
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(this, "Please write your username...", Toast.LENGTH_SHORT).show();
@@ -189,36 +199,55 @@ public class SetupActivity extends AppCompatActivity {
         if (TextUtils.isEmpty(fullname)) {
             Toast.makeText(this, "Please write your full name...", Toast.LENGTH_SHORT).show();
         }
-        if (TextUtils.isEmpty(address)) {
-            Toast.makeText(this, "Please write your address...", Toast.LENGTH_SHORT).show();
-        } else {
+        if (TextUtils.isEmpty(parentof)) {
+            Toast.makeText(this, "Please write children name...", Toast.LENGTH_SHORT).show();
+        }
+        if (TextUtils.isEmpty(birthday)) {
+            Toast.makeText(this, "Please write birthday of your child...", Toast.LENGTH_SHORT).show();
+        }
+        if (TextUtils.isEmpty(idclass)) {
+            Toast.makeText(this, "Please write your idclass...", Toast.LENGTH_SHORT).show();
+        }else {
             loadingBar.setTitle("Saving Information");
             loadingBar.setMessage("Please wait, while we are creating your new Account...");
             loadingBar.show();
             loadingBar.setCanceledOnTouchOutside(true);
 
-            HashMap userMap = new HashMap();
+            final HashMap userMap = new HashMap();
             userMap.put("username", username);
             userMap.put("fullname", fullname);
-            userMap.put("address", address);
-            userMap.put("status", "Hey there, i am using Press School App, developed by AlohaTeam");
-            userMap.put("gender", "none");
-            userMap.put("dob", "none");
-            userMap.put("relationshipstatus", "none");
-            UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+            userMap.put("parentof", parentof);
+            userMap.put("birthday", birthday);
+            userMap.put("idclass", idclass);
+            ClassRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    classname[0] = dataSnapshot.child(idclass).child("classname").getValue(String.class);
+                    userMap.put("classname",classname[0]);
 
-                public void onComplete(@NonNull Task task) {
-                    if (task.isSuccessful()) {
-                        SendUserToMainActivity();
-                        Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
-                        loadingBar.dismiss();
-                    } else {
-                        String message = task.getException().getMessage();
-                        Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
-                        loadingBar.dismiss();
-                    }
+                    UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+
+                        public void onComplete(@NonNull Task task) {
+                            if (task.isSuccessful()) {
+                                SendUserToMainActivity();
+                                Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
+                                loadingBar.dismiss();
+                            } else {
+                                String message = task.getException().getMessage();
+                                Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+                                loadingBar.dismiss();
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
                 }
             });
+
+
         }
     }
 

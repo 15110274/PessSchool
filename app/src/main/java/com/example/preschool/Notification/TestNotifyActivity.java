@@ -8,9 +8,11 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.preschool.R;
 
@@ -21,7 +23,7 @@ public class TestNotifyActivity extends AppCompatActivity {
 
     private NotificationManagerCompat notificationManager;
     private EditText notify_content;
-
+    private Uri uri;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +31,8 @@ public class TestNotifyActivity extends AppCompatActivity {
 
         notificationManager = NotificationManagerCompat.from(this);
         notify_content = findViewById(R.id.notify_content);
+
+
     }
 
     public void sendOnChannel1(View v) {
@@ -40,8 +44,8 @@ public class TestNotifyActivity extends AppCompatActivity {
 
         Intent broadcastIntent = new Intent(this, NotificationReceiver.class);
         broadcastIntent.putExtra("toastMessage", message);
-        PendingIntent actionIntent = PendingIntent.getBroadcast(this,
-                0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        uri=Uri.parse("android.resource://"+getPackageName()+"/raw/sound_notify.mp3");
+        uri=Uri.parse(String.format("android.resource://%s/%s/%s",this.getPackageName(),"raw","sound_notify.mp3"));
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_1_ID)
                 .setSmallIcon(R.drawable.ic_notification)
@@ -49,11 +53,10 @@ public class TestNotifyActivity extends AppCompatActivity {
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                .setColor(Color.BLUE)
+                .setColor(Color.YELLOW)
                 .setContentIntent(contentIntent)
                 .setAutoCancel(true)
                 .setOnlyAlertOnce(true)
-                .addAction(R.mipmap.ic_launcher, "Toast", actionIntent)
                 .build();
 
         notificationManager.notify(1, notification);

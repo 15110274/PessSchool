@@ -35,6 +35,8 @@ public class DonNghiPhepViewActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+
+
         DonNghiPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child("Class01").child("DonNghiPhep");
         DonNghiPhepRef.addValueEventListener(new ValueEventListener() {
             @Override
