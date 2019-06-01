@@ -116,7 +116,7 @@
             android:layout_margin="8dp"
             android:paddingStart="50dp"
             android:drawablePadding="10dp"
-            android:gravity="center"
+            android:gravity="left"
             android:textColor="@color/textcolor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
