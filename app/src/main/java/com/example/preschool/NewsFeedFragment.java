@@ -47,7 +47,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     String currentUserID;
     private FirebaseAuth mAuth;
     Boolean LikeChecker = false;
-    private TextView txtIdClass, txtIsTeacher;
 
     FloatingActionButton addPost;
     private static String idClass, idTeacher;
@@ -58,8 +57,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_news_feed, container, false);
 
-        txtIdClass = view.findViewById(R.id.id_class);
-        txtIsTeacher = view.findViewById(R.id.is_teacher);
         addPost = view.findViewById(R.id.floating_add_post);
         addPost.setVisibility(View.INVISIBLE);
         addPost.setOnClickListener(new View.OnClickListener() {
@@ -176,6 +173,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     public void onClick(View v) {
                         Intent commentsIntent = new Intent(getActivity(), CommentsActivity.class);
                         commentsIntent.putExtra("PostKey", PostKey);
+                        commentsIntent.putExtra("idclass",idClass);
                         startActivity(commentsIntent);
                     }
                 });
