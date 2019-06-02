@@ -1,12 +1,14 @@
 package com.example.preschool.PhotoAlbum;
 
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -20,9 +22,13 @@ import com.example.preschool.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 
@@ -30,9 +36,12 @@ public class PhotoAlbumActivity extends AppCompatActivity {
 
     private FloatingActionButton fab;
     private RecyclerView myRecycleView;
-    private DatabaseReference mPhotosRef;
+    private DatabaseReference mPhotosRef,UsersRef;
+    private FirebaseAuth mAuth;
+    private String currentUserID;
     private FirebaseRecyclerAdapter<Album, PhotoAlbumActivity.ItemViewHolder> myRecycleViewAdpter;
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +51,36 @@ public class PhotoAlbumActivity extends AppCompatActivity {
         actionBar.setTitle(R.string.photo_album);
 
         fab=findViewById(R.id.add_new_album);
+        fab.setVisibility(View.INVISIBLE);
+
+        mAuth = FirebaseAuth.getInstance();
+        currentUserID=mAuth.getCurrentUser().getUid();
+        UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String idClass = dataSnapshot.child("idclass").getValue().toString();
+                DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
+                ClassRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.child("teacher").getValue().toString().equals(currentUserID)) {
+                            fab.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,12 +89,16 @@ public class PhotoAlbumActivity extends AppCompatActivity {
             }
         });
 
-        mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Albums");
+        /**
+         * quăng id class vô chổ này classtest1
+         *
+         */
+        mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Albums");
         mPhotosRef.keepSynced(true);
 
         myRecycleView = findViewById(R.id.albumRecyclerView);
 
-        DatabaseReference personsRef = FirebaseDatabase.getInstance().getReference().child("Albums");
+        DatabaseReference personsRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Albums");
         Query personsQuery = personsRef.orderByKey();
 
         myRecycleView.hasFixedSize();
@@ -69,6 +112,7 @@ public class PhotoAlbumActivity extends AppCompatActivity {
             protected void onBindViewHolder(PhotoAlbumActivity.ItemViewHolder holder, final int position, final Album album) {
                 holder.setTitle(album.getName());
                 holder.setImage(album.getImageUrlList().get(0));
+                holder.setSoLuongAnh(String.valueOf(album.getImageUrlList().size()));
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -111,7 +155,7 @@ public class PhotoAlbumActivity extends AppCompatActivity {
         View mView;
         public ItemViewHolder(View itemView){
             super(itemView);
-            mView = itemView.findViewById(R.id.card);
+            mView = itemView.findViewById(R.id.view_album);
         }
         public void setTitle(String title){
             TextView albumTile = mView.findViewById(R.id.title_album);
@@ -120,6 +164,10 @@ public class PhotoAlbumActivity extends AppCompatActivity {
         public void setImage(String image){
             ImageView imgAlbum = mView.findViewById(R.id.img_thumbnail);
             Picasso.get().load(image).resize(500,0 ).into(imgAlbum);
+        }
+        public void setSoLuongAnh(String soLuongAnh){
+            TextView soAnh = mView.findViewById(R.id.so_anh);
+            soAnh.setText(soLuongAnh+" ảnh");
         }
 
     }

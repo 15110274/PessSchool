@@ -1,46 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/view_album"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:orientation="vertical">
+
     <androidx.cardview.widget.CardView
         android:id="@+id/card"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        card_view:cardElevation="2dp"
+        android:layout_gravity="center"
         card_view:cardCornerRadius="15dp"
-        >
+        card_view:cardElevation="0dp">
 
-        <LinearLayout
-            android:id="@+id/top_layout"
-            android:layout_gravity="center"
-            android:orientation="vertical"
-            android:background="@color/background"
+
+        <ImageView
+            android:id="@+id/img_thumbnail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <ImageView
-                android:id="@+id/img_thumbnail"
-                android:layout_below="@+id/title_album"
-                android:layout_width="match_parent"
-
-                android:layout_height="160dp"
-                android:background="@drawable/border_chat_items"
-                android:scaleType="centerCrop"/>
-
-            <TextView
-                android:id="@+id/title_album"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:text="Tên Album"
-                android:textAlignment="center"
-                android:textColor="#575754"
-                android:textSize="18sp" />
-
-        </LinearLayout>
+            android:layout_height="160dp"
+            android:layout_below="@+id/title_album"
+            android:scaleType="centerCrop" />
     </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/title_album"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="Tên Album"
+        android:textAlignment="textStart"
+        android:textColor="#575754"
+        android:textSize="18sp" />
+    <TextView
+        android:id="@+id/so_anh"
+        android:layout_width="match_parent"
+        android:paddingBottom="8dp"
+        android:layout_height="wrap_content"
+        android:text="số ảnh"/>
 </LinearLayout>

@@ -144,33 +144,33 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
-    private void guiIdTeacher(final Fragment fragment){
-        UsersRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String idclass=dataSnapshot.child("idclass").getValue().toString();
-                ClassRef.child(idclass).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String idTeacher=dataSnapshot.child("teacher").getValue().toString();
-                        Bundle bundle = new Bundle();
-                        bundle.putString("teacher",idTeacher);
-                        fragment.setArguments(bundle);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
+//    private void guiIdTeacher(final Fragment fragment){
+//        UsersRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                String idclass=dataSnapshot.child("idclass").getValue().toString();
+//                ClassRef.child(idclass).addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        String idTeacher=dataSnapshot.child("teacher").getValue().toString();
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("teacher",idTeacher);
+//                        fragment.setArguments(bundle);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
     private void SendUserToFindFriendActivity() {
         Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
         startActivity(friendsIntent);
@@ -272,12 +272,13 @@ public class MainActivity extends AppCompatActivity
                 UsersRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String idclass=dataSnapshot.child("idclass").getValue(String.class);
+                        final String idclass=dataSnapshot.child("idclass").getValue(String.class);
                         ClassRef.child(idclass).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if(dataSnapshot.child("teacher").getValue().toString().equals(currentUserID)){
                                     Intent intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
+                                    intent.putExtra("CLASS_ID",idclass);
                                     startActivity(intent);
                                 }
                                 else {
@@ -299,8 +300,6 @@ public class MainActivity extends AppCompatActivity
 
                     }
                 });
-                intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
-                startActivity(intent);
                 break;
 //            case R.id.menu:
 //                break;
@@ -379,19 +378,19 @@ public class MainActivity extends AppCompatActivity
             switch (position){
                 case 0:
                     fragment=new FriendsFragment();
-                    guiIdTeacher(fragment);
+//                    guiIdTeacher(fragment);
                     break;
                 case 1:
                     fragment=new NewsFeedFragment();
-                    guiIdTeacher(fragment);
+//                    guiIdTeacher(fragment);
                     break;
                 case 2:
                     fragment=new ChatFragment();
-                    guiIdTeacher(fragment);
+//                    guiIdTeacher(fragment);
                     break;
                 case 3:
                     fragment=new NotificationFragment();
-                    guiIdTeacher(fragment);
+//                    guiIdTeacher(fragment);
                     break;
             }
             //guiIdTeacher(fragment);
@@ -404,4 +403,5 @@ public class MainActivity extends AppCompatActivity
             return 4;
         }
     }
+
 }

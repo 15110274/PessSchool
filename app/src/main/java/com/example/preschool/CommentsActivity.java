@@ -74,12 +74,18 @@ public class CommentsActivity extends AppCompatActivity {
         current_user_id=mAuth.getCurrentUser().getUid();
         UsersRef= FirebaseDatabase.getInstance().getReference().child("Users");
         Post_Key=getIntent().getExtras().get("PostKey").toString();
-        PostsRef= FirebaseDatabase.getInstance().getReference().child("Posts").child(Post_Key).child("Comments");
+
+
+        /**
+         * quăng id class vô chổ này classtest1
+         *
+         */
+        PostsRef= FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Posts").child(Post_Key).child("Comments");
 
 
 
-        clickPostRef= FirebaseDatabase.getInstance().getReference().child("Posts").child(Post_Key);
-        LikesRef = FirebaseDatabase.getInstance().getReference().child("Likes");
+        clickPostRef= FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Posts").child(Post_Key);
+        LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Likes");
 
         CommentsList=findViewById(R.id.comments_list);
         CommentsList.setHasFixedSize(true);
@@ -93,7 +99,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         DisplayNoOfComments=findViewById(R.id.display_no_of_comments);
 
-        CommentsRef=FirebaseDatabase.getInstance().getReference().child("Posts");
+        CommentsRef=FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Posts");
 
         PostCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override

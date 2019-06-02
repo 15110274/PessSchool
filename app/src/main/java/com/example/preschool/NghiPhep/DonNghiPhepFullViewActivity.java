@@ -26,6 +26,7 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ArrayList<DonNghiPhep> donNghiPhepArrayList = new ArrayList<DonNghiPhep>();
     private DonNghiPhepFullViewAdapter adapter;
+    private String idClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +35,9 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recycler_view_donnghiphep_full);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        idClass=getIntent().getExtras().get("CLASS_ID").toString();
 
-        DonNghiPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child("Class01").child("DonNghiPhep");
+        DonNghiPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("DonNghiPhep");
         DonNghiPhepRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -53,9 +55,4 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        finish();
-    }
 }

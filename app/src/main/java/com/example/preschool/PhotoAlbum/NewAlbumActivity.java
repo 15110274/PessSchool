@@ -73,8 +73,13 @@ public class NewAlbumActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.progress_bar);
         addPhotos = findViewById(R.id.add_photos);
 
-        mStorageRef = FirebaseStorage.getInstance().getReference("Albums");
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Albums");
+        /**
+         * quăng id class vô chổ này classtest1
+         *
+         */
+
+        mStorageRef = FirebaseStorage.getInstance().getReference().child("classtest1").child("Albums");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Albums");
 
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -51,6 +51,7 @@ public class PostActivity extends AppCompatActivity {
     private DatabaseReference UsersRef, PostsRef,sttPostRef;
     private FirebaseAuth mAuth;
 
+    private String idClass;
 
     private String  saveCurrentDate, saveCurrentTime, postRandomName,downloadUrl, current_user_id;
     private int countPosts;
@@ -64,9 +65,11 @@ public class PostActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         current_user_id = mAuth.getCurrentUser().getUid();
 
-        PostsImagesRefrence = FirebaseStorage.getInstance().getReference();
+        idClass=getIntent().getExtras().get("CLASS_ID").toString();
+
+        PostsImagesRefrence = FirebaseStorage.getInstance().getReference().child(idClass);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        PostsRef = FirebaseDatabase.getInstance().getReference().child("Posts");
+        PostsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
 
 
         SelectPostImage =  findViewById(R.id.select_post_image);
@@ -74,7 +77,7 @@ public class PostActivity extends AppCompatActivity {
         PostDescription = findViewById(R.id.post_description);
         loadingBar = new ProgressDialog(this);
 
-        sttPostRef=FirebaseDatabase.getInstance().getReference().child("sttPost");
+        sttPostRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("sttPost");
         sttPostRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

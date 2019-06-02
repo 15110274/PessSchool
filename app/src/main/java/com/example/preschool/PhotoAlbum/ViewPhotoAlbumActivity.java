@@ -32,11 +32,14 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_photo_album);
         final ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.camera);
 
         positionAlbum=getIntent().getExtras().get("POSITION_ALBUM").toString();
+        /**
+         * quăng id class vô chổ này classtest1
+         *
+         */
 
-        mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Albums").child(positionAlbum);
+        mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Albums").child(positionAlbum);
         mPhotosRef.keepSynced(true);
 
         myRecycleView = findViewById(R.id.recycler_view_show_photo);
