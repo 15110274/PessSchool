@@ -65,7 +65,7 @@ public class PostActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         current_user_id = mAuth.getCurrentUser().getUid();
 
-        idClass=getIntent().getExtras().get("CLASS_ID").toString();
+        idClass= getIntent().getExtras().get("idClass").toString();
 
         PostsImagesRefrence = FirebaseStorage.getInstance().getReference().child(idClass);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");

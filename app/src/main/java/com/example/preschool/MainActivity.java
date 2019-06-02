@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.preschool.NghiPhep.DonNghiPhepActivity;
@@ -56,10 +57,8 @@ public class MainActivity extends AppCompatActivity
     String currentUserID;
     private Toolbar toolbar;
     private DrawerLayout drawer;
-    private User user;
-    private Class userClass;
-    private Intent NewFeedIntent;
-    private String idTeacher;
+    ////////////////////////////////////////////////
+    private String idClass, idTeacher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +89,16 @@ public class MainActivity extends AppCompatActivity
         mViewPager = findViewById(R.id.viewPager);
         final TabLayout tabLayout = findViewById(R.id.tablayout);
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        ///////////////////////////////////////////////////
+        idClass=getIntent().getExtras().get("idClass").toString();
+        idTeacher=getIntent().getExtras().get("idTeacher").toString();
+        Bundle bundle = new Bundle();
+        bundle.putString("idClass", idClass);
+        bundle.putString("idTeacher",idTeacher);
+
+        /////////////////////////////////////////////////////
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),bundle);
+
         mViewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(mViewPager);
 
@@ -144,33 +152,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
-//    private void guiIdTeacher(final Fragment fragment){
-//        UsersRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                String idclass=dataSnapshot.child("idclass").getValue().toString();
-//                ClassRef.child(idclass).addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        String idTeacher=dataSnapshot.child("teacher").getValue().toString();
-//                        Bundle bundle = new Bundle();
-//                        bundle.putString("teacher",idTeacher);
-//                        fragment.setArguments(bundle);
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
     private void SendUserToFindFriendActivity() {
         Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
         startActivity(friendsIntent);
@@ -261,6 +242,8 @@ public class MainActivity extends AppCompatActivity
         switch (id){
             case R.id.photoalbum:
                 intent=new Intent(MainActivity.this, PhotoAlbumActivity.class);
+                intent.putExtra("idClass",idClass);
+                intent.putExtra("idTeacher",idTeacher);
                 startActivity(intent);
                 break;
             case R.id.parent:
@@ -268,38 +251,16 @@ public class MainActivity extends AppCompatActivity
             case R.id.curriculum:
                 //Nếu là phụ huynh thì chuyển sang DonNghiPhepActivity
                 //Nếu là giáo viên thì chuyển sang trang DonNghiPhepFullViewActivity
-
-                UsersRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final String idclass=dataSnapshot.child("idclass").getValue(String.class);
-                        ClassRef.child(idclass).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if(dataSnapshot.child("teacher").getValue().toString().equals(currentUserID)){
-                                    Intent intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
-                                    intent.putExtra("CLASS_ID",idclass);
-                                    startActivity(intent);
-                                }
-                                else {
-                                    Intent intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
-                                    startActivity(intent);
-                                }
-
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                //////////////////////////////////////////////////
+                if(idTeacher.equals(currentUserID)){
+                    intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
+                    intent.putExtra("CLASS_ID",idClass);
+                    startActivity(intent);
+                }
+                else {
+                    intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
+                    startActivity(intent);
+                }
                 break;
 //            case R.id.menu:
 //                break;
@@ -367,9 +328,11 @@ public class MainActivity extends AppCompatActivity
                 .updateChildren(currentStateMap);
     }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
+        ////////////////////////////////////////////
+        Bundle bundle;
+        public SectionsPagerAdapter(FragmentManager fm,Bundle bundle) {
             super(fm);
+            this.bundle=bundle;
         }
 
         @Override
@@ -378,22 +341,18 @@ public class MainActivity extends AppCompatActivity
             switch (position){
                 case 0:
                     fragment=new FriendsFragment();
-//                    guiIdTeacher(fragment);
                     break;
                 case 1:
                     fragment=new NewsFeedFragment();
-//                    guiIdTeacher(fragment);
                     break;
                 case 2:
                     fragment=new ChatFragment();
-//                    guiIdTeacher(fragment);
                     break;
                 case 3:
                     fragment=new NotificationFragment();
-//                    guiIdTeacher(fragment);
                     break;
             }
-            //guiIdTeacher(fragment);
+            fragment.setArguments(bundle);
             return fragment;
         }
 

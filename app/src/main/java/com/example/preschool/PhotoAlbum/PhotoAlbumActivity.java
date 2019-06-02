@@ -16,7 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.preschool.MainActivity;
 import com.example.preschool.R;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -41,6 +43,9 @@ public class PhotoAlbumActivity extends AppCompatActivity {
     private String currentUserID;
     private FirebaseRecyclerAdapter<Album, PhotoAlbumActivity.ItemViewHolder> myRecycleViewAdpter;
 
+    ////////////////////////////////
+    private String idClass,idTeacher;
+
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,36 +60,22 @@ public class PhotoAlbumActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         currentUserID=mAuth.getCurrentUser().getUid();
-        UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String idClass = dataSnapshot.child("idclass").getValue().toString();
-                DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
-                ClassRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.child("teacher").getValue().toString().equals(currentUserID)) {
-                            fab.setVisibility(View.VISIBLE);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        //////////////////////////////////////////////
+        idTeacher=getIntent().getExtras().get("idTeacher").toString();
+        idClass=getIntent().getExtras().get("idClass").toString();
+        if (idTeacher.equals(currentUserID)) {
+            fab.setVisibility(View.VISIBLE);
+            Toast.makeText(PhotoAlbumActivity.this,"trung",Toast.LENGTH_LONG).show();
+        }
+        else{
+            fab.setVisibility(View.INVISIBLE);
+            Toast.makeText(PhotoAlbumActivity.this,"ko trung",Toast.LENGTH_LONG).show();
+        }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), NewAlbumActivity.class);
+                intent.putExtra("idClass",idClass);
                 startActivity(intent);
             }
         });
@@ -93,12 +84,12 @@ public class PhotoAlbumActivity extends AppCompatActivity {
          * quăng id class vô chổ này classtest1
          *
          */
-        mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Albums");
+        mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Albums");
         mPhotosRef.keepSynced(true);
 
         myRecycleView = findViewById(R.id.albumRecyclerView);
 
-        DatabaseReference personsRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Albums");
+        DatabaseReference personsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Albums");
         Query personsQuery = personsRef.orderByKey();
 
         myRecycleView.hasFixedSize();
@@ -117,6 +108,8 @@ public class PhotoAlbumActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(), ViewPhotoAlbumActivity.class);
+                        //////////////////////////////////////////////
+                        intent.putExtra("idClass",idClass);
                         intent.putExtra("POSITION_ALBUM", getRef(position).getKey());
                         startActivity(intent);
                     }

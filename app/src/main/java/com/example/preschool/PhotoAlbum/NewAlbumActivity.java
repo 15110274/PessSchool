@@ -57,6 +57,8 @@ public class NewAlbumActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseRef;
 
     private StorageTask mUploadTask;
+    ///////////////////////////////////
+    private String idClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +79,10 @@ public class NewAlbumActivity extends AppCompatActivity {
          * quăng id class vô chổ này classtest1
          *
          */
-
-        mStorageRef = FirebaseStorage.getInstance().getReference().child("classtest1").child("Albums");
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Albums");
+        ////////////////////////////////////////////////////
+        idClass=getIntent().getExtras().get("idClass").toString();
+        mStorageRef = FirebaseStorage.getInstance().getReference().child(idClass).child("Albums");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Albums");
 
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override

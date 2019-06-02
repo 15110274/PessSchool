@@ -26,6 +26,7 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
     private TextView nameAlbum;
     private Album mAlbum=new Album();
     private AdapterImageView adapterImageView;
+    private String idClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,8 +39,9 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
          * quăng id class vô chổ này classtest1
          *
          */
-
-        mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Albums").child(positionAlbum);
+        /////////////////////////////////////////////////
+        idClass=getIntent().getExtras().get("idClass").toString();
+        mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Albums").child(positionAlbum);
         mPhotosRef.keepSynced(true);
 
         myRecycleView = findViewById(R.id.recycler_view_show_photo);

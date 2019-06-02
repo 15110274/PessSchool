@@ -50,7 +50,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     private TextView txtIdClass, txtIsTeacher;
 
     FloatingActionButton addPost;
-    private String teacher = "1";
+    private static String idClass, idTeacher;
 
     @SuppressLint("RestrictedApi")
     @Nullable
@@ -69,47 +69,52 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
         });
 
-
-//        Bundle bundle = getArguments();
-//        if (bundle != null) {
-//            teacher = bundle.getString("teacher");
-//        }
-//        Toast.makeText(getActivity(), "teacher" + teacher, Toast.LENGTH_LONG).show();
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
+        //////////////////////////////////////////////
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            idClass = bundle.getString("idClass");
+            idTeacher=bundle.getString("idTeacher");
+        }
+        //nếu là giáo viên mới cho phép đăng bài
+        if(currentUserID.equals(idTeacher)) addPost.show();
+        else addPost.hide();
+
+
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
         //Kiểm tra có phải là teacher
 
-        UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String idClass = dataSnapshot.child("idclass").getValue().toString();
-                txtIdClass.setText(idClass);
-                DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
-                ClassRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.child("teacher").getValue().toString().equals(currentUserID)) {
-                            addPost.setVisibility(View.VISIBLE);
-                            txtIsTeacher.setText("teacher");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//        UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                String idClass = dataSnapshot.child("idclass").getValue().toString();
+//                txtIdClass.setText(idClass);
+//                DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
+//                ClassRef.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot.child("teacher").getValue().toString().equals(currentUserID)) {
+//                            addPost.setVisibility(View.VISIBLE);
+//                            txtIsTeacher.setText("teacher");
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
         postList = view.findViewById(R.id.all_users_post_list);
         postList.setHasFixedSize(true);
@@ -122,8 +127,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
          * quăng id class vô chổ này classtest1
          *
          */
-        PostsRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Posts");
-        LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Likes");
+        PostsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
+        LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
         DisplayAllUsersPosts();
 
 
@@ -245,8 +250,9 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
              * quăng id class vô chổ này classtest1
              *
              */
-            LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Likes");
-            CommentsRef = FirebaseDatabase.getInstance().getReference().child("Class").child("classtest1").child("Posts");
+            LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
+            /////////////////////////////////////////////
+            CommentsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
             currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
@@ -327,7 +333,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private void SendUserToPostActivity() {
         Intent addNewPostIntent = new Intent(getActivity(), PostActivity.class);
-        addNewPostIntent.putExtra("CLASS_ID", txtIdClass.getText().toString());
+        //////////////////////////////////////////
+        addNewPostIntent.putExtra("idClass",idClass);
         startActivity(addNewPostIntent);
     }
 

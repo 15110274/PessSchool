@@ -41,7 +41,6 @@ public class LoginActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 1;
     private GoogleApiClient mGoogleSignInClient;
     private static final String TAG = "LoginActivity";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -229,10 +228,37 @@ public class LoginActivity extends AppCompatActivity {
     // Login Success Send User to MainActivity
     private void SendUserToMainActivity()
     {
-        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(mainIntent);
-        finish();
+        //////////////////////////////////////////////////////
+        String currentUserID = mAuth.getCurrentUser().getUid();
+        final DatabaseReference UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        final DatabaseReference ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
+        UsersRef.child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final String idClass=dataSnapshot.child("idclass").getValue().toString();
+                ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
+                        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                        mainIntent.putExtra("idClass",idClass);
+                        mainIntent.putExtra("idTeacher",idTeacher);
+                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(mainIntent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
     }
 
     // Login Fail Send User back  LoginActivity
