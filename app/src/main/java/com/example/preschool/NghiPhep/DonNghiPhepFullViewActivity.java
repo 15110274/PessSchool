@@ -52,4 +52,10 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        finish();
+    }
 }

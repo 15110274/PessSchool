@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 
 import com.example.preschool.NghiPhep.DonNghiPhepActivity;
+import com.example.preschool.NghiPhep.DonNghiPhepFullViewActivity;
 import com.example.preschool.Notification.NotificationFragment;
 import com.example.preschool.Notification.TestNotifyActivity;
 import com.example.preschool.PhotoAlbum.PhotoAlbumActivity;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity
         mAuth=FirebaseAuth.getInstance();
 
         currentUserID = mAuth.getCurrentUser().getUid();
-        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
         ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
 
 
@@ -144,7 +145,7 @@ public class MainActivity extends AppCompatActivity
 
     }
     private void guiIdTeacher(final Fragment fragment){
-        UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
+        UsersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String idclass=dataSnapshot.child("idclass").getValue().toString();
@@ -196,9 +197,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void CheckUserExistence() {
 
-        final String current_user_id = mAuth.getCurrentUser().getUid();
-
-        UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
+        UsersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(!dataSnapshot.hasChild("fullname"))
@@ -257,7 +256,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        Intent intent;
+        final Intent intent;
 
         switch (id){
             case R.id.photoalbum:
@@ -269,6 +268,37 @@ public class MainActivity extends AppCompatActivity
             case R.id.curriculum:
                 //Nếu là phụ huynh thì chuyển sang DonNghiPhepActivity
                 //Nếu là giáo viên thì chuyển sang trang DonNghiPhepFullViewActivity
+
+                UsersRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String idclass=dataSnapshot.child("idclass").getValue(String.class);
+                        ClassRef.child(idclass).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.child("teacher").getValue().toString().equals(currentUserID)){
+                                    Intent intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
+                                    startActivity(intent);
+                                }
+                                else {
+                                    Intent intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
+                                    startActivity(intent);
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                 intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
                 startActivity(intent);
                 break;
@@ -320,7 +350,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
     public void updateUserStatus(String state){
-        String currentUserID=mAuth.getCurrentUser().getUid();
         String saveCurrentDate,saveCurrentTime;
         Calendar calForDate=Calendar.getInstance();
         SimpleDateFormat currentDate= new SimpleDateFormat("MM dd,yyyy");
@@ -335,7 +364,7 @@ public class MainActivity extends AppCompatActivity
         currentStateMap.put("date",saveCurrentDate);
         currentStateMap.put("type",state);
 
-        UsersRef.child(currentUserID).child("userState")
+        UsersRef.child("userState")
                 .updateChildren(currentStateMap);
     }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

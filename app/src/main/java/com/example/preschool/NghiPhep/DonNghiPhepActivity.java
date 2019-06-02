@@ -62,7 +62,7 @@ public class DonNghiPhepActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mParentName = dataSnapshot.child("fullname").getValue(String.class);
-                mKidName = dataSnapshot.child("relationshipstatus").getValue(String.class);
+                mKidName = dataSnapshot.child("parentof").getValue(String.class);
                 classId = dataSnapshot.child("idclass").getValue(String.class);
 
                 DonXinPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(classId).child("DonNghiPhep");
@@ -87,7 +87,7 @@ public class DonNghiPhepActivity extends AppCompatActivity {
 
     public void ShowDanhSach(View view) {
         Intent intent = new Intent(DonNghiPhepActivity.this, DonNghiPhepViewActivity.class);
-        intent.putExtra("USER_ID", userId);
+//        intent.putExtra("USER_ID", userId);
         startActivity(intent);
 
     }
@@ -135,4 +135,5 @@ public class DonNghiPhepActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
+
 }
