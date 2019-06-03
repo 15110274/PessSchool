@@ -110,6 +110,7 @@ public class PhotoAlbumActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), ViewPhotoAlbumActivity.class);
                         //////////////////////////////////////////////
                         intent.putExtra("idClass",idClass);
+                        intent.putExtra("idTeacher",idTeacher);
                         intent.putExtra("POSITION_ALBUM", getRef(position).getKey());
                         startActivity(intent);
                     }
@@ -162,6 +163,5 @@ public class PhotoAlbumActivity extends AppCompatActivity {
             TextView soAnh = mView.findViewById(R.id.so_anh);
             soAnh.setText(soLuongAnh+" ảnh");
         }
-
     }
 }

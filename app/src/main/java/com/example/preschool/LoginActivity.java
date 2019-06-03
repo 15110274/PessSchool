@@ -62,7 +62,6 @@ public class LoginActivity extends AppCompatActivity {
 
         if(currentUser != null) {
             SendUserToMainActivity();
-
         }
     }
 
@@ -214,7 +213,6 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         loadingBar = new ProgressDialog(this);
-
     }
 
 

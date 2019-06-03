@@ -1,15 +1,24 @@
 package com.example.preschool;
 
 public class FindFriends {
-    public String profileimage,fullname, address;
+    public String profileimage,fullname, address, idclass;
 
     public FindFriends() {
     }
 
-    public FindFriends(String profileimage, String fullname, String address) {
+    public FindFriends(String profileimage, String fullname, String address, String idclass) {
         this.profileimage = profileimage;
         this.fullname = fullname;
         this.address = address;
+        this.idclass=idclass;
+    }
+
+    public String getIdclass() {
+        return idclass;
+    }
+
+    public void setIdclass(String idclass) {
+        this.idclass = idclass;
     }
 
     public String getProfileimage() {

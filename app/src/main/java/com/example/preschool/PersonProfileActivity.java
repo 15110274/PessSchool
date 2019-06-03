@@ -32,7 +32,7 @@ public class PersonProfileActivity extends AppCompatActivity {
     private DatabaseReference FriendRequestRef,UsersRef,FriendsRef;
     private FirebaseAuth mAuth;
 
-    private String senderUserId,receiverUserId,CURRENT_STATE,saveCurrentDate;
+    private String senderUserId,receiverUserId,CURRENT_STATE,saveCurrentDate,idClass;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,10 +41,11 @@ public class PersonProfileActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         senderUserId=mAuth.getCurrentUser().getUid();
         receiverUserId=getIntent().getExtras().get("visit_user_id").toString();
+        idClass=getIntent().getExtras().get("idClass").toString();
 
         UsersRef= FirebaseDatabase.getInstance().getReference().child("Users");
-        FriendRequestRef= FirebaseDatabase.getInstance().getReference().child("FriendRequests");
-        FriendsRef= FirebaseDatabase.getInstance().getReference().child("Friends");
+        FriendRequestRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("FriendRequests");
+        FriendsRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Friends");
 
         IntializeFields();
         //UsersRef.child(receiverUserId);

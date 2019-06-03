@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.viewpager.widget.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:id="@+id/view_pager"
     tools:context=".PhotoAlbum.ViewPhotoAlbumActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_show_photo"
-        android:background="@android:color/black"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-    </androidx.recyclerview.widget.RecyclerView>
-
-</LinearLayout>
+</androidx.viewpager.widget.ViewPager>

@@ -21,8 +21,7 @@
             android:name=".NghiPhep.DonNghiPhepActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".PhotoAlbum.ViewPhotoAlbumActivity"
-            android:parentActivityName=".PhotoAlbum.PhotoAlbumActivity" />
+            android:name=".PhotoAlbum.ViewPhotoAlbumActivity" />
         <activity android:name=".PhotoAlbum.PhotoAlbumActivity" />
         <activity android:name=".PhotoAlbum.NewAlbumActivity" />
         <activity android:name=".Notification.TestNotifyActivity" />

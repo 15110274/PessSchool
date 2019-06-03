@@ -15,7 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -32,6 +34,8 @@ public class FindFriendsActivity extends AppCompatActivity {
     private RecyclerView SearchResultList;
 
     private DatabaseReference allUserDatabaseRef;
+    //////////////////////////////////////////
+    private String idClass, idTeacher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +47,10 @@ public class FindFriendsActivity extends AppCompatActivity {
 
         SearchButton = findViewById(R.id.search_people_friends_button);
         SearchInputText = findViewById(R.id.search_box_input);
+        ////////////////////////////////////////////////
+        idClass=getIntent().getExtras().get("idClass").toString();
+
+        idTeacher=getIntent().getExtras().get("idTeacher").toString();
 
         SearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,29 +63,35 @@ public class FindFriendsActivity extends AppCompatActivity {
     }
     private void SearchPeopleAndFriends(String searchBoxInput)
     {
-        Query searchPeopleAndFriendsQuery=allUserDatabaseRef.orderByChild("username")
+        Query searchPeopleAndFriendsQuery=allUserDatabaseRef.orderByChild("fullname")
                 .startAt(searchBoxInput).endAt(searchBoxInput+"\uf8ff");
         FirebaseRecyclerOptions<FindFriends> options=new FirebaseRecyclerOptions.Builder<FindFriends>().
                 setQuery(searchPeopleAndFriendsQuery, FindFriends.class).build();
         FirebaseRecyclerAdapter<FindFriends, FindFriendsViewHolder> adapter=new FirebaseRecyclerAdapter<FindFriends, FindFriendsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull FindFriendsViewHolder findFriendsViewHolder, final int position, @NonNull FindFriends findFriends) {
-                final String PostKey = getRef(position).getKey();
-                findFriendsViewHolder.setFullname(findFriends.getFullname());
-                findFriendsViewHolder.setAddress(findFriends.getAddress());
-                findFriendsViewHolder.setProfileImage(getApplicationContext(), findFriends.getProfileimage());
+                //final String PostKey = getRef(position).getKey();
+                if(findFriends.getIdclass().equals(idClass)){
+                    final String PostKey = getRef(position).getKey();
+                    findFriendsViewHolder.setFullname(findFriends.getFullname());
+                    findFriendsViewHolder.setAddress(findFriends.getAddress());
+                    findFriendsViewHolder.setProfileImage(getApplicationContext(), findFriends.getProfileimage());
 
 
-                findFriendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String visit_user_id=getRef(position).getKey();
-                        Intent profileIntent=new Intent(FindFriendsActivity.this,PersonProfileActivity.class);
-                        profileIntent.putExtra("visit_user_id",visit_user_id);
-                        startActivity(profileIntent);
-                    }
-                });
-
+                    findFriendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String visit_user_id=getRef(position).getKey();
+                            Intent profileIntent=new Intent(FindFriendsActivity.this,PersonProfileActivity.class);
+                            profileIntent.putExtra("visit_user_id",visit_user_id);
+                            profileIntent.putExtra("idClass",idClass);
+                            startActivity(profileIntent);
+                        }
+                    });
+                }
+                else{
+                   findFriendsViewHolder.Layout_hide();
+                }
             }
             @NonNull
             @Override
@@ -93,27 +107,37 @@ public class FindFriendsActivity extends AppCompatActivity {
     }
 
     public static class FindFriendsViewHolder extends RecyclerView.ViewHolder {
-        View mView;
-
+        //View mView;
+        private final LinearLayout layout;
+        final LinearLayout.LayoutParams params;
 
         public FindFriendsViewHolder(@NonNull View itemView) {
             super(itemView);
-            mView = itemView;
+            //mView = itemView;
+            layout =(LinearLayout)itemView.findViewById(R.id.all_user_find_friend);
+            params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
         }
 
         public void setProfileImage(Context ctx, String profileimage) {
-            CircleImageView myImage = mView.findViewById(R.id.all_users_profile_image);
+            CircleImageView myImage = layout.findViewById(R.id.all_users_profile_image);
             Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).resize(200,0).into(myImage);
 
         }
 
         public void setFullname(String fullname) {
-            TextView myName=mView.findViewById(R.id.all_users_profile_full_name);
+            TextView myName=layout.findViewById(R.id.all_users_profile_full_name);
             myName.setText(fullname);
         }
         public void setAddress(String address){
-            TextView myAddress=mView.findViewById(R.id.all_users_address);
+            TextView myAddress=layout.findViewById(R.id.all_users_address);
             myAddress.setText(address);
+        }
+        private void Layout_hide() {
+            params.height = 0;
+            //itemView.setLayoutParams(params); //This One.
+            layout.setLayoutParams(params);   //Or This one.
+
         }
     }
 }

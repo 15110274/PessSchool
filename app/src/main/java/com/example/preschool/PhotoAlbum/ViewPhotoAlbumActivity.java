@@ -5,7 +5,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -21,12 +23,13 @@ import com.google.firebase.database.ValueEventListener;
 public class ViewPhotoAlbumActivity extends AppCompatActivity {
 
     private RecyclerView myRecycleView;
+    private ViewPager viewPager;
     private DatabaseReference mPhotosRef;
     private String positionAlbum;
     private TextView nameAlbum;
     private Album mAlbum=new Album();
     private AdapterImageView adapterImageView;
-    private String idClass;
+    private String idClass,idTeacher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +44,16 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
          */
         /////////////////////////////////////////////////
         idClass=getIntent().getExtras().get("idClass").toString();
+        idTeacher=getIntent().getExtras().get("idTeacher").toString();
+
         mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Albums").child(positionAlbum);
         mPhotosRef.keepSynced(true);
 
-        myRecycleView = findViewById(R.id.recycler_view_show_photo);
+        //myRecycleView = findViewById(R.id.recycler_view_show_photo);
+        viewPager=findViewById(R.id.view_pager);
 
-
-        myRecycleView.hasFixedSize();
-        myRecycleView.setLayoutManager(new LinearLayoutManager(this));
+//        myRecycleView.hasFixedSize();
+//        myRecycleView.setLayoutManager(new LinearLayoutManager(this));
 
         mPhotosRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -56,8 +61,10 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
                 mAlbum= dataSnapshot.getValue(Album.class);
                 actionBar.setTitle(mAlbum.getName());
 
-                adapterImageView=new AdapterImageView(mAlbum.getImageUrlList());
-                myRecycleView.setAdapter(adapterImageView);
+//                adapterImageView=new AdapterImageView(mAlbum.getImageUrlList());
+//                myRecycleView.setAdapter(adapterImageView);
+                AdapterImageView adapter = new AdapterImageView(ViewPhotoAlbumActivity.this, mAlbum.getImageUrlList());
+                viewPager.setAdapter(adapter);
             }
 
             @Override
@@ -65,9 +72,6 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
-
 
 }

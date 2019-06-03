@@ -37,7 +37,7 @@ public class FriendsFragment extends Fragment {
     private RecyclerView myFriendList;
     private DatabaseReference FriendsRef,UsersRef;
     private FirebaseAuth mAuth;
-    private String online_user_id;
+    private String online_user_id,idClass;
 
     @Nullable
     @Override
@@ -46,9 +46,12 @@ public class FriendsFragment extends Fragment {
 
         mAuth=FirebaseAuth.getInstance();
         online_user_id=mAuth.getCurrentUser().getUid();
-        FriendsRef= FirebaseDatabase.getInstance().getReference().child("Friends").child(online_user_id);
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            idClass = bundle.getString("idClass");
+        }
+        FriendsRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Friends").child(online_user_id);
         UsersRef=FirebaseDatabase.getInstance().getReference().child("Users");
-
         myFriendList=view.findViewById(R.id.friend_list);
         myFriendList.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
