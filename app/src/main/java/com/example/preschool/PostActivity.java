@@ -77,7 +77,7 @@ public class PostActivity extends AppCompatActivity {
         PostDescription = findViewById(R.id.post_description);
         loadingBar = new ProgressDialog(this);
 
-        sttPostRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("sttPost");
+        sttPostRef=FirebaseDatabase.getInstance().getReference().child("sttPost");
         sttPostRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -87,6 +87,7 @@ public class NewAlbumActivity extends AppCompatActivity {
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                uriList.clear();
                 openFileChooser();
             }
         });
@@ -152,7 +153,7 @@ public class NewAlbumActivity extends AppCompatActivity {
         final Album album = new Album();
         if (uriList != null) {
             for (int i = 0; i < uriList.size(); i++) {
-                StorageReference fileReference = mStorageRef.child(System.currentTimeMillis() + "." +
+                StorageReference fileReference = mStorageRef.child(mEditTextAlbumName.getText().toString()).child(System.currentTimeMillis() + "." +
                         getFileExtension(uriList.get(i)));
 
                 mUploadTask = fileReference.putFile(uriList.get(i))
