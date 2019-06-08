@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -70,13 +71,10 @@ public class FindFriendsActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<FindFriends, FindFriendsViewHolder> adapter=new FirebaseRecyclerAdapter<FindFriends, FindFriendsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull FindFriendsViewHolder findFriendsViewHolder, final int position, @NonNull FindFriends findFriends) {
-                //final String PostKey = getRef(position).getKey();
-                if(findFriends.getIdclass().equals(idClass)){
-                    final String PostKey = getRef(position).getKey();
+                if(findFriends.getIdclass().equals(idClass)&&!getRef(position).getKey().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                     findFriendsViewHolder.setFullname(findFriends.getFullname());
                     findFriendsViewHolder.setAddress(findFriends.getAddress());
                     findFriendsViewHolder.setProfileImage(getApplicationContext(), findFriends.getProfileimage());
-
 
                     findFriendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override

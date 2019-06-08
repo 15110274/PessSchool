@@ -15,13 +15,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".NghiPhep.DonNghiPhepViewActivity"></activity>
+        <activity android:name=".EditProfileActivity"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name=".NghiPhep.DonNghiPhepViewActivity" />
         <activity android:name=".NghiPhep.DonNghiPhepFullViewActivity" />
         <activity
             android:name=".NghiPhep.DonNghiPhepActivity"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".PhotoAlbum.ViewPhotoAlbumActivity" />
+        <activity android:name=".PhotoAlbum.ViewPhotoAlbumActivity" />
         <activity android:name=".PhotoAlbum.PhotoAlbumActivity" />
         <activity android:name=".PhotoAlbum.NewAlbumActivity" />
         <activity android:name=".Notification.TestNotifyActivity" />

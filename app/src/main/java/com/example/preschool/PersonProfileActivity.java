@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +18,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.microsoft.appcenter.ingestion.Ingestion;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -48,7 +50,6 @@ public class PersonProfileActivity extends AppCompatActivity {
         FriendsRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Friends");
 
         IntializeFields();
-        //UsersRef.child(receiverUserId);
         UsersRef.child(receiverUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -101,10 +102,25 @@ public class PersonProfileActivity extends AppCompatActivity {
             });
         }
         else{
+            //nếu là chính người đó thì hiển thị button sửa thông tin
             DeclineFriendReqButton.setVisibility(View.INVISIBLE);
-            SendFriendReqButton.setVisibility(View.INVISIBLE);
+            //SendFriendReqButton.setVisibility(View.INVISIBLE);
+            SendFriendReqButton.setText("Sửa thông tin");
+            SendFriendReqButton.setEnabled(true);
+            SendFriendReqButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    SendUserToEditProfileActivity();
+                }
+            });
         }
     }
+
+    private void SendUserToEditProfileActivity() {
+        Intent intent=new Intent(PersonProfileActivity.this, EditProfileActivity.class);
+        startActivity(intent);
+    }
+
     private void UnFriendAnExistingFriends() {
         FriendsRef.child(senderUserId).child(receiverUserId)
                 .removeValue()

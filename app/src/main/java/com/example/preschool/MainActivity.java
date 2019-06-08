@@ -277,6 +277,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.profile:
                 intent=new Intent(MainActivity.this, PersonProfileActivity.class);
                 intent.putExtra("visit_user_id",currentUserID);
+                intent.putExtra("idClass",idClass);
                 startActivity(intent);
                 break;
             case R.id.event:
