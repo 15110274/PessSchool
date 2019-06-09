@@ -6,6 +6,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -23,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.MissingFormatArgumentException;
 
 public class PersonProfileActivity extends AppCompatActivity {
 
@@ -34,7 +37,7 @@ public class PersonProfileActivity extends AppCompatActivity {
     private DatabaseReference FriendRequestRef,UsersRef,FriendsRef;
     private FirebaseAuth mAuth;
 
-    private String senderUserId,receiverUserId,CURRENT_STATE,saveCurrentDate,idClass;
+    private String senderUserId,receiverUserId,CURRENT_STATE,saveCurrentDate,idClass,idTeacher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +47,7 @@ public class PersonProfileActivity extends AppCompatActivity {
         senderUserId=mAuth.getCurrentUser().getUid();
         receiverUserId=getIntent().getExtras().get("visit_user_id").toString();
         idClass=getIntent().getExtras().get("idClass").toString();
+        idTeacher=getIntent().getExtras().get("idTeacher").toString();
 
         UsersRef= FirebaseDatabase.getInstance().getReference().child("Users");
         FriendRequestRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("FriendRequests");
@@ -114,10 +118,29 @@ public class PersonProfileActivity extends AppCompatActivity {
                 }
             });
         }
-    }
 
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // chuyen ve trang trc ko bi mat du lieu
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(PersonProfileActivity.this, MainActivity.class);
+        intent.putExtra("idClass",idClass);
+        intent.putExtra("idTeacher",idTeacher);
+        startActivity(intent);
+    }
     private void SendUserToEditProfileActivity() {
         Intent intent=new Intent(PersonProfileActivity.this, EditProfileActivity.class);
+        intent.putExtra("idClass",idClass);
+        intent.putExtra("idTeacher",idTeacher);
         startActivity(intent);
     }
 

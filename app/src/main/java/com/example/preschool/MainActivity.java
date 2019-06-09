@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
+
     private void SendUserToFindFriendActivity() {
         Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
         friendsIntent.putExtra("idClass",idClass);
@@ -278,6 +279,7 @@ public class MainActivity extends AppCompatActivity
                 intent=new Intent(MainActivity.this, PersonProfileActivity.class);
                 intent.putExtra("visit_user_id",currentUserID);
                 intent.putExtra("idClass",idClass);
+                intent.putExtra("idTeacher",idTeacher);
                 startActivity(intent);
                 break;
             case R.id.event:

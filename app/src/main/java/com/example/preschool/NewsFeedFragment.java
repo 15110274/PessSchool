@@ -82,37 +82,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
-        //Kiểm tra có phải là teacher
-
-//        UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                String idClass = dataSnapshot.child("idclass").getValue().toString();
-//                txtIdClass.setText(idClass);
-//                DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
-//                ClassRef.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot.child("teacher").getValue().toString().equals(currentUserID)) {
-//                            addPost.setVisibility(View.VISIBLE);
-//                            txtIsTeacher.setText("teacher");
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
         postList = view.findViewById(R.id.all_users_post_list);
         postList.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -142,12 +111,28 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
             @Override
-            protected void onBindViewHolder(@NonNull PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
+            protected void onBindViewHolder(@NonNull final PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
 
                 final String PostKey = getRef(position).getKey();
-                postsViewHolder.setFullname(posts.getFullname());
+                UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.exists()){
+                            final String image=dataSnapshot.child("profileimage").getValue().toString();
+                            final String name=dataSnapshot.child("fullname").getValue().toString();
+                            postsViewHolder.setFullname(name);
+                            postsViewHolder.setProfileImage(image);
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
                 postsViewHolder.setDescription(posts.getDescription());
-                postsViewHolder.setProfileImage(posts.getProfileimage());
                 postsViewHolder.setPostImage(posts.getPostimage());
 
                 Calendar calFordTime = Calendar.getInstance();
@@ -236,7 +221,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         String currentUserId;
         DatabaseReference LikesRef;
         DatabaseReference CommentsRef;
-
         public PostsViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
             LikePostButton = itemView.findViewById(R.id.like_button);

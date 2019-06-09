@@ -16,7 +16,7 @@
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".EditProfileActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:parentActivityName=".PersonProfileActivity"></activity>
         <activity android:name=".NghiPhep.DonNghiPhepViewActivity" />
         <activity android:name=".NghiPhep.DonNghiPhepFullViewActivity" />
         <activity
@@ -29,7 +29,7 @@
         <activity android:name=".AddEventActivity" />
         <activity
             android:name=".PersonProfileActivity"
-            android:theme="@style/AppTheme" />
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".FindFriendsActivity"
             android:theme="@style/AppTheme"/>
         <activity android:name=".ChatActivity" />

@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,6 +43,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private String currentUserId;
     final static int Gallery_Pick = 1;
     private StorageReference UserProfileImageRef;
+    private String idClass,idTeacher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,8 @@ public class EditProfileActivity extends AppCompatActivity {
         userFullName=findViewById(R.id.edit_fullname);
         userDOB=findViewById(R.id.edit_birthday);
         userParentOf=findViewById(R.id.edit_parentof);
+        idClass=getIntent().getExtras().get("idClass").toString();
+        idTeacher=getIntent().getExtras().get("idTeacher").toString();
 
         UpdateAccountSettingButton=findViewById(R.id.update_account_settings_button);
         loadingBar=new ProgressDialog(this);
@@ -71,7 +75,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 String myDOB=dataSnapshot.child("birthday").getValue().toString();
                 String myParentOf=dataSnapshot.child("parentof").getValue().toString();
 
-                Picasso.get().load(myProfileImage).into(userProfImage);
+                Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfImage);
                 userName.setText(myUserName);
                 userFullName.setText(myProfileName);
                 userDOB.setText(myDOB);
@@ -150,6 +154,8 @@ public class EditProfileActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
                                                         Intent selfIntent = new Intent(EditProfileActivity.this, EditProfileActivity.class);
+                                                        selfIntent.putExtra("idClass",idClass);
+                                                        selfIntent.putExtra("idTeacher",idTeacher);
                                                         startActivity(selfIntent);
 
                                                         Toast.makeText(EditProfileActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
@@ -195,7 +201,7 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()){
-                    SendUserToPersonProfileActicity();
+                    SendUserToPersonProfileActivity();
                     Toast.makeText(EditProfileActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
                 }
                 else{
@@ -205,10 +211,29 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void SendUserToPersonProfileActicity() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // chuyen ve trang trc ko bi mat du lieu
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(EditProfileActivity.this, PersonProfileActivity.class);
+        intent.putExtra("idClass",idClass);
+        intent.putExtra("idTeacher",idTeacher);
+        intent.putExtra("visit_user_id",currentUserId);
+        startActivity(intent);
+    }
+    private void SendUserToPersonProfileActivity() {
         Intent intent=new Intent(EditProfileActivity.this, PersonProfileActivity.class);
         intent.putExtra("visit_user_id",currentUserId);
+        intent.putExtra("idClass",idClass);
+        intent.putExtra("idTeacher",idTeacher);
         startActivity(intent);
     }
 }

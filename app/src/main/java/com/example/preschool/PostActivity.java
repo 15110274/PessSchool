@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -210,18 +211,12 @@ public class PostActivity extends AppCompatActivity {
                         {
                             if(dataSnapshot.exists())
                             {
-                                String userFullName = dataSnapshot.child("fullname").getValue().toString();
-                                String userProfileImage = dataSnapshot.child("profileimage").getValue().toString();
 
                                 HashMap postsMap = new HashMap();
                                 postsMap.put("uid", current_user_id);
                                 postsMap.put("date", saveCurrentDate);
                                 postsMap.put("time", saveCurrentTime);
                                 postsMap.put("description", Description);
-
-
-                                postsMap.put("profileimage", userProfileImage);
-                                postsMap.put("fullname", userFullName);
 
                                 postsMap.put("counter",countPosts);
 
@@ -232,7 +227,6 @@ public class PostActivity extends AppCompatActivity {
                                             {
                                                 if(task.isSuccessful())
                                                 {
-
                                                     SendUserToNewsFeedActivity();
                                                     Toast.makeText(PostActivity.this, "New Post is updated successfully.", Toast.LENGTH_SHORT).show();
                                                     loadingBar.dismiss();
@@ -263,5 +257,20 @@ public class PostActivity extends AppCompatActivity {
     }
     private void SendUserToNewsFeedActivity(){
         finish();
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(PostActivity.this, MainActivity.class);
+        intent.putExtra("idClass",idClass);
+        intent.putExtra("idTeacher",current_user_id);
+        startActivity(intent);
     }
 }
