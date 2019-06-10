@@ -26,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -45,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         addControlls();
 
         addEvents();
@@ -59,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
+
 
         if(currentUser != null) {
             SendUserToMainActivity();
@@ -237,13 +239,12 @@ public class LoginActivity extends AppCompatActivity {
                 ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
+                        final String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
                         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                         mainIntent.putExtra("idClass",idClass);
                         mainIntent.putExtra("idTeacher",idTeacher);
                         mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(mainIntent);
-                        finish();
                     }
 
                     @Override
@@ -257,8 +258,9 @@ public class LoginActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
-    }
 
+
+    }
     // Login Fail Send User back  LoginActivity
     private void SendUserToLoginActivity()
     {

@@ -3,7 +3,7 @@ package com.example.preschool;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    public String fullname,username,idClass,classname,birthday,parentof,profileimage;
+    public String fullname,username,idclass,classname,birthday,parentof,profileimage;
     public UserState userState;
 
     public String getFullname() {
@@ -22,12 +22,12 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    public String getIdClass() {
-        return idClass;
+    public String getIdclass() {
+        return idclass;
     }
 
-    public void setIdClass(String idClass) {
-        this.idClass = idClass;
+    public void setIdclass(String idclass) {
+        this.idclass = idclass;
     }
 
     public String getClassname() {
@@ -70,10 +70,10 @@ public class User implements Serializable {
         this.userState = userState;
     }
 
-    public User(String fullname, String username, String idClass, String classname, String birthday, String parentof, String profileimage, UserState userState) {
+    public User(String fullname, String username, String idclass, String classname, String birthday, String parentof, String profileimage, UserState userState) {
         this.fullname = fullname;
         this.username = username;
-        this.idClass = idClass;
+        this.idclass = idclass;
         this.classname = classname;
         this.birthday = birthday;
         this.parentof = parentof;

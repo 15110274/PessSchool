@@ -105,7 +105,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     //hiển thị bảng tin
     private void DisplayAllUsersPosts() {
-        Query SortPostsInDecendingOrder = PostsRef.orderByChild("counter");
+        Query SortPostsInDecendingOrder = PostsRef;
         FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>().setQuery(SortPostsInDecendingOrder, Posts.class).build();
         FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
 

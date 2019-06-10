@@ -54,8 +54,7 @@ public class PostActivity extends AppCompatActivity {
 
     private String idClass;
 
-    private String  saveCurrentDate, saveCurrentTime, postRandomName,downloadUrl, current_user_id;
-    private int countPosts;
+    private String  saveCurrentDate, saveCurrentTime,downloadUrl, current_user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,18 +77,6 @@ public class PostActivity extends AppCompatActivity {
         PostDescription = findViewById(R.id.post_description);
         loadingBar = new ProgressDialog(this);
 
-        sttPostRef=FirebaseDatabase.getInstance().getReference().child("sttPost");
-        sttPostRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                countPosts=Integer.parseInt(dataSnapshot.getValue().toString());
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
         SelectPostImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -102,7 +89,6 @@ public class PostActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 ValidatePostInfo();
-                sttPostRef.setValue(countPosts+1);
             }
         });
 
@@ -153,29 +139,12 @@ public class PostActivity extends AppCompatActivity {
         Calendar calFordTime = Calendar.getInstance();
         SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
         saveCurrentTime = currentTime.format(calFordDate.getTime());
-
-        postRandomName = saveCurrentDate + saveCurrentTime;
-        final String childString=current_user_id+postRandomName;
+        final String childString=PostsRef.push().getKey();
 
 
-        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(ImageUri.getLastPathSegment() + postRandomName + ".jpg");
+        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(ImageUri.getLastPathSegment() + ".jpg");
         //dem count post
 
-        PostsRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-
-
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
         filePath.putFile(ImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
 
 
@@ -218,7 +187,6 @@ public class PostActivity extends AppCompatActivity {
                                 postsMap.put("time", saveCurrentTime);
                                 postsMap.put("description", Description);
 
-                                postsMap.put("counter",countPosts);
 
                                 PostsRef.child(childString).updateChildren(postsMap)
                                         .addOnCompleteListener(new OnCompleteListener() {
