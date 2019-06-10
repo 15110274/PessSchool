@@ -47,7 +47,7 @@ public class CommentsActivity extends AppCompatActivity {
 
     private DatabaseReference clickPostRef,CommentsRef;
 
-    private String Post_Key, current_user_id,idclass;
+    private String Post_Key, current_user_id,idclass,idTeacher;
     private FirebaseAuth mAuth;
     private String postimage,profileimage,description,time,postname;
     Boolean LikeChecker=false;
@@ -75,6 +75,7 @@ public class CommentsActivity extends AppCompatActivity {
         UsersRef= FirebaseDatabase.getInstance().getReference().child("Users");
         Post_Key=getIntent().getExtras().get("PostKey").toString();
         idclass=getIntent().getExtras().get("idclass").toString();
+        idTeacher=getIntent().getExtras().get("idTeacher").toString();
 
 
         /**
@@ -128,16 +129,32 @@ public class CommentsActivity extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                     setLikeButtonStatus(Post_Key);
                     setCommentPostButtonStatus(Post_Key);
-                    postname=dataSnapshot.child("fullname").getValue().toString();
+
                     description=dataSnapshot.child("description").getValue().toString();
+
                     postimage=dataSnapshot.child("postimage").getValue().toString();
-                    profileimage=dataSnapshot.child("profileimage").getValue().toString();
                     time=dataSnapshot.child("time").getValue().toString();
 
-                    PostName.setText(postname);
+
                     PostDescription.setText(description);
                     Picasso.get().load(postimage).resize(600,0).into(PostImage);
-                    Picasso.get().load(profileimage).resize(100,0).into(PostProfileImage);
+                    UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.exists()){
+                                final String image=dataSnapshot.child("profileimage").getValue().toString();
+                                final String name=dataSnapshot.child("fullname").getValue().toString();
+                                PostName.setText(name);
+                                Picasso.get().load(image).resize(600,0).into(PostProfileImage);
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
                     PostTime.setText(time);
                     CommentButton.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -298,7 +315,7 @@ public class CommentsActivity extends AppCompatActivity {
             SimpleDateFormat currentTime=new SimpleDateFormat("HH:mm:ss");
             final String saveCurrentTime=currentTime.format(calFordDate.getTime());
 
-            final String RandomKey=current_user_id+saveCurrentDate+saveCurrentTime;
+            final String RandomKey=FirebaseDatabase.getInstance().getReference().push().getKey();
             HashMap commentsMap=new HashMap();
             commentsMap.put("uid",current_user_id);
             commentsMap.put("comment",commentText);

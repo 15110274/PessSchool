@@ -49,7 +49,7 @@ public class PostActivity extends AppCompatActivity {
     private static final int Gallery_Pick = 1;
 
     private StorageReference PostsImagesRefrence ;
-    private DatabaseReference UsersRef, PostsRef,sttPostRef;
+    private DatabaseReference UsersRef, PostsRef;
     private FirebaseAuth mAuth;
 
     private String idClass;

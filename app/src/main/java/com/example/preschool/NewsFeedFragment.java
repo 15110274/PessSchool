@@ -159,6 +159,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                         Intent commentsIntent = new Intent(getActivity(), CommentsActivity.class);
                         commentsIntent.putExtra("PostKey", PostKey);
                         commentsIntent.putExtra("idclass",idClass);
+                        commentsIntent.putExtra("idTeacher",idTeacher);
                         startActivity(commentsIntent);
                     }
                 });
