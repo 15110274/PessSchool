@@ -5,11 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/backgroundDark"
-    tools:context=".EventsActivity">
+    tools:context=".Event.EventsActivity">
 
 
     <CalendarView
         android:id="@+id/calendarView"
+        android:theme=""
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -32,7 +33,7 @@
         tools:layout_editor_absoluteX="0dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_event1"
+        android:id="@+id/add_event"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
