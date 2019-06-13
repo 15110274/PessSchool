@@ -34,7 +34,9 @@
     <string name="profile">Thông tin</string>
     <string name="homework">Bài tập</string>
     <string name="camera">Máy ảnh</string>
-    <string name="curriculum">Khóa học</string>
+    <string name="permissonform">Đơn xin phép</string>
+    <string name="timetable">Thời khóa biểu</string>
+
     <string name="help">Trợ giúp</string>
     <string name="photo_album">Album ảnh</string>
     <string name="you_are_Logged_In_successfully">Đăng nhập thành công.</string>
