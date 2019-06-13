@@ -15,16 +15,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Event.AddEventActivity"
-            android:theme="@style/AddEventsTheme">
-
-        </activity>
-        <activity android:name=".Event.EventsActivity">
-
-        </activity>
-        <activity
-            android:name=".EditProfileActivity"
-            android:parentActivityName=".PersonProfileActivity" />
+        <activity android:name=".EditProfileActivity"
+            android:parentActivityName=".PersonProfileActivity"></activity>
         <activity android:name=".NghiPhep.DonNghiPhepViewActivity" />
         <activity android:name=".NghiPhep.DonNghiPhepFullViewActivity" />
         <activity
