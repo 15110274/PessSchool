@@ -83,7 +83,6 @@ public class FindFriendsActivity extends AppCompatActivity {
                             Intent profileIntent=new Intent(FindFriendsActivity.this,PersonProfileActivity.class);
                             profileIntent.putExtra("visit_user_id",visit_user_id);
                             profileIntent.putExtra("idClass",idClass);
-                            profileIntent.putExtra("idTeacher",idTeacher);
                             startActivity(profileIntent);
                         }
                     });

@@ -15,8 +15,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".EditProfileActivity"
-            android:parentActivityName=".PersonProfileActivity"></activity>
+        <activity android:name=".Event.AddEventActivity"
+            android:theme="@style/AddEventsTheme">
+
+        </activity>
+        <activity android:name=".Event.EventsActivity">
+
+        </activity>
+        <activity
+            android:name=".EditProfileActivity"
+            android:parentActivityName=".PersonProfileActivity" />
         <activity android:name=".NghiPhep.DonNghiPhepViewActivity" />
         <activity android:name=".NghiPhep.DonNghiPhepFullViewActivity" />
         <activity
@@ -26,12 +34,12 @@
         <activity android:name=".PhotoAlbum.PhotoAlbumActivity" />
         <activity android:name=".PhotoAlbum.NewAlbumActivity" />
         <activity android:name=".Notification.TestNotifyActivity" />
-        <activity android:name=".AddEventActivity" />
         <activity
             android:name=".PersonProfileActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".FindFriendsActivity"
-            android:theme="@style/AppTheme"/>
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".FindFriendsActivity"
+            android:theme="@style/AppTheme" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".CommentsActivity" />
         <activity
@@ -46,9 +54,6 @@
         <activity
             android:name=".CameraActivity"
             android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".EventsActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".HelpActivity"
             android:parentActivityName=".MainActivity" />
@@ -72,6 +77,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".Parent.ProfileParentActivity"

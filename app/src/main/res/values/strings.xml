@@ -34,8 +34,7 @@
     <string name="profile">Profile</string>
     <string name="homework">Homework</string>
     <string name="camera">Camera</string>
-    <string name="permissonform">Permisson Form</string>
-    <string name="timetable">Time Table</string>
+    <string name="curriculum">Curriculum</string>
     <string name="photo_album">Photo album</string>
     <string name="you_are_Logged_In_successfully">you are Logged In successfully.</string>
     <string name="insert_email">Please write your email</string>

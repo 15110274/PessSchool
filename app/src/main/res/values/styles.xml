@@ -10,13 +10,30 @@
         //underline color of Edittext
         <item name="colorControlNormal">@color/colorAccent</item>
         //background color
-        <item name="android:windowBackground">@color/backgroundDark</item>
+        <item name="android:windowBackground">@color/background</item>
         //toolbar back arrow color
         <item name="android:textColorSecondary">@color/background</item>
         //toolbar title color
         <item name="android:textColorPrimary">@android:color/black</item>
     </style>
 
+    <!-- Base application theme. -->
+    <style name="AddEventsTheme" parent="Theme.AppCompat.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/backgroundDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorHint">@android:color/darker_gray</item>
+        <item name="android:textColor">@color/textcolor</item>
+        //underline color of Edittext
+        <item name="colorControlNormal">@color/colorAccent</item>
+        //background color
+        <item name="android:windowBackground">@color/background</item>
+        //toolbar back arrow color
+        <item name="android:textColorSecondary">@color/background</item>
+        //toolbar title color
+        <item name="android:textColorPrimary">@android:color/black</item>
+    </style>
 
     <!--Style Menu-->
     <style name="MyActionBar.MenuTextStyle" parent="android:style/TextAppearance.Holo.Widget.ActionBar.Menu">

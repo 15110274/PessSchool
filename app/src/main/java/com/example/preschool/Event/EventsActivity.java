@@ -1,4 +1,4 @@
-package com.example.preschool;
+package com.example.preschool.Event;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -6,14 +6,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import sun.bob.mcalendarview.MCalendarView;
 import sun.bob.mcalendarview.vo.DateData;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.renderscript.Sampler;
 import android.view.View;
 import android.widget.CalendarView;
 import android.widget.DatePicker;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.preschool.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +35,7 @@ public class EventsActivity extends AppCompatActivity {
     private DatabaseReference UsersRef, EventsRef;
     private FirebaseAuth mAuth;
     private String current_user_id;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,12 +47,20 @@ public class EventsActivity extends AppCompatActivity {
         EventsRef = FirebaseDatabase.getInstance().getReference().child("Events");
 
         showEvent = findViewById(R.id.show_event);
-        addEvent=findViewById(R.id.add_event1);
+        addEvent=findViewById(R.id.add_event);
         calendarView = findViewById(R.id.calendarView);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 Toast.makeText(EventsActivity.this, dayOfMonth + "-" + month + "-" + year, Toast.LENGTH_LONG).show();
+            }
+        });
+
+        addEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(EventsActivity.this,AddEventActivity.class);
+                startActivity(intent);
             }
         });
 

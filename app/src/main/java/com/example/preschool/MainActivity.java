@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.preschool.Event.EventsActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepFullViewActivity;
 import com.example.preschool.Notification.NotificationFragment;
@@ -251,7 +252,10 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.parent:
                 break;
-            case R.id.permissonform:
+            case R.id.curriculum:
+                //Nếu là phụ huynh thì chuyển sang DonNghiPhepActivity
+                //Nếu là giáo viên thì chuyển sang trang DonNghiPhepFullViewActivity
+                //////////////////////////////////////////////////
                 if(idTeacher.equals(currentUserID)){
                     intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
                     intent.putExtra("CLASS_ID",idClass);
@@ -262,12 +266,8 @@ public class MainActivity extends AppCompatActivity
                     startActivity(intent);
                 }
                 break;
-            case R.id.timetable:
-                intent=new Intent(MainActivity.this, TimeTableActivity.class);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
-                startActivity(intent);
-                break;
+//            case R.id.menu:
+//                break;
             case R.id.camera:
                 intent=new Intent(MainActivity.this, CameraActivity.class);
                 startActivity(intent);
