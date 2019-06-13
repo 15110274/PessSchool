@@ -15,7 +15,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".TimeTableActivity"></activity>
+        <activity android:name=".Event.AddEventActivity"
+            android:theme="@style/AddEventsTheme">
+
+        </activity>
+        <activity android:name=".Event.EventsActivity">
+
+        </activity>
         <activity
             android:name=".EditProfileActivity"
             android:parentActivityName=".PersonProfileActivity" />
@@ -31,10 +37,9 @@
         <activity android:name=".AddEventActivity" />
         <activity
             android:name=".PersonProfileActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity
-            android:name=".FindFriendsActivity"
-            android:theme="@style/AppTheme" />
+            android:parentActivityName=".MainActivity"/>
+        <activity android:name=".FindFriendsActivity"
+            android:theme="@style/AppTheme"/>
         <activity android:name=".ChatActivity" />
         <activity android:name=".CommentsActivity" />
         <activity
