@@ -23,6 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".TimeTableActivity"></activity>
         <activity
             android:name=".Event.AddEventActivity"
             android:theme="@style/AddEventsTheme"></activity>

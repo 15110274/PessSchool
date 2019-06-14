@@ -13,8 +13,12 @@
         android:title="@string/parent"
         android:icon="@drawable/ic_parent"></item>
     <item
-        android:id="@+id/curriculum"
-        android:title="@string/curriculum"
+        android:id="@+id/permissonform"
+        android:title="@string/permissonform"
+        android:icon="@drawable/ic_event"></item>
+    <item
+        android:id="@+id/timetable"
+        android:title="@string/timetable"
         android:icon="@drawable/ic_curriculum"></item>
     <item
         android:id="@+id/camera"
