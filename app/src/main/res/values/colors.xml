@@ -5,7 +5,7 @@
     <color name="colorPrimaryDark">#FF8722</color>
     <color name="colorAccent">#FFA000</color>
     <color name="background">#ffffff</color>
-    <color name="backgroundDark">#F5F6F7</color>
+    <color name="backgroundDark">#DCDEE3</color>
     <color name="textcolor">#BA333232</color>
     <color name="hintcolor">#aaa</color>
     <!--<color name="nonecolor"></color>-->
