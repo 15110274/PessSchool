@@ -53,19 +53,19 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    //Check user hiện tại đã đăng nhập app hay chưa
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-
-
-        if(currentUser != null) {
-            SendUserToMainActivity();
-        }
-    }
+//    //Check user hiện tại đã đăng nhập app hay chưa
+//    @Override
+//    protected void onStart()
+//    {
+//        super.onStart();
+//
+//        FirebaseUser currentUser = mAuth.getCurrentUser();
+//
+//
+//        if(currentUser != null) {
+//            SendUserToMainActivity();
+//        }
+//    }
 
 
     private void addEvents() {

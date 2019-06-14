@@ -15,13 +15,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Event.AddEventActivity"
-            android:theme="@style/AddEventsTheme">
+        <activity android:name=".StartActivity"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".Event.EventsActivity">
-
-        </activity>
+        <activity
+            android:name=".Event.AddEventActivity"
+            android:theme="@style/AddEventsTheme"></activity>
+        <activity android:name=".Event.EventsActivity"></activity>
         <activity
             android:name=".EditProfileActivity"
             android:parentActivityName=".PersonProfileActivity" />
@@ -72,11 +77,6 @@
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 
         </activity>
         <activity
