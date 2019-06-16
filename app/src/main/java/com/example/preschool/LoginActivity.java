@@ -48,34 +48,17 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         addControlls();
-
         addEvents();
-
     }
 
-//    //Check user hiện tại đã đăng nhập app hay chưa
-//    @Override
-//    protected void onStart()
-//    {
-//        super.onStart();
-//
-//        FirebaseUser currentUser = mAuth.getCurrentUser();
-//
-//
-//        if(currentUser != null) {
-//            SendUserToMainActivity();
-//        }
-//    }
-
-
     private void addEvents() {
-
-        // Click LogIn
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 AllowingUserToLogin();
+                Toast.makeText(LoginActivity.this, "vao login", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -164,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void AllowingUserToLogin()
     {
-        String email = txtUsername.getText().toString();
+        final String email = txtUsername.getText().toString();
         String password = txtPass.getText().toString();
 
         if(TextUtils.isEmpty(email))
@@ -181,7 +164,6 @@ public class LoginActivity extends AppCompatActivity {
             loadingBar.setMessage(getString(R.string.message_login_successfully));
             loadingBar.setCanceledOnTouchOutside(true);
             loadingBar.show();
-
             // Sign With Email and Password by Firebase
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -190,10 +172,26 @@ public class LoginActivity extends AppCompatActivity {
                         {
                             if(task.isSuccessful())
                             {
-                                SendUserToMainActivity();
+                                final String currentUserID=mAuth.getCurrentUser().getUid();
+                                DatabaseReference UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+                                UsersRef.addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        if (!dataSnapshot.hasChild("fullname")) {
+                                            SendUserToSetupActivity();
+                                        } else if (currentUserID.equals("Z85jCL2QLARLYoQGPjltOB5kCOE2")) {
+                                            Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
+                                            startActivity(intent);
+                                            finish();
+                                        } else {
+                                            SendUserToMainActivity();
+                                        }
+                                    }
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                Toast.makeText(LoginActivity.this, R.string.you_are_Logged_In_successfully, Toast.LENGTH_SHORT).show();
-                                loadingBar.dismiss();
+                                    }
+                                });
                             }
                             else
                             {
@@ -205,26 +203,24 @@ public class LoginActivity extends AppCompatActivity {
                     });
         }
     }
-
+    private void SendUserToSetupActivity() {
+        Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
+        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(setupIntent);
+    }
     private void addControlls() {
         txtUsername=findViewById(R.id.login_email);
         txtPass=findViewById(R.id.login_password);
         btnFogotPass=findViewById(R.id.fogot_password);
         btnSignIn=findViewById(R.id.login_button);
-
         mAuth = FirebaseAuth.getInstance();
-
         loadingBar = new ProgressDialog(this);
     }
-
-
     // SendUserToRegisterActivity
     public void createNewAcc(View view) {
         Intent intent = new Intent(LoginActivity.this,RegisterDemoActivity.class);
         startActivity(intent);
-
     }
-
     // Login Success Send User to MainActivity
     private void SendUserToMainActivity()
     {
@@ -243,7 +239,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                         mainIntent.putExtra("idClass",idClass);
                         mainIntent.putExtra("idTeacher",idTeacher);
-                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        //mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(mainIntent);
                     }
 
@@ -261,7 +257,6 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
-    // Login Fail Send User back  LoginActivity
     private void SendUserToLoginActivity()
     {
         Intent mainIntent = new Intent(LoginActivity.this, LoginActivity.class);

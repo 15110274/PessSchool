@@ -170,34 +170,12 @@ public class MainActivity extends AppCompatActivity
         if(currentUser==null){
             SendUserToLoginActivity();
         }
-        else
-        {
-            CheckUserExistence();
-        }
     }
 
 
     /**
      * Check xem user đã có full name hay chưa, nếu chưa gửi sang trang SetupActivity
      */
-    private void CheckUserExistence() {
-
-        UsersRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild("fullname"))
-                {
-                    SendUserToSetupActivity();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-    }
 
     private void SendUserToSetupActivity() {
         Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
@@ -303,17 +281,11 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.logout:
-                updateUserStatus("offline");
-
                 intent=new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
                 mAuth.signOut();
-                finish();
+                startActivity(intent);
                 break;
-
         }
-
-
         return true;
     }
     public void updateUserStatus(String state){

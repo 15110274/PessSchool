@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AdminActivity"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/panel"
+        android:layout_width="match_parent"
+        android:layout_height="56dip"
+        android:background="@color/colorAccent"
+        android:text="Create Account"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <EditText
+        android:id="@+id/setup_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        tools:layout_editor_absoluteX="0dp"
+        android:ems="10"
+        android:layout_alignParentBottom="true"
+        android:hint="Email"
+        android:padding="14dp"
+        tools:ignore="MissingConstraints"
+        app:layout_constraintTop_toBottomOf="@+id/panel"/>
+    <Button
+        android:id="@+id/create_button"
+        android:layout_width="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
+        android:text="Create Account"
+        android:textColor="@color/cardview_dark_background"
+        app:layout_constraintTop_toBottomOf="@+id/setup_email"
+        />
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="match_parent"
+        tools:layout_editor_absoluteX="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
+        android:text="Đăng xuất"
+        android:textColor="@color/cardview_dark_background"
+        app:layout_constraintTop_toBottomOf="@+id/create_button"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
