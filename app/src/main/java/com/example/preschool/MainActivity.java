@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.preschool.Chats.ChatsFragment;
 import com.example.preschool.Event.EventsActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepFullViewActivity;
@@ -325,7 +326,7 @@ public class MainActivity extends AppCompatActivity
                     fragment=new NewsFeedFragment();
                     break;
                 case 2:
-                    fragment=new ChatFragment();
+                    fragment=new ChatsFragment();
                     break;
                 case 3:
                     fragment=new NotificationFragment();

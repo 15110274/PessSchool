@@ -219,6 +219,7 @@ public class SetupActivity extends AppCompatActivity {
             userMap.put("parentof", parentof);
             userMap.put("birthday", birthday);
             userMap.put("idclass", idclass);
+            userMap.put("userid", currentUserID);
             ClassRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
