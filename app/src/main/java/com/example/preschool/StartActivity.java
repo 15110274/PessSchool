@@ -32,12 +32,13 @@ public class StartActivity extends AppCompatActivity {
             UsersRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (!dataSnapshot.hasChild("fullname")) {
-                        SendUserToSetupActivity();
-                    } else if (currentUserID.equals("Z85jCL2QLARLYoQGPjltOB5kCOE2")) {
+                    if (currentUserID.equals("Z85jCL2QLARLYoQGPjltOB5kCOE2")) {
                         Intent intent = new Intent(StartActivity.this, AdminActivity.class);
                         startActivity(intent);
                         finish();
+                    }
+                    else if (!dataSnapshot.hasChild("fullname")) {
+                        SendUserToSetupActivity();
                     } else {
                         SendUserToMainActivity();
                     }
