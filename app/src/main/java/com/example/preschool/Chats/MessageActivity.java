@@ -108,10 +108,10 @@ public class MessageActivity extends AppCompatActivity {
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                notify = true;
                 String msg = text_send.getText().toString();
                 if (!msg.equals("")) {
                     sendMessage(fuser.getUid(), userid, msg);
+                    notify = true;
                 } else {
                     Toast.makeText(MessageActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
                 }
@@ -305,10 +305,8 @@ public class MessageActivity extends AppCompatActivity {
 
     private void status(String status) {
         reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid()).child("userState");
-
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("type", status);
-
         reference.updateChildren(hashMap);
     }
 

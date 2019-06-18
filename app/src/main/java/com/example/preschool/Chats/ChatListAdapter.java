@@ -2,6 +2,7 @@ package com.example.preschool.Chats;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     private List<User> mUsers;
     private boolean ischat;
 
-    String theLastMessage;
+    private String theLastMessage;
+    private Boolean seen = true;
+    private Boolean you_send = false;
 
     public ChatListAdapter(Context mContext, List<User> mUsers, boolean ischat) {
         this.mUsers = mUsers;
@@ -58,7 +61,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         }
 
         if (ischat) {
-            lastMessage(user.getUserid(), holder.last_msg);
+            lastMessage(user.getUserid(), holder.last_msg, holder.sender);
         } else {
             holder.last_msg.setVisibility(View.GONE);
         }
@@ -94,6 +97,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         public ImageView profile_image;
         private ImageView is_online;
         private TextView last_msg;
+        private TextView sender;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -102,12 +106,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             profile_image = itemView.findViewById(R.id.profile_image);
             is_online = itemView.findViewById(R.id.online);
             last_msg = itemView.findViewById(R.id.last_msg);
+            sender = itemView.findViewById(R.id.sender);
         }
     }
 
     //check for last message
-    private void lastMessage(final String userid, final TextView last_msg) {
+    private void lastMessage(final String userid, final TextView last_msg, final TextView sender) {
         theLastMessage = "default";
+//        last_msg.setTextColor();
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
 
@@ -120,12 +126,19 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                         if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
                                 chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
                             theLastMessage = chat.getMessage();
+                            seen = chat.isIsseen();
+                            if (chat.getSender().equals(firebaseUser.getUid())) {
+                                you_send = true;
+                            } else you_send = false;
                         }
                     }
                 }
 
-                setTextLastMess(theLastMessage, last_msg);
-
+                setTextLastMess(theLastMessage, last_msg, seen);
+                // Ẩn hiện là bạn gửi hay người khác gửi
+                if (you_send) {
+                    sender.setVisibility(View.VISIBLE);
+                } else sender.setVisibility(View.GONE);
                 theLastMessage = "default";
             }
 
@@ -136,13 +149,18 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         });
     }
 
-    private void setTextLastMess(String theLastMessage, TextView last_msg) {
+    private void setTextLastMess(String theLastMessage, TextView last_msg, Boolean seen) {
+
         switch (theLastMessage) {
             case "default":
                 last_msg.setText("No Message");
+                last_msg.setTextColor(Color.parseColor("#555555"));
                 break;
 
             default:
+                if (seen) {
+                    last_msg.setTextColor(Color.parseColor("#555555"));
+                } else last_msg.setTextColor(Color.parseColor("#ffa000"));
                 try {// Có  dấu Enter
                     if (theLastMessage.indexOf("\n") < 20)
                         last_msg.setText(theLastMessage.substring(0, theLastMessage.indexOf("\n")) + "...");

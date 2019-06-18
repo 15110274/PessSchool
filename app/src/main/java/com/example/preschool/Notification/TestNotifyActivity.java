@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.example.preschool.R;
 
 import static com.example.preschool.Notification.App.CHANNEL_1_ID;
-import static com.example.preschool.Notification.App.CHANNEL_2_ID;
+//import static com.example.preschool.Notification.App.CHANNEL_2_ID;
 
 public class TestNotifyActivity extends AppCompatActivity {
 
@@ -62,16 +62,16 @@ public class TestNotifyActivity extends AppCompatActivity {
         notificationManager.notify(1, notification);
     }
 
-    public void sendOnChannel2(View v) {
-        String message = notify_content.getText().toString();
-
-        Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
-                .setSmallIcon(R.drawable.ic_child)
-                .setContentTitle("Preschool")
-                .setContentText(message)
-                .setPriority(NotificationCompat.PRIORITY_LOW)
-                .build();
-
-        notificationManager.notify(2, notification);
-    }
+//    public void sendOnChannel2(View v) {
+//        String message = notify_content.getText().toString();
+//
+//        Notification notification = new NotificationCompat.Builder(this, CHANNEL_2_ID)
+//                .setSmallIcon(R.drawable.ic_child)
+//                .setContentTitle("Preschool")
+//                .setContentText(message)
+//                .setPriority(NotificationCompat.PRIORITY_LOW)
+//                .build();
+//
+//        notificationManager.notify(2, notification);
+//    }
 }
