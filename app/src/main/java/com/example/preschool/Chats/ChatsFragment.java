@@ -31,7 +31,7 @@ public class ChatsFragment extends Fragment {
 
     private RecyclerView recyclerView;
 
-    private UserAdapter userAdapter;
+    private ChatListAdapter userAdapter;
     private List<User> mUsers;
 
     private FirebaseUser fuser;
@@ -101,7 +101,7 @@ public class ChatsFragment extends Fragment {
                         }
                     }
                 }
-                userAdapter = new UserAdapter(getContext(), mUsers, true);
+                userAdapter = new ChatListAdapter(getContext(), mUsers, true);
                 recyclerView.setAdapter(userAdapter);
             }
 

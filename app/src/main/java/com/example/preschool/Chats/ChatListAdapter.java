@@ -25,7 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
+public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHolder> {
 
     private Context mContext;
     private List<User> mUsers;
@@ -33,7 +33,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     String theLastMessage;
 
-    public UserAdapter(Context mContext, List<User> mUsers, boolean ischat){
+    public ChatListAdapter(Context mContext, List<User> mUsers, boolean ischat) {
         this.mUsers = mUsers;
         this.mContext = mContext;
         this.ischat = ischat;
@@ -42,8 +42,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.user_item, parent, false);
-        return new UserAdapter.ViewHolder(view);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.user_item_chat, parent, false);
+        return new ChatListAdapter.ViewHolder(view);
     }
 
     @Override
@@ -51,29 +51,26 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
         final User user = mUsers.get(position);
         holder.username.setText(user.getUsername());
-        if (user.getProfileimage().equals("default")){
+        if (user.getProfileimage().equals("default")) {
             holder.profile_image.setImageResource(R.mipmap.ic_launcher);
         } else {
             Picasso.get().load(user.getProfileimage()).into(holder.profile_image);
         }
 
-        if (ischat){
+        if (ischat) {
             lastMessage(user.getUserid(), holder.last_msg);
         } else {
             holder.last_msg.setVisibility(View.GONE);
         }
 
-        if (ischat){
-            if (user.getUserState().equals("online")){
-                holder.img_on.setVisibility(View.VISIBLE);
-                holder.img_off.setVisibility(View.GONE);
+        if (ischat) {
+            if (user.getUserState().getType().equals("online")) {
+                holder.is_online.setVisibility(View.VISIBLE);
             } else {
-                holder.img_on.setVisibility(View.GONE);
-                holder.img_off.setVisibility(View.VISIBLE);
+                holder.is_online.setVisibility(View.GONE);
             }
         } else {
-            holder.img_on.setVisibility(View.GONE);
-            holder.img_off.setVisibility(View.GONE);
+            holder.is_online.setVisibility(View.GONE);
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -91,12 +88,11 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         return mUsers.size();
     }
 
-    public  class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView username;
         public ImageView profile_image;
-        private ImageView img_on;
-        private ImageView img_off;
+        private ImageView is_online;
         private TextView last_msg;
 
         public ViewHolder(View itemView) {
@@ -104,14 +100,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
             username = itemView.findViewById(R.id.username);
             profile_image = itemView.findViewById(R.id.profile_image);
-            img_on = itemView.findViewById(R.id.img_on);
-            img_off = itemView.findViewById(R.id.img_off);
+            is_online = itemView.findViewById(R.id.online);
             last_msg = itemView.findViewById(R.id.last_msg);
         }
     }
 
     //check for last message
-    private void lastMessage(final String userid, final TextView last_msg){
+    private void lastMessage(final String userid, final TextView last_msg) {
         theLastMessage = "default";
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
@@ -119,9 +114,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
-                   if (firebaseUser != null && chat != null) {
+                    if (firebaseUser != null && chat != null) {
                         if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
                                 chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
                             theLastMessage = chat.getMessage();
@@ -129,15 +124,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     }
                 }
 
-                switch (theLastMessage){
-                    case  "default":
-                        last_msg.setText("No Message");
-                        break;
-
-                    default:
-                        last_msg.setText(theLastMessage);
-                        break;
-                }
+                setTextLastMess(theLastMessage, last_msg);
 
                 theLastMessage = "default";
             }
@@ -147,5 +134,25 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
             }
         });
+    }
+
+    private void setTextLastMess(String theLastMessage, TextView last_msg) {
+        switch (theLastMessage) {
+            case "default":
+                last_msg.setText("No Message");
+                break;
+
+            default:
+                try {// Có  dấu Enter
+                    if (theLastMessage.indexOf("\n") < 20)
+                        last_msg.setText(theLastMessage.substring(0, theLastMessage.indexOf("\n")) + "...");
+                    else last_msg.setText(theLastMessage.substring(0, 20) + "...");
+                } catch (Exception e) {// Không có dấu Enter
+                    if (theLastMessage.length() > 20) {
+                        last_msg.setText(theLastMessage.substring(0, 20) + "...");
+                    } else last_msg.setText(theLastMessage);
+                }
+                break;
+        }
     }
 }

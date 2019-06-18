@@ -2,12 +2,14 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
-    android:padding="8dp"
+    android:paddingStart="10dp"
+    android:paddingBottom="2dp"
+    android:paddingTop="2dp"
     android:layout_height="wrap_content">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:id="@+id/profile_image"
         android:src="@mipmap/ic_launcher"/>
 
