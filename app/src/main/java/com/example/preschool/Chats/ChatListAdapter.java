@@ -33,7 +33,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     private boolean ischat;
 
     private String theLastMessage;
-    private Boolean seen = true;
+    private Boolean seen = false;
     private Boolean you_send = false;
 
     public ChatListAdapter(Context mContext, List<User> mUsers, boolean ischat) {
@@ -111,10 +111,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     }
 
     //check for last message
-    private void lastMessage(final String userid, final TextView last_msg, final TextView sender) {
+    private void lastMessage(final String senderid, final TextView last_msg, final TextView sender) {
         theLastMessage = "default";
 //        last_msg.setTextColor();
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        final String userId = firebaseUser.getUid();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Chats");
 
         reference.addValueEventListener(new ValueEventListener() {
@@ -123,10 +124,12 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
                     if (firebaseUser != null && chat != null) {
-                        if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
-                                chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
+                        if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(senderid) ||
+                                chat.getReceiver().equals(senderid) && chat.getSender().equals(firebaseUser.getUid())) {
                             theLastMessage = chat.getMessage();
-                            seen = chat.isIsseen();
+                            if (chat.getReceiver().equals(userId)) {
+                                seen = chat.isIsseen();
+                            }
                             if (chat.getSender().equals(firebaseUser.getUid())) {
                                 you_send = true;
                             } else you_send = false;

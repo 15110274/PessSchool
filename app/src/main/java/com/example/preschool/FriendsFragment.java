@@ -46,6 +46,8 @@ public class FriendsFragment extends Fragment {
 
         mAuth=FirebaseAuth.getInstance();
         online_user_id=mAuth.getCurrentUser().getUid();
+
+        // Nhận idClass từ Main
         Bundle bundle = getArguments();
         if (bundle != null) {
             idClass = bundle.getString("idClass");

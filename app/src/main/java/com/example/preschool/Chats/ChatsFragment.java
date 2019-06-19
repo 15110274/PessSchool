@@ -30,29 +30,34 @@ import java.util.List;
 public class ChatsFragment extends Fragment {
 
     private RecyclerView recyclerView;
-
     private ChatListAdapter userAdapter;
     private List<User> mUsers;
-
     private FirebaseUser fuser;
     private DatabaseReference reference;
-
     private List<Chatlist> usersList;
+    private String idClass;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_chats, container, false);
 
+        // Nhận idClass từ Main
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            idClass = bundle.getString("idClass");
+        }
+
         recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
 
         fuser = FirebaseAuth.getInstance().getCurrentUser();
 
         usersList = new ArrayList<>();
 
-        reference = FirebaseDatabase.getInstance().getReference("Chatlist").child(fuser.getUid());
+        reference = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("ChatList").child(fuser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -77,8 +82,9 @@ public class ChatsFragment extends Fragment {
         return view;
     }
 
+
     private void updateToken(String token) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference(idClass).child("Tokens");
         Token token1 = new Token(token);
         reference.child(fuser.getUid()).setValue(token1);
     }
@@ -94,7 +100,7 @@ public class ChatsFragment extends Fragment {
                     User user = snapshot.getValue(User.class);
                     for (Chatlist chatlist : usersList) {
                         if (user.getUserid() != null) {
-                            if(user.getUserid().equals(chatlist.getId())) {
+                            if (user.getUserid().equals(chatlist.getId())) {
                                 mUsers.add(user);
                             }
 
