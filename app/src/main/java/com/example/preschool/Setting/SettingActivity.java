@@ -5,15 +5,19 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import com.example.preschool.ChangeClassActivity;
+import com.example.preschool.MainActivity;
 import com.example.preschool.R;
 
 public class SettingActivity extends AppCompatActivity {
 
 
     private Switch myswitch;
+    private String idClass,idTeacher;
     SharedPref sharedPref;
 
     @Override
@@ -46,6 +50,24 @@ public class SettingActivity extends AppCompatActivity {
                 }
             }
         });
+        idClass=getIntent().getExtras().get("idClass").toString();
+        idTeacher=getIntent().getExtras().get("idTeacher").toString();
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // chuyen ve trang trc ko bi mat du lieu
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(SettingActivity.this, MainActivity.class);
+        intent.putExtra("idClass",idClass);
+        intent.putExtra("idTeacher",idTeacher);
+        startActivity(intent);
     }
 
     private void restarApp() {
