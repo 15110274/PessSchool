@@ -37,7 +37,7 @@ public class FriendsFragment extends Fragment {
     private RecyclerView myFriendList;
     private DatabaseReference FriendsRef,UsersRef;
     private FirebaseAuth mAuth;
-    private String online_user_id,idClass;
+    private String online_user_id,idClass,idTeacher;
 
     @Nullable
     @Override
@@ -51,6 +51,7 @@ public class FriendsFragment extends Fragment {
         Bundle bundle = getArguments();
         if (bundle != null) {
             idClass = bundle.getString("idClass");
+            idTeacher = bundle.getString("idTeacher");
         }
         FriendsRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Friends").child(online_user_id);
         UsersRef=FirebaseDatabase.getInstance().getReference().child("Users");
@@ -145,6 +146,8 @@ public class FriendsFragment extends Fragment {
                                             if(which==0){
                                                 Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
                                                 profileintent.putExtra("visit_user_id",usersIDs);
+                                                profileintent.putExtra("idTeacher",idTeacher);
+                                                profileintent.putExtra("idClass",idClass);
                                                 startActivity(profileintent);
                                             }
                                             if(which==1){

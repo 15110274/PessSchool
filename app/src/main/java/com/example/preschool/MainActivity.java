@@ -235,10 +235,14 @@ public class MainActivity extends AppCompatActivity
                 if(idTeacher.equals(currentUserID)){
                     intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
                     intent.putExtra("CLASS_ID",idClass);
+                    intent.putExtra("idClass",idClass);
+                    intent.putExtra("idTeacher",idTeacher);
                     startActivity(intent);
                 }
                 else {
                     intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
+                    intent.putExtra("idClass",idClass);
+                    intent.putExtra("idTeacher",idTeacher);
                     startActivity(intent);
                 }
                 break;
@@ -250,10 +254,14 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.camera:
                 intent=new Intent(MainActivity.this, CameraActivity.class);
+                intent.putExtra("idClass",idClass);
+                intent.putExtra("idTeacher",idTeacher);
                 startActivity(intent);
                 break;
             case R.id.homework:
                 intent=new Intent(MainActivity.this, TestNotifyActivity.class);
+                intent.putExtra("idClass",idClass);
+                intent.putExtra("idTeacher",idTeacher);
                 startActivity(intent);
                 break;
             case R.id.profile:
@@ -265,20 +273,28 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.event:
                 intent= new Intent(MainActivity.this, EventsActivity.class);
+                intent.putExtra("idClass",idClass);
+                intent.putExtra("idTeacher",idTeacher);
                 startActivity(intent);
                 break;
 //            case R.id.knowledge:
 //                break;
             case R.id.changeclass:
                 intent= new Intent(MainActivity.this, ChangeClassActivity.class);
+                intent.putExtra("idClass",idClass);
+                intent.putExtra("idTeacher",idTeacher);
                 startActivity(intent);
                 break;
             case R.id.help:
                 intent=new Intent(MainActivity.this, HelpActivity.class);
+                intent.putExtra("idClass",idClass);
+                intent.putExtra("idTeacher",idTeacher);
                 startActivity(intent);
                 break;
             case R.id.setting:
                 intent=new Intent(MainActivity.this, SettingActivity.class);
+                intent.putExtra("idClass",idClass);
+                intent.putExtra("idTeacher",idTeacher);
                 startActivity(intent);
                 break;
             case R.id.logout:
