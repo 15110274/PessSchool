@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.example.preschool.Chats.ChatsFragment;
 import com.example.preschool.Event.EventsActivity;
+import com.example.preschool.Menu.MenuActivity;
+import com.example.preschool.Menu.ViewMenuActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepFullViewActivity;
 import com.example.preschool.Notification.NotificationFragment;
@@ -252,10 +254,17 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
-            case R.id.homework:
-                intent=new Intent(MainActivity.this, TestNotifyActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
+            case R.id.menu:
+                if(idTeacher.equals(currentUserID)){
+                    intent=new Intent(MainActivity.this, MenuActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+                else {
+                    intent=new Intent(MainActivity.this, ViewMenuActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
                 break;
             case R.id.profile:
                 intent=new Intent(MainActivity.this, PersonProfileActivity.class);

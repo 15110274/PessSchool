@@ -53,5 +53,6 @@
     <string name="reset_pass_successful">Kiểm tra hòm thư của bạn để hoàn tất tạo lại mật khẩu</string>
     <string name="logout">Đăng xuất</string>
     <string name="register">Register</string>
+    <string name="menu">Thực đơn</string>
 
 </resources>

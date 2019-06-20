@@ -72,3 +72,15 @@ configurations.all {
     resolutionStrategy.force 'com.android.support:appcompat-v7:25.3.0'
     resolutionStrategy.force 'com.android.support:support-v13:25.3.0'
 }
+
+//configurations.all { //fix ClassNotFoundException : OnUnhandledKeyEventListener
+//    resolutionStrategy.eachDependency { details ->
+//        def requested = details.requested
+//        if (requested.group == "com.android.support") {
+//            if (!requested.name.startsWith("multidex")) {
+//                details.useVersion "28.0.0"
+//            }
+//        }
+//    }
+//}
+

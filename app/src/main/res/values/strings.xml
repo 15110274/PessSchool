@@ -51,4 +51,5 @@
     <string name="reset_pass_successful">Check your mail to complete reset password your account</string>
     <string name="logout">Log out</string>
     <string name="register">Register</string>
+    <string name="menu">Menu</string>
 </resources>
