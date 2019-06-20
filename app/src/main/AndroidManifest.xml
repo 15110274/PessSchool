@@ -19,6 +19,12 @@
             android:theme="@style/AppTheme"></activity>
         <activity android:name=".Menu.MenuActivity"
             android:theme="@style/AppTheme"/>
+        <activity android:name=".ManageUserActivity"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".AdminActivity"></activity>
+        <activity android:name=".ManageClassActivity"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".AdminActivity"/>
         <activity
             android:name=".Chats.MessageActivity"
             android:theme="@style/AppTheme" />

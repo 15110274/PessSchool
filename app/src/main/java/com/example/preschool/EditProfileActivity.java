@@ -43,7 +43,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private String currentUserId;
     final static int Gallery_Pick = 1;
     private StorageReference UserProfileImageRef;
-    private String idClass,idTeacher;
+    private String idClass,idTeacher,className;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +62,7 @@ public class EditProfileActivity extends AppCompatActivity {
         userParentOf=findViewById(R.id.edit_parentof);
         idClass=getIntent().getExtras().get("idClass").toString();
         idTeacher=getIntent().getExtras().get("idTeacher").toString();
-
+        className=getIntent().getExtras().get("CLASS_NAME").toString();
         UpdateAccountSettingButton=findViewById(R.id.update_account_settings_button);
         loadingBar=new ProgressDialog(this);
 
@@ -156,6 +156,7 @@ public class EditProfileActivity extends AppCompatActivity {
                                                         Intent selfIntent = new Intent(EditProfileActivity.this, EditProfileActivity.class);
                                                         selfIntent.putExtra("idClass",idClass);
                                                         selfIntent.putExtra("idTeacher",idTeacher);
+                                                        selfIntent.putExtra("CLASS_NAME",className);
                                                         startActivity(selfIntent);
 
                                                         Toast.makeText(EditProfileActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
@@ -224,16 +225,19 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent=new Intent(EditProfileActivity.this, PersonProfileActivity.class);
-        intent.putExtra("idClass",idClass);
-        intent.putExtra("idTeacher",idTeacher);
-        intent.putExtra("visit_user_id",currentUserId);
+        intent.putExtra("ID_CLASS",idClass);
+        intent.putExtra("ID_TEACHER",idTeacher);
+        intent.putExtra("VISIT_USER_ID",currentUserId);
+        intent.putExtra("CLASS_NAME",className);
         startActivity(intent);
     }
     private void SendUserToPersonProfileActivity() {
         Intent intent=new Intent(EditProfileActivity.this, PersonProfileActivity.class);
-        intent.putExtra("visit_user_id",currentUserId);
-        intent.putExtra("idClass",idClass);
-        intent.putExtra("idTeacher",idTeacher);
+        intent.putExtra("VISIT_USER_ID",currentUserId);
+        intent.putExtra("ID_CLASS",idClass);
+        intent.putExtra("ID_TEACHER",idTeacher);
+        intent.putExtra("CLASS_NAME",className);
         startActivity(intent);
     }
 }
+
