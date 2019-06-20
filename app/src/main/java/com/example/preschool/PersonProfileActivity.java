@@ -37,7 +37,7 @@ public class PersonProfileActivity extends AppCompatActivity {
     private DatabaseReference FriendRequestRef,UsersRef,FriendsRef;
     private FirebaseAuth mAuth;
 
-    private String senderUserId,receiverUserId,CURRENT_STATE,saveCurrentDate,idClass,idTeacher;
+    private String senderUserId,receiverUserId,CURRENT_STATE,saveCurrentDate,idClass,idTeacher, className;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,9 +45,11 @@ public class PersonProfileActivity extends AppCompatActivity {
 
         mAuth=FirebaseAuth.getInstance();
         senderUserId=mAuth.getCurrentUser().getUid();
-        receiverUserId=getIntent().getExtras().get("visit_user_id").toString();
-        idClass=getIntent().getExtras().get("idClass").toString();
-        idTeacher=getIntent().getExtras().get("idTeacher").toString();
+        receiverUserId=getIntent().getExtras().get("VISIT_USER_ID").toString();
+        Bundle bundle=getIntent().getExtras();
+        idClass=bundle.getString("ID_CLASS");
+        idTeacher=bundle.getString("ID_TEACHER");
+        className=bundle.getString("CLASS_NAME");
 
         UsersRef= FirebaseDatabase.getInstance().getReference().child("Users");
         FriendRequestRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("FriendRequests");
@@ -133,14 +135,16 @@ public class PersonProfileActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent=new Intent(PersonProfileActivity.this, MainActivity.class);
-        intent.putExtra("idClass",idClass);
-        intent.putExtra("idTeacher",idTeacher);
+        intent.putExtra("ID_CLASS",idClass);
+        intent.putExtra("ID_TEACHER",idTeacher);
+        intent.putExtra("CLASS_NAME",className);
         startActivity(intent);
     }
     private void SendUserToEditProfileActivity() {
         Intent intent=new Intent(PersonProfileActivity.this, EditProfileActivity.class);
         intent.putExtra("idClass",idClass);
         intent.putExtra("idTeacher",idTeacher);
+        intent.putExtra("CLASS_NAME",className);
         startActivity(intent);
     }
 
