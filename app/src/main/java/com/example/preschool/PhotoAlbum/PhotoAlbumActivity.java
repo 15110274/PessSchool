@@ -41,6 +41,7 @@ public class PhotoAlbumActivity extends AppCompatActivity {
     private DatabaseReference mPhotosRef,UsersRef;
     private FirebaseAuth mAuth;
     private String currentUserID;
+    private Bundle bundle;
     private FirebaseRecyclerAdapter<Album, PhotoAlbumActivity.ItemViewHolder> myRecycleViewAdpter;
 
     ////////////////////////////////
@@ -52,6 +53,11 @@ public class PhotoAlbumActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_album);
 
+        //get bundle from Main
+        bundle=getIntent().getExtras();
+        idClass=bundle.getString("ID_CLASS");
+        idTeacher=bundle.getString("ID_TEACHER");
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.photo_album);
 
@@ -60,16 +66,12 @@ public class PhotoAlbumActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         currentUserID=mAuth.getCurrentUser().getUid();
-        //////////////////////////////////////////////
-        idTeacher=getIntent().getExtras().get("idTeacher").toString();
-        idClass=getIntent().getExtras().get("idClass").toString();
+
         if (idTeacher.equals(currentUserID)) {
             fab.setVisibility(View.VISIBLE);
-            Toast.makeText(PhotoAlbumActivity.this,"trung",Toast.LENGTH_LONG).show();
         }
         else{
             fab.setVisibility(View.INVISIBLE);
-            Toast.makeText(PhotoAlbumActivity.this,"ko trung",Toast.LENGTH_LONG).show();
         }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,10 +82,6 @@ public class PhotoAlbumActivity extends AppCompatActivity {
             }
         });
 
-        /**
-         * quăng id class vô chổ này classtest1
-         *
-         */
         mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Albums");
         mPhotosRef.keepSynced(true);
 
@@ -108,10 +106,9 @@ public class PhotoAlbumActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(getApplicationContext(), ViewPhotoAlbumActivity.class);
-                        //////////////////////////////////////////////
-                        intent.putExtra("idClass",idClass);
-                        intent.putExtra("idTeacher",idTeacher);
-                        intent.putExtra("POSITION_ALBUM", getRef(position).getKey());
+
+                        bundle.putString("POSITION_ALBUM",getRef(position).getKey());
+                        intent.putExtras(bundle);
                         startActivity(intent);
                     }
                 });

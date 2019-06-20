@@ -50,12 +50,20 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     FloatingActionButton addPost;
     private static String idClass, idTeacher;
+    private Bundle bundle;
 
     @SuppressLint("RestrictedApi")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_news_feed, container, false);
+
+        // Get Bundle
+        bundle = getArguments();
+        if (bundle != null) {
+            idClass = bundle.getString("ID_CLASS");
+            idTeacher=bundle.getString("ID_TEACHER");
+        }
 
         addPost = view.findViewById(R.id.floating_add_post);
         addPost.setVisibility(View.INVISIBLE);
@@ -68,12 +76,9 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
-        //////////////////////////////////////////////
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            idClass = bundle.getString("ID_CLASS");
-            idTeacher=bundle.getString("ID_TEACHER");
-        }
+
+        //
+
         //nếu là giáo viên mới cho phép đăng bài
         if(currentUserID.equals(idTeacher)) addPost.show();
         else addPost.hide();
@@ -157,9 +162,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     @Override
                     public void onClick(View v) {
                         Intent commentsIntent = new Intent(getActivity(), CommentsActivity.class);
-                        commentsIntent.putExtra("PostKey", PostKey);
-                        commentsIntent.putExtra("idclass",idClass);
-                        commentsIntent.putExtra("idTeacher",idTeacher);
+                        bundle.putString("KEY_POST",PostKey);
+                        commentsIntent.putExtras(bundle);
                         startActivity(commentsIntent);
                     }
                 });
@@ -317,7 +321,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     private void SendUserToPostActivity() {
         Intent addNewPostIntent = new Intent(getActivity(), PostActivity.class);
         //////////////////////////////////////////
-        addNewPostIntent.putExtra("idClass",idClass);
+        addNewPostIntent.putExtras(bundle);
         startActivity(addNewPostIntent);
     }
 

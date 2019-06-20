@@ -272,9 +272,11 @@ public class SetupActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         final String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
+                        String className=dataSnapshot.child(idClass).child("classname").getValue().toString();
                         Intent mainIntent = new Intent(SetupActivity.this, MainActivity.class);
                         Bundle bundle=new Bundle();
                         bundle.putString("ID_CLASS",idClass);
+                        bundle.putString("CLASS_NAME",className);
                         bundle.putString("ID_TEACHER",idTeacher);
                         mainIntent.putExtras(bundle);
                         finish();

@@ -3,6 +3,7 @@ package com.example.preschool.Chats;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     private Boolean seen = false;
     private Boolean you_send = false;
 
+    private Bundle bundle;
+
     public ChatListAdapter(Context mContext, List<User> mUsers, boolean ischat) {
         this.mUsers = mUsers;
         this.mContext = mContext;
@@ -46,6 +49,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.user_item_chat, parent, false);
+
         return new ChatListAdapter.ViewHolder(view);
     }
 
@@ -80,7 +84,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, MessageActivity.class);
-                intent.putExtra("userid", user.getUserid());
+                bundle=new Bundle();
+                bundle.putString("ID_RECIVER",user.getUserid());
+                intent.putExtras(bundle);
                 mContext.startActivity(intent);
             }
         });

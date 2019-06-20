@@ -52,11 +52,17 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
     private RecyclerView myTimeTableList;
     private HorizontalPicker picker;
 
+    private Bundle bundle;
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time_table);
+
+        bundle=getIntent().getExtras();
+        idClass=bundle.getString("ID_CLASS");
+        idTeacher=bundle.getString("ID_TEACHER");
 
         addControlls();
 
@@ -142,8 +148,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
         SimpleDateFormat date = new SimpleDateFormat("ddMMyyyy");
         dateSelect = date.format(cal.getTime());
 
-        idClass = getIntent().getExtras().get("idClass").toString();
-        idTeacher = getIntent().getExtras().get("idTeacher").toString();
+
         TimeTableRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("TimeTable");
 
         EdtDiscription = findViewById(R.id.edtDiscription);

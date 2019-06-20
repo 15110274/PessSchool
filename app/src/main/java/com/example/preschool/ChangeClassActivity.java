@@ -9,16 +9,19 @@ import android.view.MenuItem;
 
 public class ChangeClassActivity extends AppCompatActivity {
     private String idClass,idTeacher;
-
+    private Bundle bundle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_class);
 
+        // Get Bundle
+        bundle=getIntent().getExtras();
+        idClass=bundle.getString("ID_CLASS");
+        idTeacher=bundle.getString("ID_TEACHER");
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.change_join_class);
-        idClass=getIntent().getExtras().get("idClass").toString();
-        idTeacher=getIntent().getExtras().get("idTeacher").toString();
     }
     public boolean onOptionsItemSelected(MenuItem item) {
         // chuyen ve trang trc ko bi mat du lieu
@@ -32,8 +35,7 @@ public class ChangeClassActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent=new Intent(ChangeClassActivity.this, MainActivity.class);
-        intent.putExtra("idClass",idClass);
-        intent.putExtra("idTeacher",idTeacher);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 }

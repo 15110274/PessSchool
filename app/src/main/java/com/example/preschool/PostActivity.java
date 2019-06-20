@@ -48,54 +48,58 @@ public class PostActivity extends AppCompatActivity {
     private String Description;
     private static final int Gallery_Pick = 1;
 
-    private StorageReference PostsImagesRefrence ;
+    private StorageReference PostsImagesRefrence;
     private DatabaseReference UsersRef, PostsRef;
+    private ValueEventListener usersListener,postListener;
     private FirebaseAuth mAuth;
 
     private String idClass;
 
-    private String  saveCurrentDate, saveCurrentTime,downloadUrl, current_user_id;
+    private String saveCurrentDate, saveCurrentTime, downloadUrl, current_user_id;
+
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+
+        // Get Bundle
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            idClass = bundle.getString("ID_CLASS");
+        }
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Add New Post");
         mAuth = FirebaseAuth.getInstance();
         current_user_id = mAuth.getCurrentUser().getUid();
-
-        idClass= getIntent().getExtras().get("idClass").toString();
 
         PostsImagesRefrence = FirebaseStorage.getInstance().getReference().child(idClass);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
 
 
-        SelectPostImage =  findViewById(R.id.select_post_image);
-        UpdatePostButton =  findViewById(R.id.update_post_button);
+        SelectPostImage = findViewById(R.id.select_post_image);
+        UpdatePostButton = findViewById(R.id.update_post_button);
         PostDescription = findViewById(R.id.post_description);
         loadingBar = new ProgressDialog(this);
 
         SelectPostImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 OpenGallery();
             }
         });
         UpdatePostButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 ValidatePostInfo();
             }
         });
 
 
-
     }
-
 
 
     private void OpenGallery() {
@@ -109,12 +113,12 @@ public class PostActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==Gallery_Pick && resultCode==RESULT_OK && data!=null)
-        {
+        if (requestCode == Gallery_Pick && resultCode == RESULT_OK && data != null) {
             ImageUri = data.getData();
             SelectPostImage.setImageURI(ImageUri);
         }
     }
+
     private void ValidatePostInfo() {
         Description = PostDescription.getText().toString();
 
@@ -131,6 +135,7 @@ public class PostActivity extends AppCompatActivity {
             StoringImageToFirebaseStorage();
         }
     }
+
     private void StoringImageToFirebaseStorage() {
         Calendar calFordDate = Calendar.getInstance();
         SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
@@ -139,7 +144,7 @@ public class PostActivity extends AppCompatActivity {
         Calendar calFordTime = Calendar.getInstance();
         SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
         saveCurrentTime = currentTime.format(calFordDate.getTime());
-        final String childString=PostsRef.push().getKey();
+        final String childString = PostsRef.push().getKey();
 
 
         StorageReference filePath = PostsImagesRefrence.child("Post Images").child(ImageUri.getLastPathSegment() + ".jpg");
@@ -161,9 +166,9 @@ public class PostActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        SendUserToNewsFeedActivity();
                                         Toast.makeText(PostActivity.this, "Image success", Toast.LENGTH_SHORT).show();
                                         loadingBar.dismiss();
+                                        SendUserToNewsFeedActivity();
                                     } else {
                                         Toast.makeText(PostActivity.this, "Image fail", Toast.LENGTH_SHORT).show();
                                         loadingBar.dismiss();
@@ -174,12 +179,10 @@ public class PostActivity extends AppCompatActivity {
                         }
                     });
                     //lưu các mục còn lại lên posts
-                    UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
+                    usersListener = UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot)
-                        {
-                            if(dataSnapshot.exists())
-                            {
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
 
                                 HashMap postsMap = new HashMap();
                                 postsMap.put("uid", current_user_id);
@@ -187,20 +190,15 @@ public class PostActivity extends AppCompatActivity {
                                 postsMap.put("time", saveCurrentTime);
                                 postsMap.put("description", Description);
 
-
                                 PostsRef.child(childString).updateChildren(postsMap)
                                         .addOnCompleteListener(new OnCompleteListener() {
                                             @Override
-                                            public void onComplete(@NonNull Task task)
-                                            {
-                                                if(task.isSuccessful())
-                                                {
-                                                    SendUserToNewsFeedActivity();
+                                            public void onComplete(@NonNull Task task) {
+                                                if (task.isSuccessful()) {
                                                     Toast.makeText(PostActivity.this, "New Post is updated successfully.", Toast.LENGTH_SHORT).show();
                                                     loadingBar.dismiss();
-                                                }
-                                                else
-                                                {
+                                                    SendUserToNewsFeedActivity();
+                                                } else {
                                                     Toast.makeText(PostActivity.this, "Error Occured while updating your post.", Toast.LENGTH_SHORT).show();
                                                     loadingBar.dismiss();
                                                 }
@@ -215,17 +213,18 @@ public class PostActivity extends AppCompatActivity {
                         }
                     });
 
-                }
-                else {
+                } else {
                     String message = task.getException().getMessage();
                     Toast.makeText(PostActivity.this, "Error:" + message, Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
-    private void SendUserToNewsFeedActivity(){
+
+    private void SendUserToNewsFeedActivity() {
         finish();
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -234,11 +233,23 @@ public class PostActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
-        Intent intent=new Intent(PostActivity.this, MainActivity.class);
-        intent.putExtra("idClass",idClass);
-        intent.putExtra("idTeacher",current_user_id);
-        startActivity(intent);
+        finish();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        UsersRef.removeEventListener(usersListener);
+    }
+
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//
+//    }
+
+
 }

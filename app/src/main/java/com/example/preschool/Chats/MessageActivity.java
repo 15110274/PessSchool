@@ -49,7 +49,6 @@ public class MessageActivity extends AppCompatActivity {
     private TextView username;
     private TextView lastseen;
 
-    private FirebaseUser fuser;
     private DatabaseReference reference;
 
     private ImageButton btn_send;
@@ -64,16 +63,25 @@ public class MessageActivity extends AppCompatActivity {
 
     private ValueEventListener seenListener;
 
-    private String userid;
+    private String idReciver, current_user_id, idClass;
 
     private APIService apiService;
 
     private boolean notify = false;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            idReciver = bundle.getString("ID_RECIVER");
+            idClass=bundle.getString("ID_CLASS");
+        }
+
+        current_user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,17 +110,16 @@ public class MessageActivity extends AppCompatActivity {
         btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
 
-        intent = getIntent();
-        userid = intent.getStringExtra("userid");
-        fuser = FirebaseAuth.getInstance().getCurrentUser();
+//        fuser = FirebaseAuth.getInstance().getCurrentUser();
 
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String msg = text_send.getText().toString();
                 if (!msg.equals("")) {
-                    sendMessage(fuser.getUid(), userid, msg);
                     notify = true;
+                    sendMessage(current_user_id, idReciver, msg);
+
                 } else {
                     Toast.makeText(MessageActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
                 }
@@ -121,7 +128,7 @@ public class MessageActivity extends AppCompatActivity {
         });
 
 
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(idReciver);
 
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -140,7 +147,7 @@ public class MessageActivity extends AppCompatActivity {
                     lastseen.setText(user.getUserState().getTime());
                 }
 
-                readMesagges(fuser.getUid(), userid, user.getProfileimage());
+                readMesagges(current_user_id, idReciver, user.getProfileimage());
             }
 
             @Override
@@ -149,17 +156,17 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        seenMessage(userid);
+        seenMessage(idReciver);
     }
 
-    private void seenMessage(final String userid) {
+    private void seenMessage(final String idReciver) {
         reference = FirebaseDatabase.getInstance().getReference("Chats");
         seenListener = reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
-                    if (chat.getReceiver().equals(fuser.getUid()) && chat.getSender().equals(userid)) {
+                    if (chat.getReceiver().equals(current_user_id) && chat.getSender().equals(idReciver)) {
                         HashMap<String, Object> hashMap = new HashMap<>();
                         hashMap.put("isseen", true);
                         snapshot.getRef().updateChildren(hashMap);
@@ -189,14 +196,14 @@ public class MessageActivity extends AppCompatActivity {
 
         // add user to chat fragment
         final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("Chatlist")
-                .child(fuser.getUid())
-                .child(userid);
+                .child(current_user_id)
+                .child(idReciver);
 
         chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (!dataSnapshot.exists()) {
-                    chatRef.child("id").setValue(userid);
+                    chatRef.child("id").setValue(idReciver);
                 }
             }
 
@@ -207,13 +214,13 @@ public class MessageActivity extends AppCompatActivity {
         });
 
         final DatabaseReference chatRefReceiver = FirebaseDatabase.getInstance().getReference("Chatlist")
-                .child(userid)
-                .child(fuser.getUid());
-        chatRefReceiver.child("id").setValue(fuser.getUid());
+                .child(idReciver)
+                .child(current_user_id);
+        chatRefReceiver.child("id").setValue(current_user_id);
 
         final String msg = message;
 
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid());
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(current_user_id);
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -239,8 +246,8 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(fuser.getUid(), R.mipmap.ic_launcher, username + ": " + message, "New Message",
-                            userid);
+                    Data data = new Data(current_user_id, R.mipmap.ic_launcher, username + ": " + message, "New Message",
+                            idReciver);
 
                     Sender sender = new Sender(data, token.getToken());
 
@@ -304,7 +311,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void status(String status) {
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(fuser.getUid()).child("userState");
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(current_user_id).child("userState");
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("type", status);
         reference.updateChildren(hashMap);
@@ -313,15 +320,15 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        status("online");
-        currentUser(userid);
+//        status("online");
+        currentUser(current_user_id);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         reference.removeEventListener(seenListener);
-        status("offline");
+//        status("offline");
         currentUser("none");
     }
 }

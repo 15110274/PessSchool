@@ -55,13 +55,13 @@ public class MainActivity extends AppCompatActivity
     private ViewPager mViewPager;
     private FirebaseAuth mAuth;
     private DatabaseReference UsersRef,ClassRef;
-    private TextView findButton;
+    private TextView txtclassName;
     String currentUserID;
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private Bundle bundle;
-    ////////////////////////////////////////////////
-    private String idClass, idTeacher;
+
+    private String idClass, idTeacher, className;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity
         bundle = getIntent().getExtras();
         if(bundle!=null){
             idClass= bundle.getString("ID_CLASS");
+            className=bundle.getString("CLASS_NAME");
             idTeacher=bundle.getString("ID_TEACHER");
         }
 
@@ -78,7 +79,7 @@ public class MainActivity extends AppCompatActivity
 
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
-        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
+//        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("classmane").toString();
 
 
 //        updateUserStatus("online");
@@ -88,13 +89,8 @@ public class MainActivity extends AppCompatActivity
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        findButton=findViewById(R.id.find_button);
-        findButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SendUserToFindFriendActivity(bundle);
-            }
-        });
+        txtclassName=findViewById(R.id.class_name);
+        txtclassName.setText(className);
 
         mViewPager = findViewById(R.id.viewPager);
         final TabLayout tabLayout = findViewById(R.id.tablayout);
@@ -168,13 +164,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     //
-    @Override
-    protected void onStart() {
-        super.onStart();
-        if(mAuth.getCurrentUser()==null){
-            SendUserToLoginActivity();
-        }
-    }
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        if(mAuth.getCurrentUser()==null){
+//            SendUserToLoginActivity();
+//        }
+//    }
 
 
     /**
@@ -242,7 +238,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 else {
                     intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
-                    intent.putExtras(bundle);
+//                    intent.putExtras(bundle);
                     startActivity(intent);
                 }
                 break;

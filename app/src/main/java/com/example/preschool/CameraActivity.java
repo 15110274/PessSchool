@@ -17,16 +17,19 @@ import com.google.firebase.database.ValueEventListener;
 
 public class CameraActivity extends AppCompatActivity {
     private String idClass,idTeacher;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        bundle=getIntent().getExtras();
+        idClass=bundle.getString("ID_CLASS");
+        idTeacher=bundle.getString("ID_TEACHER");
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.camera);
-        idClass=getIntent().getExtras().get("idClass").toString();
-        idTeacher=getIntent().getExtras().get("idTeacher").toString();
     }
     public boolean onOptionsItemSelected(MenuItem item) {
         // chuyen ve trang trc ko bi mat du lieu
@@ -40,8 +43,7 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent intent=new Intent(CameraActivity.this, MainActivity.class);
-        intent.putExtra("idClass",idClass);
-        intent.putExtra("idTeacher",idTeacher);
+        intent.putExtras(bundle);
         startActivity(intent);
     }
 }

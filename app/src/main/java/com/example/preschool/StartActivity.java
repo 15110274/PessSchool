@@ -74,12 +74,14 @@ public class StartActivity extends AppCompatActivity {
                 ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
+                        String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
+                        String className=dataSnapshot.child(idClass).child("classname").getValue().toString();
                         Intent mainIntent = new Intent(StartActivity.this, MainActivity.class);
                         Bundle bundleStart=new Bundle();
 
                         // Đóng gói dữ liệu vào bundle
                         bundleStart.putString("ID_CLASS",idClass);
+                        bundleStart.putString("CLASS_NAME",className);
                         bundleStart.putString("ID_TEACHER",idTeacher);
                         mainIntent.putExtras(bundleStart);
 //                        mainIntent.putExtra("idTeacher",idTeacher);

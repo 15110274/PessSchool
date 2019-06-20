@@ -28,14 +28,21 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
     private DonNghiPhepFullViewAdapter adapter;
     private String idClass;
 
+    private Bundle bundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_don_nghi_phep_full_view);
+
+        // Get Bundle
+        bundle=getIntent().getExtras();
+        idClass=bundle.getString("ID_CLASS");
+
+
         recyclerView = findViewById(R.id.recycler_view_donnghiphep_full);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        idClass=getIntent().getExtras().get("CLASS_ID").toString();
 
         DonNghiPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("DonNghiPhep");
         DonNghiPhepRef.addValueEventListener(new ValueEventListener() {

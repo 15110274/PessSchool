@@ -38,22 +38,20 @@
                     android:padding="15dp" />
 
                 <TextView
-                    android:id="@+id/find_button"
-                    android:layout_width="280dp"
+                    android:id="@+id/class_name"
+                    android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:gravity="left"
-                    android:paddingEnd="35dp"
-                    android:hint=" Tìm kiếm "
-                    android:textColor="@android:color/darker_gray"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:layout_marginEnd="60dp"
+                    android:layout_marginStart="-10dp"
+                    android:layout_alignParentEnd="true"
+                    android:text="Ten lop"
+                    android:textColor="@color/background"
                     android:textSize="20sp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="27dp"
-                    android:layout_marginEnd="50dp"
-                    android:background="@android:color/white" />
+
             </RelativeLayout>
 
         </androidx.appcompat.widget.Toolbar>
