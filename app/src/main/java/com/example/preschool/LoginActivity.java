@@ -47,6 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         addControlls();
         addEvents();
     }
@@ -57,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 AllowingUserToLogin();
-                Toast.makeText(LoginActivity.this, "vao login", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(LoginActivity.this, "vao login", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -181,8 +182,9 @@ public class LoginActivity extends AppCompatActivity {
                                             SendUserToSetupActivity();
                                         } else if (currentUserID.equals("Z85jCL2QLARLYoQGPjltOB5kCOE2")) {
                                             Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
-                                            startActivity(intent);
                                             finish();
+                                            startActivity(intent);
+
                                         } else {
                                             SendUserToMainActivity();
                                         }
@@ -205,7 +207,8 @@ public class LoginActivity extends AppCompatActivity {
     }
     private void SendUserToSetupActivity() {
         Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
-        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        finish();
         startActivity(setupIntent);
     }
     private void addControlls() {
@@ -217,10 +220,10 @@ public class LoginActivity extends AppCompatActivity {
         loadingBar = new ProgressDialog(this);
     }
     // SendUserToRegisterActivity
-    public void createNewAcc(View view) {
-        Intent intent = new Intent(LoginActivity.this,RegisterDemoActivity.class);
-        startActivity(intent);
-    }
+//    public void createNewAcc(View view) {
+//        Intent intent = new Intent(LoginActivity.this,RegisterDemoActivity.class);
+//        startActivity(intent);
+//    }
     // Login Success Send User to MainActivity
     private void SendUserToMainActivity()
     {
@@ -237,8 +240,13 @@ public class LoginActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         final String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
                         Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                        mainIntent.putExtra("idClass",idClass);
-                        mainIntent.putExtra("idTeacher",idTeacher);
+                        Bundle bundleStart=new Bundle();
+
+                        // Đóng gói dữ liệu vào bundle
+                        bundleStart.putString("ID_CLASS",idClass);
+                        bundleStart.putString("ID_TEACHER",idTeacher);
+                        mainIntent.putExtras(bundleStart);
+                        finish();
                         //mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(mainIntent);
                     }
@@ -257,11 +265,11 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
-    private void SendUserToLoginActivity()
-    {
-        Intent mainIntent = new Intent(LoginActivity.this, LoginActivity.class);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(mainIntent);
-        finish();
-    }
+//    private void SendUserToLoginActivity()
+//    {
+//        Intent mainIntent = new Intent(LoginActivity.this, LoginActivity.class);
+//        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        startActivity(mainIntent);
+//        finish();
+//    }
 }

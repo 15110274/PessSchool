@@ -45,7 +45,7 @@ public class ChatsFragment extends Fragment {
         // Nhận idClass từ Main
         Bundle bundle = getArguments();
         if (bundle != null) {
-            idClass = bundle.getString("idClass");
+            idClass = bundle.getString("ID_CLASS");
         }
 
         recyclerView = view.findViewById(R.id.recycler_view);

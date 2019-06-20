@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.preschool.Chats.MessageActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -50,8 +52,8 @@ public class FriendsFragment extends Fragment {
         // Nhận idClass từ Main
         Bundle bundle = getArguments();
         if (bundle != null) {
-            idClass = bundle.getString("idClass");
-            idTeacher = bundle.getString("idTeacher");
+            idClass = bundle.getString("ID_CLASS");
+            idTeacher = bundle.getString("ID_TEACHER");
         }
         FriendsRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Friends").child(online_user_id);
         UsersRef=FirebaseDatabase.getInstance().getReference().child("Users");
@@ -102,12 +104,11 @@ public class FriendsFragment extends Fragment {
 
     }
     private void DisplayAllFriends() {
-        FirebaseRecyclerOptions<Friends> options=new FirebaseRecyclerOptions.Builder<Friends>().
-                setQuery(FriendsRef, Friends.class).build();
-        FirebaseRecyclerAdapter<Friends, FriendsViewHolder> adapter=new FirebaseRecyclerAdapter<Friends, FriendsViewHolder>(options) {
+        FirebaseRecyclerOptions<User> options=new FirebaseRecyclerOptions.Builder<User>().
+                setQuery(FriendsRef, User.class).build();
+        FirebaseRecyclerAdapter<User, FriendsViewHolder> adapter=new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, int position, @NonNull Friends model) {
-                friendsViewHolder.setDate(model.getDate());
+            protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, int position, @NonNull User model) {
                 final String usersIDs=getRef(position).getKey();
                 UsersRef.child(usersIDs).addValueEventListener(new ValueEventListener() {
                     @Override
@@ -120,17 +121,17 @@ public class FriendsFragment extends Fragment {
                             if(dataSnapshot.hasChild("userState")){
                                 type=dataSnapshot.child("userState").child("type").getValue().toString();
 
-//                                if(type.equals("online")){
-//                                    friendsViewHolder.onlineStatusView.setVisibility(View.VISIBLE);
-//                                }
-//                                else{
-//                                    friendsViewHolder.onlineStatusView.setVisibility(View.INVISIBLE);
-//                                }
+                                if(type.equals("online")){
+                                    friendsViewHolder.online.setVisibility(View.VISIBLE);
+                                }
+                                else{
+                                    friendsViewHolder.online.setVisibility(View.GONE);
+                                }
                             }
 
                             friendsViewHolder.setFullname(userName);
                             friendsViewHolder.setProfileImage(profileImage);
-                            friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                            friendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     CharSequence options[]=new  CharSequence[]{
@@ -144,18 +145,16 @@ public class FriendsFragment extends Fragment {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
                                             if(which==0){
-                                                Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
-                                                profileintent.putExtra("visit_user_id",usersIDs);
-                                                profileintent.putExtra("idTeacher",idTeacher);
-                                                profileintent.putExtra("idClass",idClass);
-                                                startActivity(profileintent);
+//                                                Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
+//                                                profileintent.putExtra("visit_user_id",usersIDs);
+//                                                profileintent.putExtra("idTeacher",idTeacher);
+//                                                profileintent.putExtra("idClass",idClass);
+//                                                startActivity(profileintent);
                                             }
                                             if(which==1){
-                                                Intent chatintent=new Intent(getActivity(),ChatActivity.class);
-                                                chatintent.putExtra("visit_user_id",usersIDs);
-                                                chatintent.putExtra("userName",userName);
+                                                Intent chatintent=new Intent(getActivity(), MessageActivity.class);
+                                                chatintent.putExtra("userid", usersIDs);
                                                 startActivity(chatintent);
-
                                             }
                                         }
                                     });
@@ -186,26 +185,27 @@ public class FriendsFragment extends Fragment {
     }
 
     public static class FriendsViewHolder extends RecyclerView.ViewHolder{
-        View mView;
-        //        ImageView onlineStatusView;
+        private TextView hey_chat;
+        private ImageView user_image;
+        private TextView user_name;
+        private ImageView online;
         public FriendsViewHolder(View itemView){
             super(itemView);
-            mView=itemView;
+            hey_chat=itemView.findViewById(R.id.hey_chat);
+            user_image=itemView.findViewById(R.id.all_users_profile_image);
+            user_name=itemView.findViewById(R.id.all_users_profile_full_name);
+            hey_chat.setText("✌");
+            online=itemView.findViewById(R.id.online);
 
         }
         public void setProfileImage(String profileimage) {
-            CircleImageView myImage = mView.findViewById(R.id.all_users_profile_image);
-            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).into(myImage);
+            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).into(user_image);
 
         }
 
         public void setFullname(String fullname) {
-            TextView myName = mView.findViewById(R.id.all_users_profile_full_name);
-            myName.setText(fullname);
+            user_name.setText(fullname);
         }
-        public void setDate(String date) {
-            TextView friendsDate = mView.findViewById(R.id.all_users_address);
-            friendsDate.setText("Friends Since: "+date);
-        }
+
     }
 }

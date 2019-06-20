@@ -71,8 +71,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         //////////////////////////////////////////////
         Bundle bundle = getArguments();
         if (bundle != null) {
-            idClass = bundle.getString("idClass");
-            idTeacher=bundle.getString("idTeacher");
+            idClass = bundle.getString("ID_CLASS");
+            idTeacher=bundle.getString("ID_TEACHER");
         }
         //nếu là giáo viên mới cho phép đăng bài
         if(currentUserID.equals(idTeacher)) addPost.show();

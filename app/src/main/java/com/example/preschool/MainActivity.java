@@ -59,11 +59,19 @@ public class MainActivity extends AppCompatActivity
     String currentUserID;
     private Toolbar toolbar;
     private DrawerLayout drawer;
+    private Bundle bundle;
     ////////////////////////////////////////////////
     private String idClass, idTeacher;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Nhận bundle
+        bundle = getIntent().getExtras();
+        if(bundle!=null){
+            idClass= bundle.getString("ID_CLASS");
+            idTeacher=bundle.getString("ID_TEACHER");
+        }
 
         FirebaseApp.initializeApp(this);
         mAuth=FirebaseAuth.getInstance();
@@ -73,7 +81,7 @@ public class MainActivity extends AppCompatActivity
         ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
 
 
-        updateUserStatus("online");
+//        updateUserStatus("online");
         AppCenter.start(getApplication(), "74bc89c2-9212-4cc3-9b55-6fc10baf76bb", Analytics.class, Crashes.class);
 
         setContentView(R.layout.activity_main);
@@ -84,19 +92,16 @@ public class MainActivity extends AppCompatActivity
         findButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SendUserToFindFriendActivity();
+                SendUserToFindFriendActivity(bundle);
             }
         });
 
         mViewPager = findViewById(R.id.viewPager);
         final TabLayout tabLayout = findViewById(R.id.tablayout);
 
-        ///////////////////////////////////////////////////
-        idClass=getIntent().getExtras().get("idClass").toString();
-        idTeacher=getIntent().getExtras().get("idTeacher").toString();
-        Bundle bundle = new Bundle();
-        bundle.putString("idClass", idClass);
-        bundle.putString("idTeacher",idTeacher);
+//        Bundle bundle = new Bundle();
+//        bundle.putString("idClass", idClass);
+//        bundle.putString("idTeacher",idTeacher);
 
         /////////////////////////////////////////////////////
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),bundle);
@@ -155,10 +160,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void SendUserToFindFriendActivity() {
+    private void SendUserToFindFriendActivity(Bundle bundle) {
         Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
-        friendsIntent.putExtra("idClass",idClass);
-        friendsIntent.putExtra("idTeacher",idTeacher);
+        friendsIntent.putExtras(bundle);
         startActivity(friendsIntent);
 
     }
@@ -167,8 +171,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        FirebaseUser currentUser=mAuth.getCurrentUser();
-        if(currentUser==null){
+        if(mAuth.getCurrentUser()==null){
             SendUserToLoginActivity();
         }
     }
@@ -189,8 +192,8 @@ public class MainActivity extends AppCompatActivity
     private void SendUserToLoginActivity() {
         Intent loginIntent=new Intent(MainActivity.this,LoginActivity.class);
         loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(loginIntent);
         finish();
+        startActivity(loginIntent);
 
     }
 
@@ -222,11 +225,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         final Intent intent;
 
+
         switch (id){
             case R.id.photoalbum:
                 intent=new Intent(MainActivity.this, PhotoAlbumActivity.class);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.parent:
@@ -234,67 +237,56 @@ public class MainActivity extends AppCompatActivity
             case R.id.permissonform:
                 if(idTeacher.equals(currentUserID)){
                     intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
-                    intent.putExtra("CLASS_ID",idClass);
-                    intent.putExtra("idClass",idClass);
-                    intent.putExtra("idTeacher",idTeacher);
+                    intent.putExtras(bundle);
                     startActivity(intent);
                 }
                 else {
                     intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
-                    intent.putExtra("idClass",idClass);
-                    intent.putExtra("idTeacher",idTeacher);
+                    intent.putExtras(bundle);
                     startActivity(intent);
                 }
                 break;
             case R.id.timetable:
                 intent=new Intent(MainActivity.this, TimeTableActivity.class);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.camera:
                 intent=new Intent(MainActivity.this, CameraActivity.class);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.homework:
                 intent=new Intent(MainActivity.this, TestNotifyActivity.class);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.profile:
                 intent=new Intent(MainActivity.this, PersonProfileActivity.class);
-                intent.putExtra("visit_user_id",currentUserID);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
+                bundle.putString("VISIT_USER_ID",currentUserID);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.event:
                 intent= new Intent(MainActivity.this, EventsActivity.class);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
 //            case R.id.knowledge:
 //                break;
             case R.id.changeclass:
                 intent= new Intent(MainActivity.this, ChangeClassActivity.class);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.help:
                 intent=new Intent(MainActivity.this, HelpActivity.class);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.setting:
                 intent=new Intent(MainActivity.this, SettingActivity.class);
-                intent.putExtra("idClass",idClass);
-                intent.putExtra("idTeacher",idTeacher);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.logout:

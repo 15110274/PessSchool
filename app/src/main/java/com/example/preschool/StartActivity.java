@@ -17,13 +17,15 @@ import com.google.firebase.database.ValueEventListener;
 
 public class StartActivity extends AppCompatActivity {
 
-    FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
     private DatabaseReference UsersRef;
     private String currentUserID;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+
+
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null) {
@@ -35,7 +37,6 @@ public class StartActivity extends AppCompatActivity {
                     if (currentUserID.equals("Z85jCL2QLARLYoQGPjltOB5kCOE2")) {
                         Intent intent = new Intent(StartActivity.this, AdminActivity.class);
                         startActivity(intent);
-                        finish();
                     }
                     else if (!dataSnapshot.hasChild("fullname")) {
                         SendUserToSetupActivity();
@@ -50,17 +51,15 @@ public class StartActivity extends AppCompatActivity {
             });
         }
         else {
-            Toast.makeText(StartActivity.this, "vao login1", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(StartActivity.this, "vao login1", Toast.LENGTH_SHORT).show();
             Intent intent=new Intent(StartActivity.this,LoginActivity.class);
             startActivity(intent);
-            finish();
         }
     }
     private void SendUserToSetupActivity() {
         Intent setupIntent = new Intent(StartActivity.this, SetupActivity.class);
-        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(setupIntent);
-        finish();
     }
     private void SendUserToMainActivity()
     {
@@ -77,9 +76,14 @@ public class StartActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         final String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
                         Intent mainIntent = new Intent(StartActivity.this, MainActivity.class);
-                        mainIntent.putExtra("idClass",idClass);
-                        mainIntent.putExtra("idTeacher",idTeacher);
-                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        Bundle bundleStart=new Bundle();
+
+                        // Đóng gói dữ liệu vào bundle
+                        bundleStart.putString("ID_CLASS",idClass);
+                        bundleStart.putString("ID_TEACHER",idTeacher);
+                        mainIntent.putExtras(bundleStart);
+//                        mainIntent.putExtra("idTeacher",idTeacher);
+//                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(mainIntent);
                     }
 
@@ -96,5 +100,11 @@ public class StartActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.finish();
     }
 }

@@ -129,8 +129,8 @@ public class FindFriendsActivity extends AppCompatActivity {
             myName.setText(fullname);
         }
         public void setAddress(String address){
-            TextView myAddress=layout.findViewById(R.id.all_users_address);
-            myAddress.setText(address);
+//            TextView myAddress=layout.findViewById(R.id.all_users_address);
+//            myAddress.setText(address);
         }
         private void Layout_hide() {
             params.height = 0;

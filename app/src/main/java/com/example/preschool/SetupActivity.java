@@ -112,6 +112,12 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+//        this.finish();
+    }
+
+    @Override
 
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -267,8 +273,11 @@ public class SetupActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         final String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
                         Intent mainIntent = new Intent(SetupActivity.this, MainActivity.class);
-                        mainIntent.putExtra("idClass",idClass);
-                        mainIntent.putExtra("idTeacher",idTeacher);
+                        Bundle bundle=new Bundle();
+                        bundle.putString("ID_CLASS",idClass);
+                        bundle.putString("ID_TEACHER",idTeacher);
+                        mainIntent.putExtras(bundle);
+                        finish();
                         //mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(mainIntent);
                     }
@@ -287,4 +296,5 @@ public class SetupActivity extends AppCompatActivity {
 
 
     }
+
 }

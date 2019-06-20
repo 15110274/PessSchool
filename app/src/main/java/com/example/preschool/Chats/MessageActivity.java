@@ -84,6 +84,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // and this
 //                startActivity(new Intent(MessageActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                finish();
             }
         });
 
@@ -133,10 +134,9 @@ public class MessageActivity extends AppCompatActivity {
                     //and this
                     Picasso.get().load(user.getProfileimage()).into(profile_image);
                 }
-                if(user.getUserState().getType().equals("online")){
+                if (user.getUserState().getType().equals("online")) {
                     lastseen.setText("online");
-                }
-                else{
+                } else {
                     lastseen.setText(user.getUserState().getTime());
                 }
 
