@@ -44,13 +44,15 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private DatabaseReference UsersRef, PostsRef, LikesRef;
     private RecyclerView postList;
-    String currentUserID;
+    private String currentUserID;
     private FirebaseAuth mAuth;
     Boolean LikeChecker = false;
 
-    FloatingActionButton addPost;
+    private FloatingActionButton addPost;
     private static String idClass, idTeacher;
     private Bundle bundle;
+
+    private FirebaseRecyclerAdapter adapter;
 
     @SuppressLint("RestrictedApi")
     @Nullable
@@ -94,13 +96,9 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         linearLayoutManager.setStackFromEnd(true);
         postList.setLayoutManager(linearLayoutManager);
 
-        /**
-         * quăng id class vô chổ này classtest1
-         *
-         */
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
         LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
-        DisplayAllUsersPosts();
+//        DisplayAllUsersPosts();
 
 
         return view;
@@ -112,7 +110,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     private void DisplayAllUsersPosts() {
         Query SortPostsInDecendingOrder = PostsRef;
         FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>().setQuery(SortPostsInDecendingOrder, Posts.class).build();
-        FirebaseRecyclerAdapter adapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
+        adapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
 
 
             @Override
@@ -212,8 +210,21 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         };
         adapter.startListening();
+        adapter.notifyDataSetChanged();
         postList.setAdapter(adapter);
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();adapter.stopListening();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+//        adapter.startListening();
+        DisplayAllUsersPosts();
     }
 
     public static class PostsViewHolder extends RecyclerView.ViewHolder {

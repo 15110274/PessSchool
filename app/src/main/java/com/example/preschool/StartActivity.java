@@ -3,6 +3,7 @@ package com.example.preschool;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -20,89 +21,106 @@ public class StartActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private DatabaseReference UsersRef;
     private String currentUserID;
+    private Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null) {
-            currentUserID=mAuth.getCurrentUser().getUid();
+        if (currentUser != null) {
+            currentUserID = mAuth.getCurrentUser().getUid();
             UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
             UsersRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (currentUserID.equals("Z85jCL2QLARLYoQGPjltOB5kCOE2")) {
-                        Intent intent = new Intent(StartActivity.this, AdminActivity.class);
+                        intent = new Intent(StartActivity.this, AdminActivity.class);
                         startActivity(intent);
-                    }
-                    else if (!dataSnapshot.hasChild("fullname")) {
-                        SendUserToSetupActivity();
+                    } else if (!dataSnapshot.hasChild("fullname")) {
+                        intent = new Intent(StartActivity.this, SetupActivity.class);
+                        startActivity(intent);
                     } else {
-                        SendUserToMainActivity();
+                        final String idClass;
+
+                        idClass = dataSnapshot.child("idclass").getValue().toString();
+                        DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
+                        ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String idTeacher = dataSnapshot.child("teacher").getValue().toString();
+                                String className = dataSnapshot.child("classname").getValue().toString();
+                                Bundle bundleStart = new Bundle();
+                                intent = new Intent(StartActivity.this, MainActivity.class);
+                                // Đóng gói dữ liệu vào bundle
+                                bundleStart.putString("ID_CLASS", idClass);
+                                bundleStart.putString("CLASS_NAME", className);
+                                bundleStart.putString("ID_TEACHER", idTeacher);
+                                intent.putExtras(bundleStart);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
             });
-        }
-        else {
-//            Toast.makeText(StartActivity.this, "vao login1", Toast.LENGTH_SHORT).show();
-            Intent intent=new Intent(StartActivity.this,LoginActivity.class);
+        } else {
+            intent = new Intent(StartActivity.this, LoginActivity.class);
             startActivity(intent);
         }
     }
-    private void SendUserToSetupActivity() {
-        Intent setupIntent = new Intent(StartActivity.this, SetupActivity.class);
-//        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(setupIntent);
-    }
-    private void SendUserToMainActivity()
-    {
-        String currentUserID = mAuth.getCurrentUser().getUid();
-        final DatabaseReference UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        final DatabaseReference ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
-        UsersRef.child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String idClass;
-                idClass=dataSnapshot.child("idclass").getValue().toString();
-                ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
-                        String className=dataSnapshot.child(idClass).child("classname").getValue().toString();
-                        Intent mainIntent = new Intent(StartActivity.this, MainActivity.class);
-                        Bundle bundleStart=new Bundle();
-
-                        // Đóng gói dữ liệu vào bundle
-                        bundleStart.putString("ID_CLASS",idClass);
-                        bundleStart.putString("CLASS_NAME",className);
-                        bundleStart.putString("ID_TEACHER",idTeacher);
-                        mainIntent.putExtras(bundleStart);
-//                        mainIntent.putExtra("idTeacher",idTeacher);
-//                        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(mainIntent);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
 
 
-    }
+//    private void SendUserToMainActivity() {
+//        String currentUserID = mAuth.getCurrentUser().getUid();
+//        final DatabaseReference UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+//        final DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
+//        UsersRef.child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                final String idClass;
+//                idClass = dataSnapshot.child("idclass").getValue().toString();
+//                ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                        String idTeacher = dataSnapshot.child(idClass).child("teacher").getValue().toString();
+//                        String className = dataSnapshot.child(idClass).child("classname").getValue().toString();
+//                        Bundle bundleStart = new Bundle();
+//
+//                        // Đóng gói dữ liệu vào bundle
+//                        bundleStart.putString("ID_CLASS", idClass);
+//                        bundleStart.putString("CLASS_NAME", className);
+//                        bundleStart.putString("ID_TEACHER", idTeacher);
+//                        intentMain.putExtras(bundleStart);
+//                        startActivity(intentMain);
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                    }
+//                });
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//            }
+//        });
+//
+//
+//    }
 
     @Override
     protected void onPause() {
