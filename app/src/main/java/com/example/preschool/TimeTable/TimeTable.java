@@ -1,6 +1,8 @@
-package com.example.preschool;
+package com.example.preschool.TimeTable;
 
-public class TimeTable {
+import java.io.Serializable;
+
+public class TimeTable implements Serializable {
     String timeStart,timeEnd, description;
 
     public TimeTable() {

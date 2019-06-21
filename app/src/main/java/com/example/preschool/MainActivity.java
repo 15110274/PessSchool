@@ -8,7 +8,6 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import com.example.preschool.Chats.ChatsFragment;
@@ -18,19 +17,15 @@ import com.example.preschool.Menu.ViewMenuActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepFullViewActivity;
 import com.example.preschool.Notification.NotificationFragment;
-import com.example.preschool.Notification.TestNotifyActivity;
 import com.example.preschool.PhotoAlbum.PhotoAlbumActivity;
 import com.example.preschool.Setting.SettingActivity;
+import com.example.preschool.TimeTable.TimeTableActivity;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
@@ -40,7 +35,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
