@@ -359,7 +359,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-//        reference.removeEventListener(seenListener);
+        ClassRef.child("Messages").child(childToChat).removeEventListener(seenListener);
 //        status("offline");
 //        currentUser("none");
     }

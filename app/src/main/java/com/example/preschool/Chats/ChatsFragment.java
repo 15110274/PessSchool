@@ -131,7 +131,7 @@ public class ChatsFragment extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull final ChatListViewHolder chatListViewHolder, int i, @NonNull String s) {
+            protected void onBindViewHolder(@NonNull final ChatListViewHolder chatListViewHolder, int i, @NonNull final String s) {
                 UsersRef.child(s).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -151,12 +151,16 @@ public class ChatsFragment extends Fragment {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for(DataSnapshot child: dataSnapshot.getChildren()){
                                     chatListViewHolder.last_msg.setText(child.child("message").getValue().toString());
-                                    if(child.child("sender").getValue().toString().equals(current_user_id))
+                                    if(child.child("sender").getValue().toString().equals(current_user_id)){
                                         chatListViewHolder.sender.setVisibility(View.VISIBLE);
-                                    else chatListViewHolder.sender.setVisibility(View.GONE);
+                                    }
+                                    else {
+                                        chatListViewHolder.sender.setVisibility(View.GONE);
+                                        setTextLastMess(child.child("message").getValue().toString()
+                                                ,chatListViewHolder.last_msg,child.child("isseen").getValue(Boolean.class));
+                                    }
 
-                                    setTextLastMess(child.child("message").getValue().toString()
-                                            ,chatListViewHolder.last_msg,child.child("isseen").getValue(Boolean.class));
+
                                 }
 
                             }
@@ -167,11 +171,22 @@ public class ChatsFragment extends Fragment {
                             }
                         });
 
+
+
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                    }
+                });
+                chatListViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent chatintent = new Intent(getActivity(), MessageActivity.class);
+                        bundle.putString("VISIT_USER_ID", s);
+                        chatintent.putExtras(bundle);
+                        startActivity(chatintent);
                     }
                 });
             }
