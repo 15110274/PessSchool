@@ -1,6 +1,7 @@
 package com.example.preschool;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -9,10 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.preschool.Chats.MessageActivity;
 import com.example.preschool.TimeLine.Posts;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -35,6 +38,7 @@ import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -53,6 +57,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     private Bundle bundle;
 
     private FirebaseRecyclerAdapter adapter;
+    private Boolean isTeacher=false;
 
     @SuppressLint("RestrictedApi")
     @Nullable
@@ -82,7 +87,10 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         //
 
         //nếu là giáo viên mới cho phép đăng bài
-        if(currentUserID.equals(idTeacher)) addPost.show();
+        if(currentUserID.equals(idTeacher)){
+            addPost.show();
+            isTeacher=true;
+        }
         else addPost.hide();
 
 
@@ -134,6 +142,9 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
                     }
                 });
+                if(isTeacher){
+                    postsViewHolder.optionButton.setVisibility(View.VISIBLE);
+                }
 
                 postsViewHolder.setDescription(posts.getDescription());
                 postsViewHolder.setPostImage(posts.getPostimage());
@@ -154,6 +165,37 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 postsViewHolder.setCommentPostButtonStatus(PostKey);
 
                 //click post activity chua lm
+
+                // click option button
+                postsViewHolder.optionButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CharSequence options[] = new CharSequence[]{
+                                "Edit this post",
+                                "Delete this post"
+                        };
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                        builder.setTitle("Select Option");
+
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == 0) {
+//                                                Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
+//                                                profileintent.putExtra("visit_user_id",usersIDs);
+//                                                profileintent.putExtra("idTeacher",idTeacher);
+//                                                profileintent.putExtra("idClass",idClass);
+//                                                startActivity(profileintent);
+                                }
+                                if (which == 1) {
+                                    PostsRef.child(PostKey).removeValue();
+//
+                                }
+                            }
+                        });
+                        builder.show();
+                    }
+                });
 
                 //cmt
                 postsViewHolder.CommentPostButton.setOnClickListener(new View.OnClickListener() {
@@ -217,7 +259,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onPause() {
-        super.onPause();adapter.stopListening();
+        super.onPause();
+        adapter.stopListening();
     }
 
     @Override
@@ -229,20 +272,23 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     public static class PostsViewHolder extends RecyclerView.ViewHolder {
 
-        TextView LikePostButton, CommentPostButton;
-        TextView DisplayNoOfLikes, DisplayNoOfComments;
-        int countLikes;
-        int countComments;
+        private TextView LikePostButton, CommentPostButton;
+        private TextView DisplayNoOfLikes, DisplayNoOfComments;
+        private ImageButton optionButton;
+        private int countLikes;
+        private int countComments;
 
-        String currentUserId;
-        DatabaseReference LikesRef;
-        DatabaseReference CommentsRef;
+        private String currentUserId;
+        private DatabaseReference LikesRef;
+        private DatabaseReference CommentsRef;
         public PostsViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
             LikePostButton = itemView.findViewById(R.id.like_button);
             CommentPostButton = itemView.findViewById(R.id.comment_button);
             DisplayNoOfLikes = itemView.findViewById(R.id.display_no_of_likes);
             DisplayNoOfComments = itemView.findViewById(R.id.display_no_of_comments);
+            optionButton=itemView.findViewById(R.id.post_option_button);
+            optionButton.setVisibility(View.GONE);
 
             /**
              * quăng id class vô chổ này classtest1

@@ -22,18 +22,20 @@ public class StartActivity extends AppCompatActivity {
     private DatabaseReference UsersRef;
     private String currentUserID;
     private Intent intent;
+    private ValueEventListener valueEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        Toast.makeText(this,"Start Activity",Toast.LENGTH_LONG).show();
 
+        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             currentUserID = mAuth.getCurrentUser().getUid();
-            UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
-            UsersRef.addValueEventListener(new ValueEventListener() {
+            valueEventListener=UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (currentUserID.equals("Z85jCL2QLARLYoQGPjltOB5kCOE2")) {
@@ -59,6 +61,7 @@ public class StartActivity extends AppCompatActivity {
                                 bundleStart.putString("CLASS_NAME", className);
                                 bundleStart.putString("ID_TEACHER", idTeacher);
                                 intent.putExtras(bundleStart);
+
                                 startActivity(intent);
                             }
 
@@ -125,6 +128,16 @@ public class StartActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        this.finish();
+        if(valueEventListener!=null){
+
+            UsersRef.removeEventListener(valueEventListener);
+        }
+        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        finish();
     }
 }

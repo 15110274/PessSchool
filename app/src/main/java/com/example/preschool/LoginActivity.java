@@ -39,10 +39,15 @@ public class LoginActivity extends AppCompatActivity {
     private ProgressDialog loadingBar;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference UsersRef, ClassRef;
+    private ValueEventListener UsersEventListener, ClasEventListener;
+    private Intent intent;
+    private String currentUserID, idClass, idTeacher;
 
     private static final int RC_SIGN_IN = 1;
     private GoogleApiClient mGoogleSignInClient;
     private static final String TAG = "LoginActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 AllowingUserToLogin();
-//                Toast.makeText(LoginActivity.this, "vao login", Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -67,15 +71,15 @@ public class LoginActivity extends AppCompatActivity {
         btnFogotPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Dialog dialogFogotPass =new Dialog(LoginActivity.this);
+                final Dialog dialogFogotPass = new Dialog(LoginActivity.this);
                 dialogFogotPass.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialogFogotPass.setCancelable(false);
                 dialogFogotPass.setContentView(R.layout.forgot_password_dialog);
                 dialogFogotPass.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
-                final EditText txtMailFogotPass =dialogFogotPass.findViewById(R.id.txtMailForgotPass);
-                final TextView txtNotAMail=dialogFogotPass.findViewById(R.id.txtNotAMail);
-                Button btnSendForgotPass=dialogFogotPass.findViewById(R.id.btnSendFogotPass);
-                Button btnBackSendPass=dialogFogotPass.findViewById(R.id.btnBackSendPass);
+                final EditText txtMailFogotPass = dialogFogotPass.findViewById(R.id.txtMailForgotPass);
+                final TextView txtNotAMail = dialogFogotPass.findViewById(R.id.txtNotAMail);
+                Button btnSendForgotPass = dialogFogotPass.findViewById(R.id.btnSendFogotPass);
+                Button btnBackSendPass = dialogFogotPass.findViewById(R.id.btnBackSendPass);
 
                 btnSendForgotPass.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -92,9 +96,9 @@ public class LoginActivity extends AppCompatActivity {
                      */
                     private void sendResetPassword() {
                         FirebaseAuth auth = FirebaseAuth.getInstance();
-                        String emailAddress =txtMailFogotPass.getText().toString().trim();
+                        String emailAddress = txtMailFogotPass.getText().toString().trim();
 
-                        if(isMail(emailAddress)){
+                        if (isMail(emailAddress)) {
                             auth.sendPasswordResetEmail(emailAddress)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
@@ -106,16 +110,14 @@ public class LoginActivity extends AppCompatActivity {
                                                         Toast.LENGTH_LONG).show();
                                                 dialogFogotPass.cancel();
                                                 loadingBar.dismiss();
-                                            }
-                                            else {
+                                            } else {
                                                 Toast.makeText(LoginActivity.this,
                                                         "Fail to reset your password account",
                                                         Toast.LENGTH_LONG).show();
                                             }
                                         }
                                     });
-                        }
-                        else {
+                        } else {
                             txtNotAMail.setText(getString(R.string.not_a_mail));
                             loadingBar.dismiss();
                         }
@@ -146,21 +148,15 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void AllowingUserToLogin()
-    {
+    private void AllowingUserToLogin() {
         final String email = txtUsername.getText().toString();
         String password = txtPass.getText().toString();
 
-        if(TextUtils.isEmpty(email))
-        {
-            Toast.makeText(this,R.string.insert_email, Toast.LENGTH_SHORT).show();
-        }
-        else if(TextUtils.isEmpty(password))
-        {
+        if (TextUtils.isEmpty(email)) {
+            Toast.makeText(this, R.string.insert_email, Toast.LENGTH_SHORT).show();
+        } else if (TextUtils.isEmpty(password)) {
             Toast.makeText(this, R.string.insert_pass, Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
+        } else {
             loadingBar.setTitle(R.string.login);
             loadingBar.setMessage(getString(R.string.message_login_successfully));
             loadingBar.setCanceledOnTouchOutside(true);
@@ -169,41 +165,46 @@ public class LoginActivity extends AppCompatActivity {
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                         @Override
-                        public void onComplete(@NonNull Task<AuthResult> task)
-                        {
-                            if(task.isSuccessful())
-                            {
-                                final String currentUserID=mAuth.getCurrentUser().getUid();
-                                DatabaseReference UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
-                                UsersRef.addValueEventListener(new ValueEventListener() {
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                currentUserID = mAuth.getCurrentUser().getUid();
+                                UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+                                UsersEventListener = UsersRef.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         if (!dataSnapshot.hasChild("fullname")) {
-                                            SendUserToSetupActivity();
+
+                                            //Send user to SetupActivity
+                                            Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
+                                            setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                            finish();
+                                            startActivity(setupIntent);
                                         } else if (currentUserID.equals("Z85jCL2QLARLYoQGPjltOB5kCOE2")) {
+
+                                            //Send user to AdminActivity
                                             Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
                                             finish();
                                             startActivity(intent);
 
                                         } else {
-//                                            SendUserToMainActivity();
-                                            DatabaseReference ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
-                                            final String idClass=dataSnapshot.child("idclass").getValue().toString();
-                                            ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            // Send user to MainActivity
+                                            ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
+                                            idClass = dataSnapshot.child("idclass").getValue().toString();
+                                            ClasEventListener = ClassRef.addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                    final String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
-                                                    String className=dataSnapshot.child(idClass).child("classname").getValue().toString();
+                                                    idTeacher = dataSnapshot.child(idClass).child("teacher").getValue().toString();
+                                                    String className = dataSnapshot.child(idClass).child("classname").getValue().toString();
                                                     Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                                    Bundle bundleStart=new Bundle();
+                                                    Bundle bundleStart = new Bundle();
 
                                                     // Đóng gói dữ liệu vào bundle
-                                                    bundleStart.putString("ID_CLASS",idClass);
-                                                    bundleStart.putString("CLASS_NAME",className);
-                                                    bundleStart.putString("ID_TEACHER",idTeacher);
+                                                    bundleStart.putString("ID_CLASS", idClass);
+                                                    bundleStart.putString("CLASS_NAME", className);
+                                                    bundleStart.putString("ID_TEACHER", idTeacher);
                                                     mainIntent.putExtras(bundleStart);
                                                     finish();
-                                                    //mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                     startActivity(mainIntent);
                                                 }
 
@@ -212,16 +213,38 @@ public class LoginActivity extends AppCompatActivity {
 
                                                 }
                                             });
+//                                            ClasEventListener=ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                                @Override
+//                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                                    final String idTeacher = dataSnapshot.child(idClass).child("teacher").getValue().toString();
+//                                                    String className = dataSnapshot.child(idClass).child("classname").getValue().toString();
+//                                                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+//                                                    Bundle bundleStart = new Bundle();
+//
+//                                                    // Đóng gói dữ liệu vào bundle
+//                                                    bundleStart.putString("ID_CLASS", idClass);
+//                                                    bundleStart.putString("CLASS_NAME", className);
+//                                                    bundleStart.putString("ID_TEACHER", idTeacher);
+//                                                    mainIntent.putExtras(bundleStart);
+//                                                    finish();
+//                                                    //mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                                                    startActivity(mainIntent);
+//                                                }
+//
+//                                                @Override
+//                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                                }
+//                                            });
                                         }
                                     }
+
                                     @Override
                                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
                                     }
                                 });
-                            }
-                            else
-                            {
+                            } else {
                                 String message = task.getException().getMessage();
                                 Toast.makeText(LoginActivity.this, R.string.error_occured + message, Toast.LENGTH_SHORT).show();
                                 loadingBar.dismiss();
@@ -230,73 +253,22 @@ public class LoginActivity extends AppCompatActivity {
                     });
         }
     }
-    private void SendUserToSetupActivity() {
-        Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
-//        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        finish();
-        startActivity(setupIntent);
-    }
+
+
     private void addControlls() {
-        txtUsername=findViewById(R.id.login_email);
-        txtPass=findViewById(R.id.login_password);
-        btnFogotPass=findViewById(R.id.fogot_password);
-        btnSignIn=findViewById(R.id.login_button);
+        txtUsername = findViewById(R.id.login_email);
+        txtPass = findViewById(R.id.login_password);
+        btnFogotPass = findViewById(R.id.fogot_password);
+        btnSignIn = findViewById(R.id.login_button);
         mAuth = FirebaseAuth.getInstance();
         loadingBar = new ProgressDialog(this);
     }
-    // SendUserToRegisterActivity
-//    public void createNewAcc(View view) {
-//        Intent intent = new Intent(LoginActivity.this,RegisterDemoActivity.class);
-//        startActivity(intent);
-//    }
-    // Login Success Send User to MainActivity
-    private void SendUserToMainActivity()
-    {
-        //////////////////////////////////////////////////////
-        String currentUserID = mAuth.getCurrentUser().getUid();
-        final DatabaseReference UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        final DatabaseReference ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
-        UsersRef.child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String idClass=dataSnapshot.child("idclass").getValue().toString();
-                ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
-                        String className=dataSnapshot.child(idClass).child("classname").getValue().toString();
-                        Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                        Bundle bundleStart=new Bundle();
 
-                        // Đóng gói dữ liệu vào bundle
-                        bundleStart.putString("ID_CLASS",idClass);
-                        bundleStart.putString("CLASS_NAME",className);
-                        bundleStart.putString("ID_TEACHER",idTeacher);
-                        mainIntent.putExtras(bundleStart);
-                        finish();
-                        //mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(mainIntent);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ClassRef.removeEventListener(ClasEventListener);
+        UsersRef.removeEventListener(UsersEventListener);
+        finish();
     }
-//    private void SendUserToLoginActivity()
-//    {
-//        Intent mainIntent = new Intent(LoginActivity.this, LoginActivity.class);
-//        mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//        startActivity(mainIntent);
-//        finish();
-//    }
 }

@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.example.preschool.Chats.ChatsFragment;
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity
         mAuth=FirebaseAuth.getInstance();
 
         currentUserID = mAuth.getCurrentUser().getUid();
-        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+//        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
 //        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("classmane").toString();
 
 
@@ -91,11 +92,6 @@ public class MainActivity extends AppCompatActivity
         mViewPager = findViewById(R.id.viewPager);
         final TabLayout tabLayout = findViewById(R.id.tablayout);
 
-//        Bundle bundle = new Bundle();
-//        bundle.putString("idClass", idClass);
-//        bundle.putString("idTeacher",idTeacher);
-
-        /////////////////////////////////////////////////////
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(),bundle);
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -152,12 +148,12 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    private void SendUserToFindFriendActivity(Bundle bundle) {
-        Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
-        friendsIntent.putExtras(bundle);
-        startActivity(friendsIntent);
-
-    }
+//    private void SendUserToFindFriendActivity(Bundle bundle) {
+//        Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
+//        friendsIntent.putExtras(bundle);
+//        startActivity(friendsIntent);
+//
+//    }
 
     //
 //    @Override
@@ -173,21 +169,21 @@ public class MainActivity extends AppCompatActivity
      * Check xem user đã có full name hay chưa, nếu chưa gửi sang trang SetupActivity
      */
 
-    private void SendUserToSetupActivity() {
-        Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
-        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(setupIntent);
-        finish();
-    }
+//    private void SendUserToSetupActivity() {
+//        Intent setupIntent = new Intent(MainActivity.this, SetupActivity.class);
+//        setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        startActivity(setupIntent);
+//        finish();
+//    }
 
 
-    private void SendUserToLoginActivity() {
-        Intent loginIntent=new Intent(MainActivity.this,LoginActivity.class);
-        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        finish();
-        startActivity(loginIntent);
-
-    }
+//    private void SendUserToLoginActivity() {
+//        Intent loginIntent=new Intent(MainActivity.this,LoginActivity.class);
+//        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        finish();
+//        startActivity(loginIntent);
+//
+//    }
 
     @Override
     public void onBackPressed() {
@@ -209,6 +205,25 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+//        updateUserStatus("online");
+//        Toast.makeText(this,"Main Start",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+//        updateUserStatus("offline");
+//        Toast.makeText(this,"Main Stop",Toast.LENGTH_LONG).show();
+    }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -216,7 +231,6 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         final Intent intent;
-
 
         switch (id){
             case R.id.photoalbum:

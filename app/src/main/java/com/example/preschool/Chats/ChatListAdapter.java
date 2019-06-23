@@ -85,7 +85,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             public void onClick(View view) {
                 Intent intent = new Intent(mContext, MessageActivity.class);
                 bundle=new Bundle();
-                bundle.putString("ID_RECIVER",user.getUserid());
+                bundle.putString("VISIT_USER_ID",user.getUserid());
                 intent.putExtras(bundle);
                 mContext.startActivity(intent);
             }
