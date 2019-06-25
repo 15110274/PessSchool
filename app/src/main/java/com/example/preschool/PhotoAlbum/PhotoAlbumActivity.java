@@ -109,7 +109,7 @@ public class PhotoAlbumActivity extends AppCompatActivity {
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getApplicationContext(), ViewPhotoAlbumActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), ViewAllPhotoActivity.class);
 
                         bundle.putString("POSITION_ALBUM",getRef(position).getKey());
                         intent.putExtras(bundle);

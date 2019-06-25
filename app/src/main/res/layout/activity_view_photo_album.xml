@@ -5,20 +5,29 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".PhotoAlbum.ViewPhotoAlbumActivity">
+
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
 
+        <TextView
+            android:id="@+id/position_photo"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="65dp"
+            android:gravity="center" />
     </androidx.appcompat.widget.Toolbar>
+
     <androidx.viewpager.widget.ViewPager
+        android:id="@+id/view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#222222"
-        android:orientation="vertical"
-        android:id="@+id/view_pager">
+        android:orientation="vertical">
 
     </androidx.viewpager.widget.ViewPager>
 

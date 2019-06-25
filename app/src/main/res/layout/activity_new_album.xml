@@ -6,8 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp"
     tools:context=".PhotoAlbum.NewAlbumActivity">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
+    </androidx.appcompat.widget.Toolbar>
 
     <EditText
         android:id="@+id/add_title_album"
@@ -58,6 +64,7 @@
         android:id="@+id/upload_image"
         android:layout_width="wrap_content"
         android:background="@drawable/large_button"
+        android:textColor="@color/background"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Upload"/>

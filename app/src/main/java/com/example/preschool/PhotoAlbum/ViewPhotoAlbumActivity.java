@@ -10,6 +10,8 @@ import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 
 public class ViewPhotoAlbumActivity extends AppCompatActivity {
 
@@ -29,11 +33,13 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
     private DatabaseReference mPhotosRef;
     private String positionAlbum;
     private TextView nameAlbum;
-    private Album mAlbum=new Album();
+    private Album mAlbum = new Album();
     private AdapterImageView adapterImageView;
-    private String idClass,idTeacher;
+    private String idClass, idTeacher;
 
     private Bundle bundle;
+    private ArrayList<String> uriList;
+    private TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,54 +48,25 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setTitle("Album");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // and this
-//                startActivity(new Intent(MessageActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 finish();
             }
         });
 
-        // get bundle
-        bundle=getIntent().getExtras();
-        idClass=bundle.getString("ID_CLASS");
-        idTeacher=bundle.getString("ID_TEACHER");
-        positionAlbum=bundle.getString("POSITION_ALBUM");
+        // get uirList
+        uriList = getIntent().getStringArrayListExtra("IMAGE_LINK");
+        getSupportActionBar().setTitle("");
 
-        final ActionBar actionBar = getSupportActionBar();
-
-
-
-
-
-        mPhotosRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Albums").child(positionAlbum);
-        mPhotosRef.keepSynced(true);
+        title=findViewById(R.id.position_photo);
+        title.setText(String.valueOf(uriList.size()));
 
         viewPager=findViewById(R.id.view_pager);
+        AdapterImageView adapter = new AdapterImageView(ViewPhotoAlbumActivity.this, uriList);
+        viewPager.setAdapter(adapter);
 
-//        myRecycleView.hasFixedSize();
-//        myRecycleView.setLayoutManager(new LinearLayoutManager(this));
-
-        mPhotosRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mAlbum= dataSnapshot.getValue(Album.class);
-                getSupportActionBar().setTitle(mAlbum.getName());
-//                actionBar.setTitle(mAlbum.getName());
-
-//                adapterImageView=new AdapterImageView(mAlbum.getImageUrlList());
-//                myRecycleView.setAdapter(adapterImageView);
-                AdapterImageView adapter = new AdapterImageView(ViewPhotoAlbumActivity.this, mAlbum.getImageUrlList());
-                viewPager.setAdapter(adapter);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
 
     }
 

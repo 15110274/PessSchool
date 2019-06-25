@@ -2,10 +2,12 @@ package com.example.preschool;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 
 public class ChangeClassActivity extends AppCompatActivity {
     private String idClass,idTeacher;
@@ -14,6 +16,17 @@ public class ChangeClassActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_class);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Doi lop");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
         // Get Bundle
         bundle=getIntent().getExtras();
@@ -31,11 +44,5 @@ public class ChangeClassActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-    @Override
-    public void onBackPressed() {
-        Intent intent=new Intent(ChangeClassActivity.this, MainActivity.class);
-        intent.putExtras(bundle);
-        startActivity(intent);
     }
 }

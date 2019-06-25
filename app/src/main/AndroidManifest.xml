@@ -15,17 +15,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Menu.ViewMenuActivity"
-            android:theme="@style/AppTheme">
-
-        </activity>
-        <activity android:name=".Menu.MenuActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".ManageUserActivity"
-            android:theme="@style/AppTheme">
-
-        </activity>
-        <activity android:name=".ManageClassActivity"
+        <activity
+            android:name=".PhotoAlbum.ViewAllPhotoActivity"
+            android:theme="@style/AppThemeActionbar.NoActionBar"></activity>
+        <activity
+            android:name=".Menu.ViewMenuActivity"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".Menu.MenuActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ManageUserActivity"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".ManageClassActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Chats.MessageActivity"
@@ -42,30 +45,38 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TimeTable.TimeTableActivity" />
+        <activity
+            android:name=".TimeTable.TimeTableActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Event.AddEventActivity"
             android:theme="@style/AddEventsTheme" />
-        <activity android:name=".Event.EventsActivity"
-            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".Event.EventsActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".EditProfileActivity"
             android:parentActivityName=".PersonProfileActivity" />
-        <activity android:name=".NghiPhep.DonNghiPhepViewActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".NghiPhep.DonNghiPhepFullViewActivity"
-            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".NghiPhep.DonNghiPhepViewActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".NghiPhep.DonNghiPhepFullViewActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".NghiPhep.DonNghiPhepActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".PhotoAlbum.ViewPhotoAlbumActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".PhotoAlbum.PhotoAlbumActivity"
-            android:theme="@style/AppTheme"/>
-        <activity android:name=".PhotoAlbum.NewAlbumActivity" />
-        <activity android:name=".Notification.TestNotifyActivity" />
         <activity
-            android:name=".PersonProfileActivity" />
+            android:name=".PhotoAlbum.ViewPhotoAlbumActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".PhotoAlbum.PhotoAlbumActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".PhotoAlbum.NewAlbumActivity"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".Notification.TestNotifyActivity" />
+        <activity android:name=".PersonProfileActivity" />
         <activity
             android:name=".FindFriendsActivity"
             android:theme="@style/AppTheme" />
@@ -73,20 +84,23 @@
         <activity
             android:name=".CommentsActivity"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".PostActivity" />
+        <activity android:name=".PostActivity" />
         <activity
             android:name=".SetupActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ChangeClassActivity" />
+            android:name=".ChangeClassActivity"
+            android:theme="@style/AppTheme" />
         <activity
-            android:name=".CameraActivity" />
+            android:name=".CameraActivity"
+            android:theme="@style/AppTheme" />
         <activity
-            android:name=".HelpActivity" />
+            android:name=".HelpActivity"
+            android:theme="@style/AppTheme" />
         <activity android:name=".Parent.AlbumActivity" />
         <activity
-            android:name=".Setting.SettingActivity" />
+            android:name=".Setting.SettingActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Parent.HocPhiActivity"
             android:theme="@style/AppThemeActionbar" />
@@ -96,9 +110,7 @@
         <activity android:name=".RegisterDemoActivity" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme">
-
-        </activity>
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".Parent.ProfileParentActivity"
             android:theme="@style/AppThemeActionbar" />

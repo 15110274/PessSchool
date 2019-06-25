@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity
         currentStateMap.put("type",state);
 
         UsersRef.child("userState")
-                .updateChildren(currentStateMap);
+                .setValue(currentStateMap);
     }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
         ////////////////////////////////////////////
