@@ -245,13 +245,14 @@ public class MainActivity extends AppCompatActivity
                     intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
+                    break;
                 }
                 else {
                     intent=new Intent(MainActivity.this, DonNghiPhepActivity.class);
-//                    intent.putExtras(bundle);
+                    intent.putExtras(bundle);
                     startActivity(intent);
+                    break;
                 }
-                break;
             case R.id.timetable:
                 intent=new Intent(MainActivity.this, TimeTableActivity.class);
                 intent.putExtras(bundle);
@@ -303,7 +304,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.logout:
-                intent=new Intent(MainActivity.this, LoginActivity.class);
+                intent=new Intent(MainActivity.this, StartActivity.class);
                 mAuth.signOut();
                 startActivity(intent);
                 break;

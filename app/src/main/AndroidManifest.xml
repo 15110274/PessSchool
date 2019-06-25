@@ -16,15 +16,17 @@
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".Menu.ViewMenuActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme">
+
+        </activity>
         <activity android:name=".Menu.MenuActivity"
             android:theme="@style/AppTheme"/>
         <activity android:name=".ManageUserActivity"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".AdminActivity"></activity>
+            android:theme="@style/AppTheme">
+
+        </activity>
         <activity android:name=".ManageClassActivity"
-            android:theme="@style/AppTheme"
-            android:parentActivityName=".AdminActivity"/>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".Chats.MessageActivity"
             android:theme="@style/AppTheme" />
@@ -44,22 +46,26 @@
         <activity
             android:name=".Event.AddEventActivity"
             android:theme="@style/AddEventsTheme" />
-        <activity android:name=".Event.EventsActivity" />
+        <activity android:name=".Event.EventsActivity"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".EditProfileActivity"
             android:parentActivityName=".PersonProfileActivity" />
-        <activity android:name=".NghiPhep.DonNghiPhepViewActivity" />
-        <activity android:name=".NghiPhep.DonNghiPhepFullViewActivity" />
+        <activity android:name=".NghiPhep.DonNghiPhepViewActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".NghiPhep.DonNghiPhepFullViewActivity"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".NghiPhep.DonNghiPhepActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".PhotoAlbum.ViewPhotoAlbumActivity" />
-        <activity android:name=".PhotoAlbum.PhotoAlbumActivity" />
+        <activity android:name=".PhotoAlbum.ViewPhotoAlbumActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".PhotoAlbum.PhotoAlbumActivity"
+            android:theme="@style/AppTheme"/>
         <activity android:name=".PhotoAlbum.NewAlbumActivity" />
         <activity android:name=".Notification.TestNotifyActivity" />
         <activity
-            android:name=".PersonProfileActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".PersonProfileActivity" />
         <activity
             android:name=".FindFriendsActivity"
             android:theme="@style/AppTheme" />
@@ -68,27 +74,21 @@
             android:name=".CommentsActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".PostActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".PostActivity" />
         <activity
             android:name=".SetupActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ChangeClassActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".ChangeClassActivity" />
         <activity
-            android:name=".CameraActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".CameraActivity" />
         <activity
-            android:name=".HelpActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".HelpActivity" />
         <activity android:name=".Parent.AlbumActivity" />
         <activity
-            android:name=".Setting.SettingActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".Setting.SettingActivity" />
         <activity
             android:name=".Parent.HocPhiActivity"
-            android:parentActivityName=".MainActivity"
             android:theme="@style/AppThemeActionbar" />
         <activity
             android:name=".MainActivity"
@@ -96,10 +96,11 @@
         <activity android:name=".RegisterDemoActivity" />
         <activity
             android:name=".LoginActivity"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme">
+
+        </activity>
         <activity
             android:name=".Parent.ProfileParentActivity"
-            android:parentActivityName=".MainActivity"
             android:theme="@style/AppThemeActionbar" />
         <activity android:name=".Teacher.ProfileTeacherActivity" />
         <activity

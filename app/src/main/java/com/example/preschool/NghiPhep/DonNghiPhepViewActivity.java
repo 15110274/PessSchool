@@ -3,10 +3,12 @@ package com.example.preschool.NghiPhep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.preschool.R;
@@ -22,50 +24,52 @@ import java.util.ArrayList;
 
 public class DonNghiPhepViewActivity extends AppCompatActivity {
 
-    private DatabaseReference DonNghiPhepRef, UserRef;
+    private DatabaseReference DonNghiPhepRef;
+    private ValueEventListener donNghiPhepListener;
     private RecyclerView recyclerView;
     private ArrayList<DonNghiPhep> donNghiPhepArrayList = new ArrayList<DonNghiPhep>();
     private DonNghiPhepAdapter adapter;
     private String userId;
-    private String classId;
-
+    private String idClass;
+    private  Bundle bundle;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_don_nghi_phep_view);
-//        userId = getIntent().getExtras().get("USER_ID").toString();
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Don xin phep");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        // Get bundle
+        bundle=getIntent().getExtras();
+        if(bundle!=null){
+            idClass=bundle.getString("ID_CLASS");
+        }
 
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         recyclerView = findViewById(R.id.recycler_view_donnghiphep);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        UserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
-
-        UserRef.addValueEventListener(new ValueEventListener() {
+        DonNghiPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("DonNghiPhep");
+        donNghiPhepListener= DonNghiPhepRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                classId = dataSnapshot.child("idclass").getValue(String.class);
-
-                DonNghiPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(classId).child("DonNghiPhep");
-
-                DonNghiPhepRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                            if (ds.getValue(DonNghiPhep.class).getUserId().equals(userId)) {
-                                donNghiPhepArrayList.add(ds.getValue(DonNghiPhep.class));
-                            }
-                        }
-                        adapter = new DonNghiPhepAdapter(donNghiPhepArrayList);
-                        recyclerView.setAdapter(adapter);
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    if (ds.getValue(DonNghiPhep.class).getUserId().equals(userId)) {
+                        donNghiPhepArrayList.add(ds.getValue(DonNghiPhep.class));
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                }
+                adapter = new DonNghiPhepAdapter(donNghiPhepArrayList);
+                recyclerView.setAdapter(adapter);
             }
 
             @Override
@@ -76,4 +80,9 @@ public class DonNghiPhepViewActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DonNghiPhepRef.removeEventListener(donNghiPhepListener);
+    }
 }

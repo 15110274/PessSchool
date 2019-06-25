@@ -267,8 +267,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ClassRef.removeEventListener(ClasEventListener);
-        UsersRef.removeEventListener(UsersEventListener);
+        if(ClasEventListener!=null){
+            ClassRef.removeEventListener(ClasEventListener);
+        }
+        if(UsersEventListener!=null){
+            UsersRef.removeEventListener(UsersEventListener);
+        }
         finish();
     }
 }

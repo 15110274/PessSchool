@@ -18,11 +18,17 @@
         <item name="android:textColorPrimary">@android:color/black</item>
     </style>
 
+
+    <!-- Theme for Calendar-->
+    <style name="CalendarTheme" parent="Platform.MaterialComponents.Light">
+        <item name="colorAccent">@color/colorAccent</item>
+
+    </style>
     <!-- Base application theme. -->
-    <style name="AddEventsTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AddEventsTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/backgroundDark</item>
+        <item name="colorPrimaryDark">#F7F7F7</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorHint">@android:color/darker_gray</item>
         <item name="android:textColor">@color/textcolor</item>

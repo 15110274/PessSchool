@@ -40,13 +40,19 @@ public class DonNghiPhepActivity extends AppCompatActivity {
     private DatabaseReference DonXinPhepRef, UserRef;
     private DatePickerDialog.OnDateSetListener mDatePickerDialog;
     private String userId;
-    private String mParentName, classId;
+    private String mParentName, idClass;
     private String mKidName;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_don_xin_phep);
+        // Get bundle from Main
+        bundle=getIntent().getExtras();
+        if(bundle!=null){
+            idClass=bundle.getString("ID_CLASS");
+        }
 
         ngayNghi = findViewById(R.id.ngay_nghi);
         soNgayNghi = findViewById(R.id.so_ngay_nghi);
@@ -56,6 +62,8 @@ public class DonNghiPhepActivity extends AppCompatActivity {
         // Lấy User ID hiện tại đang đăng nhập
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+        DonXinPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("DonNghiPhep");
+
 
         UserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         UserRef.addValueEventListener(new ValueEventListener() {
@@ -63,9 +71,6 @@ public class DonNghiPhepActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mParentName = dataSnapshot.child("fullname").getValue(String.class);
                 mKidName = dataSnapshot.child("parentof").getValue(String.class);
-                classId = dataSnapshot.child("idclass").getValue(String.class);
-
-                DonXinPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(classId).child("DonNghiPhep");
             }
 
             @Override
@@ -87,7 +92,7 @@ public class DonNghiPhepActivity extends AppCompatActivity {
 
     public void ShowDanhSach(View view) {
         Intent intent = new Intent(DonNghiPhepActivity.this, DonNghiPhepViewActivity.class);
-//        intent.putExtra("USER_ID", userId);
+        intent.putExtras(bundle);
         startActivity(intent);
 
     }

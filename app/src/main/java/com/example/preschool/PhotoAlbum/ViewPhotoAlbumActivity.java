@@ -3,12 +3,14 @@ package com.example.preschool.PhotoAlbum;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 
@@ -38,6 +40,19 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_photo_album);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+//        getSupportActionBar().setTitle("Album");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // and this
+//                startActivity(new Intent(MessageActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                finish();
+            }
+        });
+
         // get bundle
         bundle=getIntent().getExtras();
         idClass=bundle.getString("ID_CLASS");
@@ -62,7 +77,8 @@ public class ViewPhotoAlbumActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mAlbum= dataSnapshot.getValue(Album.class);
-                actionBar.setTitle(mAlbum.getName());
+                getSupportActionBar().setTitle(mAlbum.getName());
+//                actionBar.setTitle(mAlbum.getName());
 
 //                adapterImageView=new AdapterImageView(mAlbum.getImageUrlList());
 //                myRecycleView.setAdapter(adapterImageView);

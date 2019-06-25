@@ -1,9 +1,8 @@
 package com.example.preschool.PhotoAlbum;
 
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,21 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.preschool.MainActivity;
 import com.example.preschool.R;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 
@@ -53,13 +46,24 @@ public class PhotoAlbumActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_album);
 
+        Toolbar toolbar = findViewById(R.id.toolbar_photo_album);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Album");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // and this
+//                startActivity(new Intent(MessageActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                finish();
+            }
+        });
+
         //get bundle from Main
         bundle=getIntent().getExtras();
         idClass=bundle.getString("ID_CLASS");
         idTeacher=bundle.getString("ID_TEACHER");
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.photo_album);
 
         fab=findViewById(R.id.add_new_album);
         fab.setVisibility(View.INVISIBLE);

@@ -6,10 +6,12 @@ package com.example.preschool.NghiPhep;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.View;
 
 import com.example.preschool.R;
 import com.google.firebase.database.DataSnapshot;
@@ -27,7 +29,7 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
     private ArrayList<DonNghiPhep> donNghiPhepArrayList = new ArrayList<DonNghiPhep>();
     private DonNghiPhepFullViewAdapter adapter;
     private String idClass;
-
+    private ValueEventListener donNghiPhepListener;
     private Bundle bundle;
 
     @Override
@@ -35,9 +37,20 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_don_nghi_phep_full_view);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Don xin phep");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         // Get Bundle
-        bundle=getIntent().getExtras();
-        idClass=bundle.getString("ID_CLASS");
+        bundle = getIntent().getExtras();
+        idClass = bundle.getString("ID_CLASS");
 
 
         recyclerView = findViewById(R.id.recycler_view_donnghiphep_full);
@@ -45,7 +58,7 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         DonNghiPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("DonNghiPhep");
-        DonNghiPhepRef.addValueEventListener(new ValueEventListener() {
+        donNghiPhepListener = DonNghiPhepRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
@@ -62,4 +75,9 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        DonNghiPhepRef.removeEventListener(donNghiPhepListener);
+    }
 }

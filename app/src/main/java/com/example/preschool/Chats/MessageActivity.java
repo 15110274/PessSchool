@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.example.preschool.Notifications.Data;
 import com.example.preschool.Notifications.MyResponse;
 import com.example.preschool.Notifications.Sender;
 import com.example.preschool.Notifications.Token;
+import com.example.preschool.PersonProfileActivity;
 import com.example.preschool.R;
 import com.example.preschool.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,6 +53,7 @@ public class MessageActivity extends AppCompatActivity {
     private TextView lastseen;
     private DatabaseReference UsersRef, ClassRef;
     private ImageButton btn_send;
+    private ImageButton info_user;
     private EditText text_send;
     private MessageAdapter messageAdapter;
     private List<Chat> mchat;
@@ -110,9 +113,18 @@ public class MessageActivity extends AppCompatActivity {
         lastseen = findViewById(R.id.last_seen);
         btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
+        info_user=findViewById(R.id.info_user);
 
 //        fuser = FirebaseAuth.getInstance().getCurrentUser();
 
+        info_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent=new Intent(MessageActivity.this, PersonProfileActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
