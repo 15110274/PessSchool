@@ -96,15 +96,17 @@ public class ManageClassActivity extends AppCompatActivity {
                 setQuery(ClassRef, Class.class).build();
         FirebaseRecyclerAdapter<Class, ClassViewHolder> adapter=new FirebaseRecyclerAdapter<Class, ClassViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull final ClassViewHolder classViewHolder, int position, @NonNull final Class model) {
-                final String usersIDs = getRef(position).getKey();
+            protected void onBindViewHolder(@NonNull final ClassViewHolder classViewHolder, final int position, @NonNull final Class model) {
                 classViewHolder.setClassName(model.getClassname());
                 String idTeacher=model.getTeacher();
                 if(idTeacher!=null){
                     UserRef.child(idTeacher).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            classViewHolder.setTeacherName(dataSnapshot.child("fullname").getValue().toString());
+                            if(dataSnapshot.hasChild("fullname"))
+                                classViewHolder.setTeacherName(dataSnapshot.child("fullname").getValue().toString());
+                            else
+                                classViewHolder.setTeacherName("Don't Setup");
                         }
 
                         @Override
@@ -112,6 +114,9 @@ public class ManageClassActivity extends AppCompatActivity {
 
                         }
                     });
+                }
+                else{
+                    classViewHolder.setTeacherName("null");
                 }
                 classViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -127,6 +132,30 @@ public class ManageClassActivity extends AppCompatActivity {
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                //xóa class
+                                if(which==2){
+                                    final String classID= getRef(position).getKey();
+                                    ClassRef.child(classID).removeValue();
+                                    UserRef.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.exists()){
+                                                for (DataSnapshot children: dataSnapshot.getChildren()) {
+                                                    if(children.hasChild("idclass")&&children.child("idclass").getValue().toString().equals(classID)){
+                                                        UserRef.child(children.getKey()).child("idclass").setValue("null");
+                                                        UserRef.child(children.getKey()).child("classname").setValue("null");
+                                                    }
+                                                }
+                                            }
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
 //                                if (which == 0) {
 //                                    Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
 //                                    profileintent.putExtra("visit_user_id",usersIDs);

@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Phụ huynh của: "
+        android:text="Email: "
         android:textAlignment="textStart"
         android:textColor="@android:color/darker_gray"
         android:textSize="16sp"
@@ -50,7 +50,7 @@
 
 
     <TextView
-        android:id="@+id/all_account_student"
+        android:id="@+id/all_account_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"

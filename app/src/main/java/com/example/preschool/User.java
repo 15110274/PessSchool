@@ -3,7 +3,24 @@ package com.example.preschool;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    public String fullname,username,idclass,classname,birthday,parentof,profileimage,userid;
+    public String fullname,username,idclass,classname,birthday,parentof,profileimage,userid,email,role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public UserState userState;
 
     public String getFullname() {

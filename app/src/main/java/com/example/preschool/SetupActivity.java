@@ -35,7 +35,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.util.HashMap;
 
 public class SetupActivity extends AppCompatActivity {
-    private EditText UserName, FullName, ParentOf, BirthDay, IdClass;
+    private EditText UserName, FullName, ParentOf, BirthDay;
     private Button SaveInformationbuttion;
     private CircleImageView ProfileImage;
     private ProgressDialog loadingBar;
@@ -44,6 +44,7 @@ public class SetupActivity extends AppCompatActivity {
     private DatabaseReference UsersRef;
     private DatabaseReference ClassRef;
     private StorageReference UserProfileImageRef;
+    private Uri resultUri;
 
     final static int Gallery_Pick = 1;
 
@@ -64,7 +65,6 @@ public class SetupActivity extends AppCompatActivity {
         FullName = findViewById(R.id.setup_fullname);
         ParentOf = findViewById(R.id.setup_parentofchild);
         BirthDay = findViewById(R.id.setup_dayofbirth);
-        IdClass = findViewById(R.id.setup_idClass);
         SaveInformationbuttion = findViewById(R.id.setup_information_button);
         ProfileImage = findViewById(R.id.setup_profile_image);
         loadingBar = new ProgressDialog(this);
@@ -136,15 +136,41 @@ public class SetupActivity extends AppCompatActivity {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
             if (resultCode == RESULT_OK) {
-                loadingBar.setTitle("Profile Image");
-                loadingBar.setMessage("Please wait, while we updating your profile image...");
-                loadingBar.show();
-                loadingBar.setCanceledOnTouchOutside(true);
+                resultUri = result.getUri();
+                ProfileImage.setImageURI(resultUri);
 
-                Uri resultUri = result.getUri();
+            }
+        }
+    }
 
-                StorageReference filePath = UserProfileImageRef.child(currentUserID + ".jpg");
+    private void SaveAccountSetupInformation() {
 
+        final String username = UserName.getText().toString();
+        final String fullname = FullName.getText().toString();
+        final String parentof = ParentOf.getText().toString();
+        final String birthday = BirthDay.getText().toString();
+        final String[] classname = new String[1];
+
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(this, "Please write your username...", Toast.LENGTH_SHORT).show();
+        }
+        if (TextUtils.isEmpty(fullname)) {
+            Toast.makeText(this, "Please write your full name...", Toast.LENGTH_SHORT).show();
+        }
+        if (TextUtils.isEmpty(parentof)) {
+            Toast.makeText(this, "Please write children name...", Toast.LENGTH_SHORT).show();
+        }
+        if (TextUtils.isEmpty(birthday)) {
+            Toast.makeText(this, "Please write birthday of your child...", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            loadingBar.setTitle("Saving Information");
+            loadingBar.setMessage("Please wait, while we are creating your new Account...");
+            loadingBar.show();
+            loadingBar.setCanceledOnTouchOutside(true);
+            StorageReference filePath = UserProfileImageRef.child(currentUserID + ".jpg");
+
+            if(resultUri!=null){
                 filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
@@ -164,15 +190,11 @@ public class SetupActivity extends AppCompatActivity {
                                                 @Override
                                                 public void onComplete(@NonNull Task<Void> task) {
                                                     if (task.isSuccessful()) {
-                                                        Intent selfIntent = new Intent(SetupActivity.this, SetupActivity.class);
-                                                        startActivity(selfIntent);
-
                                                         Toast.makeText(SetupActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
-                                                        loadingBar.dismiss();
+                                                        //finish();
                                                     } else {
                                                         String message = task.getException().getMessage();
                                                         Toast.makeText(SetupActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                                                        loadingBar.dismiss();
                                                     }
                                                 }
                                             });
@@ -181,56 +203,18 @@ public class SetupActivity extends AppCompatActivity {
                         }
                     }
                 });
-            } else {
-                Toast.makeText(SetupActivity.this, "Error Occured: Image can not be cropped. Try Again.", Toast.LENGTH_SHORT).show();
-                loadingBar.dismiss();
             }
-        }
-    }
-
-    private void SaveAccountSetupInformation() {
-
-        String username = UserName.getText().toString();
-        String fullname = FullName.getText().toString();
-        String parentof = ParentOf.getText().toString();
-        String birthday = BirthDay.getText().toString();
-        final String idclass = IdClass.getText().toString();
-        final String[] classname = new String[1];
-
-
-
-        if (TextUtils.isEmpty(username)) {
-            Toast.makeText(this, "Please write your username...", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(fullname)) {
-            Toast.makeText(this, "Please write your full name...", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(parentof)) {
-            Toast.makeText(this, "Please write children name...", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(birthday)) {
-            Toast.makeText(this, "Please write birthday of your child...", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(idclass)) {
-            Toast.makeText(this, "Please write your idclass...", Toast.LENGTH_SHORT).show();
-        }else {
-            loadingBar.setTitle("Saving Information");
-            loadingBar.setMessage("Please wait, while we are creating your new Account...");
-            loadingBar.show();
-            loadingBar.setCanceledOnTouchOutside(true);
-
             final HashMap userMap = new HashMap();
             userMap.put("username", username);
             userMap.put("fullname", fullname);
             userMap.put("parentof", parentof);
             userMap.put("birthday", birthday);
-            userMap.put("idclass", idclass);
+
             userMap.put("userid", currentUserID);
             ClassRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    classname[0] = dataSnapshot.child(idclass).child("classname").getValue(String.class);
-                    userMap.put("classname",classname[0]);
+
 
                     UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
 
@@ -253,7 +237,6 @@ public class SetupActivity extends AppCompatActivity {
 
                 }
             });
-
 
         }
     }

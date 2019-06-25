@@ -49,9 +49,10 @@ public class ManageUserActivity extends AppCompatActivity {
     private EditText UserEmail;
     private FloatingActionButton CreateAccountButton;
     private ProgressDialog loadingBar;
-    private Spinner classNameSpinner;
-    private DatabaseReference UsersRef;
-    private int positionChoose=0;
+    private Spinner classNameSpinner,roleSpinner;
+    private DatabaseReference UsersRef,ClassRef;
+    private int classChoose=0;
+    private int roleChoose=0;
     private String userIdJustAdd;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,16 +61,45 @@ public class ManageUserActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
         UserEmail = findViewById(R.id.setup_email);
         CreateAccountButton = findViewById(R.id.create_button);
-        classNameSpinner=findViewById(R.id.classNameSniper);
-        loadingBar = new ProgressDialog(this);
-        UsersRef=FirebaseDatabase.getInstance().getReference().child("Users");
-        myAccountList=findViewById(R.id.list_account);
-        myAccountList.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ManageUserActivity.this);
-        linearLayoutManager.setReverseLayout(true);
-        linearLayoutManager.setStackFromEnd(true);
-        myAccountList.setLayoutManager(linearLayoutManager);
-        LoadAccountClass();
+        classNameSpinner=findViewById(R.id.classNameSpinner);
+        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
+
+        roleSpinner=findViewById(R.id.roleSniper);
+        final ArrayList<String> role=new ArrayList<>();
+        role.add("Choose Role...");
+        role.add("Parent");
+        role.add("Teacher");
+        role.add("Admin");
+        final ArrayAdapter<String> roleAdapter = new ArrayAdapter<String>(ManageUserActivity.this,android.R.layout.simple_spinner_item,role){
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0){
+                    tv.setTextColor(getResources().getColor(R.color.hintcolor));
+                }
+                else {
+                    tv.setTextColor(Color.WHITE);
+                }
+                view.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                return view;
+            }
+        };
+        roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        roleSpinner.setAdapter(roleAdapter );
+
         final ArrayList<String> className=new ArrayList<>();
         final ArrayList<String> classId=new ArrayList<>();
         className.add("Choose Class...");
@@ -118,11 +148,45 @@ public class ManageUserActivity extends AppCompatActivity {
         };
         autoComplete.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         classNameSpinner.setAdapter(autoComplete);
+        classNameSpinner.setVisibility(View.GONE);
+
+        roleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position==1||position==2){
+                    classNameSpinner.setVisibility(View.VISIBLE);
+                    if(classChoose!=0)
+                        LoadAccountClass(role.get(position),classId.get(classChoose));
+                    else LoadAccountClass(role.get(position),classId.get(0));
+                }
+                else if(position==3){
+                    classNameSpinner.setVisibility(View.GONE);
+                    LoadAccountClass(role.get(position),classId.get(0));
+                }
+                else  LoadAccountClass(role.get(position),classId.get(0));
+                roleChoose=position;
+                classNameSpinner.setSelection(0);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        loadingBar = new ProgressDialog(this);
+        UsersRef=FirebaseDatabase.getInstance().getReference().child("Users");
+        myAccountList=findViewById(R.id.list_account);
+        myAccountList.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ManageUserActivity.this);
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
+        myAccountList.setLayoutManager(linearLayoutManager);
+
         classNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                classNameSpinner.setOnItemSelectedListener(this);
-                positionChoose=position;
+                classChoose=position;
+                LoadAccountClass(role.get(roleChoose),classId.get(position));
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -132,11 +196,17 @@ public class ManageUserActivity extends AppCompatActivity {
             @Override
             public void onClick(View view)
             {
-                String email = UserEmail.getText().toString();
+                final String email = UserEmail.getText().toString();
                 String password= "123456";
                 if(TextUtils.isEmpty(email))
                 {
-                    Toast.makeText(ManageUserActivity.this, "Please write your email...", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ManageUserActivity.this, "Please write email...", Toast.LENGTH_SHORT).show();
+                }
+                else if(roleChoose==0){
+                    Toast.makeText(ManageUserActivity.this, "Please choose role...", Toast.LENGTH_SHORT).show();
+                }
+                else if(roleChoose!=0 && classChoose==0){
+                    Toast.makeText(ManageUserActivity.this, "Please choose class...", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
@@ -155,12 +225,19 @@ public class ManageUserActivity extends AppCompatActivity {
                                         UserEmail.setText("");
                                         userIdJustAdd=task.getResult().getUser().getUid();
                                         final HashMap userMap = new HashMap();
-                                        userMap.put("idclass", classId.get(positionChoose));
-                                        userMap.put("classname",className.get(positionChoose));
+                                        userMap.put("email",email);
+                                        userMap.put("role",role.get(roleChoose));
+                                        if(roleChoose==1||roleChoose==2){
+                                            userMap.put("idclass", classId.get(classChoose));
+                                            userMap.put("classname",className.get(classChoose));
+                                        }
                                         UsersRef.child(userIdJustAdd).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                                             @Override
                                             public void onComplete(@NonNull Task task) {
                                                 if (task.isSuccessful()) {
+                                                    if(roleChoose==2){
+                                                        ClassRef.child(classId.get(classChoose)).child("teacher").setValue(userIdJustAdd);
+                                                    }
                                                     Toast.makeText(ManageUserActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
                                                     mAuth.signOut();
                                                     mAuth.signInWithEmailAndPassword("khoandv@gmail.com", "123456")
@@ -196,19 +273,43 @@ public class ManageUserActivity extends AppCompatActivity {
 
     }
 
-    private void LoadAccountClass() {
+    private void LoadAccountClass(final String roleChoose, final String idClassChoose) {
         FirebaseRecyclerOptions<User> options=new FirebaseRecyclerOptions.Builder<User>().
                 setQuery(UsersRef, User.class).build();
         FirebaseRecyclerAdapter<User, UsersViewHolder> adapter=new FirebaseRecyclerAdapter<User, UsersViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull final UsersViewHolder usersViewHolder, int position, @NonNull final User model) {
-//                if(model.getIdclass().equals(idClassChoose)){
-                final String usersIDs = getRef(position).getKey();
-                if(model.getFullname()!=null){
-                    usersViewHolder.setFullname(model.getFullname());
-                    usersViewHolder.setProfileImage(model.getProfileimage());
-                    usersViewHolder.setStudent(model.getParentof());
+            protected void onBindViewHolder(@NonNull final UsersViewHolder usersViewHolder, final int position, @NonNull final User model) {
+                //nếu chọn role thì sắp xếp theo role
+                if(!roleChoose.equals("Choose Role...")){
+                    //nếu ko chọn class thì sẽ hiển thị theo role
+                    if(idClassChoose.equals("")){
+                        if(model.getRole().equals(roleChoose)){
+                            if(model.getFullname()!=null)
+                                usersViewHolder.setFullname(model.getFullname());
+                            usersViewHolder.setProfileImage(model.getProfileimage());
+                            usersViewHolder.setEmail(model.getEmail());
+                        }
+                        else usersViewHolder.Layout_hide();
+                    }
+                    //nếu vừa chọn role vừa chọn class thì hiển theo role rồi hiển thị theo class
+                    else{
+                        if(model.getRole().equals(roleChoose)&&model.getIdclass().equals(idClassChoose)){
+                            if(model.getFullname()!=null)
+                                usersViewHolder.setFullname(model.getFullname());
+                            usersViewHolder.setProfileImage(model.getProfileimage());
+                            usersViewHolder.setEmail(model.getEmail());
+                        }
+                        else usersViewHolder.Layout_hide();
+                    }
                 }
+                //ngược lại hiển thị toàn bộ user
+                else{
+                    if(model.getFullname()!=null)
+                        usersViewHolder.setFullname(model.getFullname());
+                    usersViewHolder.setProfileImage(model.getProfileimage());
+                    usersViewHolder.setEmail(model.getEmail());
+                }
+                final String usersIDs = getRef(position).getKey();
                 usersViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -217,12 +318,44 @@ public class ManageUserActivity extends AppCompatActivity {
                                 "Edit User",
                                 "Delete User"
                         };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ManageUserActivity.this);
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(ManageUserActivity.this);
                         builder.setTitle("Select Option");
 
                         builder.setItems(options, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                if(which==2){
+                                    final String userID= getRef(position).getKey();
+                                    UsersRef.child(userID).removeValue();
+                                    //xóa user
+                                    ClassRef.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.exists()){
+                                                for (DataSnapshot children: dataSnapshot.getChildren()) {
+                                                    if(children.hasChild("teacher")&&children.child("teacher").getValue().toString().equals(userID)){
+                                                        ClassRef.child(children.getKey()).child("teacher").setValue("null");
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                                if(which==1){
+                                    Intent intent=new Intent(ManageUserActivity.this,EditAccountActivity.class);
+                                    intent.putExtra("USER_ID",usersIDs);
+                                    startActivity(intent);
+                                }
+                                if(which==0){
+                                    Intent intent=new Intent(ManageUserActivity.this,ViewAccountActivity.class);
+                                    intent.putExtra("USER_ID",usersIDs);
+                                    startActivity(intent);
+                                }
 //                                if (which == 0) {
 //                                    Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
 //                                    profileintent.putExtra("visit_user_id",usersIDs);
@@ -240,10 +373,7 @@ public class ManageUserActivity extends AppCompatActivity {
                         builder.show();
                     }
                 });
-//                }
-//                else{
-//                    usersViewHolder.Layout_hide();
-//                }
+
             }
             @NonNull
             @Override
@@ -261,7 +391,7 @@ public class ManageUserActivity extends AppCompatActivity {
     public static class UsersViewHolder extends RecyclerView.ViewHolder{
         private ImageView user_image;
         private TextView user_name;
-        private TextView user_student;
+        private TextView user_email;
         private final androidx.constraintlayout.widget.ConstraintLayout layout;
         final LinearLayout.LayoutParams params;
         public UsersViewHolder(View itemView){
@@ -272,7 +402,7 @@ public class ManageUserActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             user_image=layout.findViewById(R.id.all_account_profile_image);
             user_name=layout.findViewById(R.id.all_account_full_name);
-            user_student=layout.findViewById(R.id.all_account_student);
+            user_email=layout.findViewById(R.id.all_account_email);
 
         }
         public void setProfileImage(String profileimage) {
@@ -284,8 +414,8 @@ public class ManageUserActivity extends AppCompatActivity {
             user_name.setText(fullname);
         }
 
-        public void setStudent(String student) {
-            user_student.setText(student);
+        public void setEmail(String student) {
+            user_email.setText(student);
         }
         private void Layout_hide() {
             params.height = 0;

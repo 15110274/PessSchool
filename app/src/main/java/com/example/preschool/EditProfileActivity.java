@@ -44,6 +44,7 @@ public class EditProfileActivity extends AppCompatActivity {
     final static int Gallery_Pick = 1;
     private StorageReference UserProfileImageRef;
     private String idClass,idTeacher,className;
+    private Uri resultUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,21 +66,30 @@ public class EditProfileActivity extends AppCompatActivity {
         className=getIntent().getExtras().get("CLASS_NAME").toString();
         UpdateAccountSettingButton=findViewById(R.id.update_account_settings_button);
         loadingBar=new ProgressDialog(this);
-
         EditUserRef.addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String myProfileImage=dataSnapshot.child("profileimage").getValue().toString();
-                String myUserName=dataSnapshot.child("username").getValue().toString();
-                String myProfileName=dataSnapshot.child("fullname").getValue().toString();
-                String myDOB=dataSnapshot.child("birthday").getValue().toString();
-                String myParentOf=dataSnapshot.child("parentof").getValue().toString();
-
-                Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfImage);
-                userName.setText(myUserName);
-                userFullName.setText(myProfileName);
-                userDOB.setText(myDOB);
-                userParentOf.setText(myParentOf);
+                if(dataSnapshot.hasChild("profileimage")){
+                    String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
+                    Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfImage);
+                }
+                if(dataSnapshot.hasChild("fullname")){
+                    String myProfileName = dataSnapshot.child("fullname").getValue().toString();
+                    userFullName.setText(myProfileName);
+                }
+                if(dataSnapshot.hasChild("username")){
+                    String myUserName = dataSnapshot.child("username").getValue().toString();
+                    userName.setText(myUserName);
+                }
+                if(dataSnapshot.hasChild("birthday")){
+                    String myDOB = dataSnapshot.child("birthday").getValue().toString();
+                    userDOB.setText(myDOB);
+                }
+                if(dataSnapshot.hasChild("parentof")){
+                    String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+                    userParentOf.setText(myParentOf);
+                }
             }
 
             @Override
@@ -124,59 +134,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
             if(resultCode == RESULT_OK)
             {
-                loadingBar.setTitle("Profile Image");
-                loadingBar.setMessage("Please wait, while we updating your profile image...");
-                loadingBar.setCanceledOnTouchOutside(true);
-                loadingBar.show();
-
-                Uri resultUri = result.getUri();
-
-                StorageReference filePath = UserProfileImageRef.child(currentUserId + ".jpg");
-
-                filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task)
-                    {
-                        if(task.isSuccessful()) {
-
-                            Toast.makeText(EditProfileActivity.this, "Profile Image stored successfully to Firebase storage...", Toast.LENGTH_SHORT).show();
-
-                            Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
-
-                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    final String downloadUrl = uri.toString();
-
-                                    EditUserRef.child("profileimage").setValue(downloadUrl)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-                                                        Intent selfIntent = new Intent(EditProfileActivity.this, EditProfileActivity.class);
-                                                        selfIntent.putExtra("idClass",idClass);
-                                                        selfIntent.putExtra("idTeacher",idTeacher);
-                                                        selfIntent.putExtra("CLASS_NAME",className);
-                                                        startActivity(selfIntent);
-
-                                                        Toast.makeText(EditProfileActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
-                                                        loadingBar.dismiss();
-                                                    } else {
-                                                        String message = task.getException().getMessage();
-                                                        Toast.makeText(EditProfileActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                                                        loadingBar.dismiss();
-                                                    }
-                                                }
-                                            });
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-            else {
-                Toast.makeText(EditProfileActivity.this, "Error Occured: Image can not be cropped. Try Again.", Toast.LENGTH_SHORT).show();
-                loadingBar.dismiss();
+                resultUri = result.getUri();
+                userProfImage.setImageURI(resultUri);
             }
         }
     }
@@ -192,7 +151,39 @@ public class EditProfileActivity extends AppCompatActivity {
         UpdateAccountInfo(username,userfullname,userdob,userparentof);
     }
 
-    private void UpdateAccountInfo(String username, String userfullname, String userdob, String userparentof) {
+    private void UpdateAccountInfo(final String username, final String userfullname, final String userdob, final String userparentof) {
+        StorageReference filePath = UserProfileImageRef.child(currentUserId + ".jpg");
+        if(resultUri!=null){
+            filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task)
+                {
+                    if(task.isSuccessful()) {
+                        Toast.makeText(EditProfileActivity.this, "Profile Image stored successfully to Firebase storage...", Toast.LENGTH_SHORT).show();
+                        Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+                        result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                final String downloadUrl = uri.toString();
+                                //lưu hình ảnh lên
+                                EditUserRef.child("profileimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (task.isSuccessful()) {
+                                            //Toast.makeText(EditProfileActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
+                                            //finish();
+                                        } else {
+                                            //String message = task.getException().getMessage();
+                                            //Toast.makeText(EditProfileActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }
+            });
+        }
         HashMap userMap=new HashMap();
         userMap.put("username",username);
         userMap.put("fullname",userfullname);
