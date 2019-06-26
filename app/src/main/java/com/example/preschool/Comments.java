@@ -1,16 +1,14 @@
 package com.example.preschool;
 
 public class Comments {
-    public String comment, date, time, username;
+    public String comment, date, time, username, avatar;
 
-    public Comments() {
-    }
-
-    public Comments(String comment, String date, String time, String username) {
+    public Comments(String comment, String date, String time, String username, String avatar) {
         this.comment = comment;
         this.date = date;
         this.time = time;
         this.username = username;
+        this.avatar = avatar;
     }
 
     public String getComment() {
@@ -43,5 +41,16 @@ public class Comments {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public Comments() {
     }
 }

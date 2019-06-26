@@ -138,9 +138,10 @@ public class FriendsFragment extends Fragment {
         adapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull FriendsViewHolder friendsViewHolder, final int i, @NonNull final User user) {
-                try{
+
+                try {
                     friendsViewHolder.user_name.setText(user.getUsername());
-                    friendsViewHolder.kid_name.setText("Bé "+user.getParentof());
+                    friendsViewHolder.kid_name.setText("Bé " + user.getParentof());
                     friendsViewHolder.setProfileImage(user.getProfileimage());
                     // Online/Offline
                     if (user.getUserState().getType().equals("online")) {
@@ -155,33 +156,33 @@ public class FriendsFragment extends Fragment {
 
 
                             CharSequence options[] = new CharSequence[]{
-                                            user.getUsername() + "'s Profile",
-                                            "Send Message"
-                                    };
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                    builder.setTitle("Select Option");
+                                    user.getUsername() + "'s Profile",
+                                    "Send Message"
+                            };
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setTitle("Select Option");
 
-                                    builder.setItems(options, new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (which == 0) {
-                                                Intent profileIntent = new Intent(getContext(), PersonProfileActivity.class);
-                                                bundle.putString("VISIT_USER_ID", visit_user_id);
-                                                profileIntent.putExtras(bundle);
-                                                startActivity(profileIntent);
-                                            }
-                                            if (which == 1) {
-                                                Intent chatintent = new Intent(getActivity(), MessageActivity.class);
-                                                bundle.putString("VISIT_USER_ID", visit_user_id);
-                                                chatintent.putExtras(bundle);
-                                                startActivity(chatintent);
-                                            }
-                                        }
-                                    });
-                                    builder.show();
+                            builder.setItems(options, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (which == 0) {
+                                        Intent profileIntent = new Intent(getContext(), PersonProfileActivity.class);
+                                        bundle.putString("VISIT_USER_ID", visit_user_id);
+                                        profileIntent.putExtras(bundle);
+                                        startActivity(profileIntent);
+                                    }
+                                    if (which == 1) {
+                                        Intent chatintent = new Intent(getActivity(), MessageActivity.class);
+                                        bundle.putString("VISIT_USER_ID", visit_user_id);
+                                        chatintent.putExtras(bundle);
+                                        startActivity(chatintent);
+                                    }
+                                }
+                            });
+                            builder.show();
                         }
                     });
-                }catch (Exception e){
+                } catch (Exception e) {
                     friendsViewHolder.user_name.setText("Phụ huynh chưa đăng nhập");
                     friendsViewHolder.online.setVisibility(View.GONE);
                 }
@@ -298,12 +299,12 @@ public class FriendsFragment extends Fragment {
             user_name = itemView.findViewById(R.id.all_users_profile_full_name);
             hey_chat.setText("✌");
             online = itemView.findViewById(R.id.online);
-            kid_name=itemView.findViewById(R.id.all_users_profile_kid_name);
+            kid_name = itemView.findViewById(R.id.all_users_profile_kid_name);
 
         }
 
         public void setProfileImage(String profileimage) {
-            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).resize(100,0).into(user_image);
+            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).resize(100, 0).into(user_image);
 
         }
 

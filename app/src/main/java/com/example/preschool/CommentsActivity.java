@@ -2,6 +2,7 @@ package com.example.preschool;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -62,6 +63,17 @@ public class CommentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Bình luận");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         //Get Bundle
         bundle=getIntent().getExtras();
         if(bundle!=null){
@@ -115,7 +127,8 @@ public class CommentsActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists()){
                             String userName=dataSnapshot.child("username").getValue().toString();
-                            ValidateComment(userName);
+                            String urlAvatar=dataSnapshot.child("profileimage").getValue().toString();
+                            ValidateComment(userName,urlAvatar);
                             CommentInputText.setText("");
                         }
                     }
@@ -259,6 +272,7 @@ public class CommentsActivity extends AppCompatActivity {
                 commentsViewHolder.setComment(comments.getComment());
                 commentsViewHolder.setDate(comments.getDate());
                 commentsViewHolder.setTime(comments.getTime());
+                commentsViewHolder.setAvatar(comments.getAvatar());
 
             }
 
@@ -280,6 +294,10 @@ public class CommentsActivity extends AppCompatActivity {
             super(itemView);
             mView=itemView;
         }
+        public void setAvatar(String urlAvatar){
+            ImageView avatar=mView.findViewById(R.id.avatar_comment);
+            Picasso.get().load(urlAvatar).resize(50,0).placeholder(R.drawable.ic_person_black_24dp).into(avatar);
+        }
 
         public void setComment(String comment) {
             TextView myComment=mView.findViewById(R.id.comment_text);
@@ -289,23 +307,23 @@ public class CommentsActivity extends AppCompatActivity {
 
         public void setDate(String date) {
             TextView myDate=mView.findViewById(R.id.comment_date);
-            myDate.setText(" Date: "+date);
+            myDate.setText("Date: "+date);
         }
 
 
 
         public void setTime(String time) {
             TextView myTime=mView.findViewById(R.id.comment_time);
-            myTime.setText(" Time: "+time);
+            myTime.setText("Time: "+time);
         }
 
         public void setUsername(String username) {
             TextView myUserName=mView.findViewById(R.id.comment_username);
-            myUserName.setText("@"+username+ "   " );
+            myUserName.setText(username);
         }
     }
 
-    private void ValidateComment(String userName) {
+    private void ValidateComment(String userName, String urlAvatar) {
         String commentText=CommentInputText.getText().toString();
         if(TextUtils.isEmpty(commentText)){
             Toast.makeText(this,"please write text to comment...",Toast.LENGTH_SHORT).show();
@@ -326,6 +344,7 @@ public class CommentsActivity extends AppCompatActivity {
             commentsMap.put("date",saveCurrentDate);
             commentsMap.put("time",saveCurrentTime);
             commentsMap.put("username",userName);
+            commentsMap.put("avatar",urlAvatar);
             PostsRef.child(RandomKey).updateChildren(commentsMap)
                     .addOnCompleteListener(new OnCompleteListener() {
                         @Override

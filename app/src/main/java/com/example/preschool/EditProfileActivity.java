@@ -43,7 +43,6 @@ public class EditProfileActivity extends AppCompatActivity {
     private String currentUserId;
     final static int Gallery_Pick = 1;
     private StorageReference UserProfileImageRef;
-    private String idClass,idTeacher,className;
     private Uri resultUri;
 
     @Override
@@ -61,11 +60,9 @@ public class EditProfileActivity extends AppCompatActivity {
         userFullName=findViewById(R.id.edit_fullname);
         userDOB=findViewById(R.id.edit_birthday);
         userParentOf=findViewById(R.id.edit_parentof);
-        idClass=getIntent().getExtras().get("idClass").toString();
-        idTeacher=getIntent().getExtras().get("idTeacher").toString();
-        className=getIntent().getExtras().get("CLASS_NAME").toString();
         UpdateAccountSettingButton=findViewById(R.id.update_account_settings_button);
         loadingBar=new ProgressDialog(this);
+
         EditUserRef.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -193,8 +190,8 @@ public class EditProfileActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()){
-                    SendUserToPersonProfileActivity();
                     Toast.makeText(EditProfileActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
+                    finish();
                 }
                 else{
                     Toast.makeText(EditProfileActivity.this,"Error",Toast.LENGTH_SHORT).show();
@@ -203,32 +200,6 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // chuyen ve trang trc ko bi mat du lieu
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    @Override
-    public void onBackPressed() {
-        Intent intent=new Intent(EditProfileActivity.this, PersonProfileActivity.class);
-        intent.putExtra("ID_CLASS",idClass);
-        intent.putExtra("ID_TEACHER",idTeacher);
-        intent.putExtra("VISIT_USER_ID",currentUserId);
-        intent.putExtra("CLASS_NAME",className);
-        startActivity(intent);
-    }
-    private void SendUserToPersonProfileActivity() {
-        Intent intent=new Intent(EditProfileActivity.this, PersonProfileActivity.class);
-        intent.putExtra("VISIT_USER_ID",currentUserId);
-        intent.putExtra("ID_CLASS",idClass);
-        intent.putExtra("ID_TEACHER",idTeacher);
-        intent.putExtra("CLASS_NAME",className);
-        startActivity(intent);
-    }
+
 }
 

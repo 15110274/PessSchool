@@ -293,7 +293,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(current_user_id, R.mipmap.ic_launcher, username + ": " + message, "New Message",
+                    Data data = new Data(current_user_id, idClass, R.mipmap.ic_launcher, username + ": " + message, "New Message",
                             idReciver);
 
                     Sender sender = new Sender(data, token.getToken());

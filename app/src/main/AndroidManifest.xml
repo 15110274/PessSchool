@@ -15,10 +15,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".EditAccountActivity"
+        <activity
+            android:name=".MyProfileActivity"
             android:theme="@style/AppTheme"></activity>
-        <activity android:name=".ViewAccountActivity"
-            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".EditAccountActivity"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ViewAccountActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".PhotoAlbum.ViewAllPhotoActivity"
             android:theme="@style/AppThemeActionbar.NoActionBar" />
@@ -60,7 +65,7 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".EditProfileActivity"
-            android:parentActivityName=".PersonProfileActivity" />
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".NghiPhep.DonNghiPhepViewActivity"
             android:theme="@style/AppTheme" />
@@ -80,7 +85,9 @@
             android:name=".PhotoAlbum.NewAlbumActivity"
             android:theme="@style/AppTheme" />
         <activity android:name=".Notification.TestNotifyActivity" />
-        <activity android:name=".PersonProfileActivity" />
+        <activity
+            android:name=".PersonProfileActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".FindFriendsActivity"
             android:theme="@style/AppTheme" />
@@ -117,7 +124,7 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Parent.ProfileParentActivity"
-            android:theme="@style/AppThemeActionbar" />
+            android:theme="@style/AppTheme" />
         <activity android:name=".Teacher.ProfileTeacherActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"

@@ -80,8 +80,6 @@ public class ChatsFragment extends Fragment {
         MessRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("Messages");
 
         getChatList();
-        updateToken(FirebaseInstanceId.getInstance().getToken());
-
 
         return view;
     }
@@ -106,11 +104,7 @@ public class ChatsFragment extends Fragment {
         }
     }
 
-    private void updateToken(String token) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token1 = new Token(token);
-        reference.child(fuser.getUid()).setValue(token1);
-    }
+
 
     // Return IdChat of both
     private String idChat(String A, String B) {

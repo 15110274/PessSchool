@@ -45,6 +45,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
     }
 
     private void sendOreoNotification(RemoteMessage remoteMessage) {
+        String idClass = remoteMessage.getData().get("idClass");
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -54,12 +55,13 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, MessageActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("userid", user);
+        bundle.putString("VISIT_USER_ID", user);
+        bundle.putString("ID_CLASS", idClass);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
 //        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Uri defaultSound=Uri.parse("android.resource://com.example.preschool/raw/sound_notify.mp3");
+        Uri defaultSound = Uri.parse("android.resource://com.example.preschool/raw/sound_notify.mp3");
         OreoNotification oreoNotification = new OreoNotification(this);
         Notification.Builder builder = oreoNotification.getOreoNotification(title, body, pendingIntent,
                 defaultSound, icon);
@@ -75,6 +77,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
     private void sendNotification(RemoteMessage remoteMessage) {
 
+        String idClass = remoteMessage.getData().get("idClass");
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -84,13 +87,14 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         int j = Integer.parseInt(user.replaceAll("[\\D]", ""));
         Intent intent = new Intent(this, MessageActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("userid", user);
+        bundle.putString("VISIT_USER_ID", user);
+        bundle.putString("ID_CLASS", idClass);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
 
 //        Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Uri defaultSound=Uri.parse("android.resource://com.example.preschool/raw/sound_notify");
+        Uri defaultSound = Uri.parse("android.resource://com.example.preschool/raw/sound_notify");
 //        Uri defaultSound = Uri.parse(String.format("android.resource://%s/%s/%s", "com/example/preschool", "raw", "sound_notify"));
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(Integer.parseInt(icon))

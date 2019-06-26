@@ -18,6 +18,7 @@ import com.example.preschool.Menu.ViewMenuActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepFullViewActivity;
 import com.example.preschool.Notification.NotificationFragment;
+import com.example.preschool.Notifications.Token;
 import com.example.preschool.PhotoAlbum.PhotoAlbumActivity;
 import com.example.preschool.Setting.SettingActivity;
 import com.example.preschool.TimeTable.TimeTableActivity;
@@ -27,6 +28,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
@@ -53,7 +55,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private DatabaseReference UsersRef,ClassRef;
     private TextView txtclassName;
-    String currentUserID;
+    private String currentUserID;
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private Bundle bundle;
@@ -75,6 +77,8 @@ public class MainActivity extends AppCompatActivity
         mAuth=FirebaseAuth.getInstance();
 
         currentUserID = mAuth.getCurrentUser().getUid();
+        // Update token
+        updateToken(FirebaseInstanceId.getInstance().getToken());
 //        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
 //        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("classmane").toString();
 
@@ -276,9 +280,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case R.id.profile:
-                intent=new Intent(MainActivity.this, PersonProfileActivity.class);
-                bundle.putString("VISIT_USER_ID",currentUserID);
-                intent.putExtras(bundle);
+                intent=new Intent(MainActivity.this, MyProfileActivity.class);
                 startActivity(intent);
                 break;
             case R.id.event:
@@ -310,6 +312,13 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
         return true;
+    }
+
+    // Update token to send Notifications
+    private void updateToken(String token) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(currentUserID).setValue(token1);
     }
     public void updateUserStatus(String state){
         String saveCurrentDate,saveCurrentTime;
