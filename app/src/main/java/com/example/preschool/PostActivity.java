@@ -70,8 +70,16 @@ public class PostActivity extends AppCompatActivity {
             idClass = bundle.getString("ID_CLASS");
         }
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Add New Post");
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Thêm Bản Tin");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         mAuth = FirebaseAuth.getInstance();
         current_user_id = mAuth.getCurrentUser().getUid();
 

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.preschool.CommentsActivity;
 import com.example.preschool.NewsFeedFragment;
@@ -15,9 +16,12 @@ import com.example.preschool.TimeLine.Posts;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
@@ -32,15 +36,22 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
     private RecyclerView myNotificationList;
     private DatabaseReference PostsRef, UsersRef;
     private FirebaseAuth mAuth;
-    private String online_user_id;
+    private Bundle bundle;
+    private String current_user_id, idClass,idTeacher;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view= inflater.inflate(R.layout.fragment_notification, container, false);
-        mAuth = FirebaseAuth.getInstance();
-        online_user_id = mAuth.getCurrentUser().getUid();
 
-        PostsRef= FirebaseDatabase.getInstance().getReference().child("Posts");
+        bundle = getArguments();
+        if (bundle != null) {
+            idClass = bundle.getString("ID_CLASS");
+            idTeacher=bundle.getString("ID_TEACHER");
+        }
+        mAuth = FirebaseAuth.getInstance();
+        current_user_id = mAuth.getCurrentUser().getUid();
+
+        PostsRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
 
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -56,24 +67,39 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
     }
 
     private void DisplayAllNotification() {
-        Query SortPostsInDecendingOrder=PostsRef.orderByChild("counter");
+        Query SortPostsInDecendingOrder = PostsRef;
         FirebaseRecyclerOptions<Posts> options=new FirebaseRecyclerOptions.Builder<Posts>().
                 setQuery(SortPostsInDecendingOrder, Posts.class).build();
         FirebaseRecyclerAdapter<Posts, PostsViewHolder> adapterMessages=new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final PostsViewHolder postsViewHolder, final int position, @NonNull Posts posts) {
-                final Intent chatIntent=new Intent(getActivity(), NewsFeedFragment.class);
+//                final Intent chatIntent=new Intent(getActivity(), NewsFeedFragment.class);
+
+
+                String idUserPost=posts.getUid();
+                UsersRef.child(idUserPost).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        postsViewHolder.setFullname(dataSnapshot.child("username").getValue().toString());
+                        postsViewHolder.setProfileImage(dataSnapshot.child("profileimage").getValue().toString());
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
 
                 final String PostKey = getRef(position).getKey();
                 postsViewHolder.setContent(" đã thêm một bài viết mới");
-                postsViewHolder.setFullname(posts.getFullname());
                 postsViewHolder.setTime(posts.getTime());
-                postsViewHolder.setProfileImage(posts.getProfileimage());
+
                 postsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent commentsIntent=new Intent(getActivity(), CommentsActivity.class);
-                        commentsIntent.putExtra("PostKey",PostKey);
+                        bundle.putString("KEY_POST",PostKey);
+                        commentsIntent.putExtras(bundle);
                         startActivity(commentsIntent);
                     }
                 });
@@ -116,7 +142,7 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
 
         public void setProfileImage(String profileimage) {
             CircleImageView userImage = mView.findViewById(R.id.all_notification_profile_image);
-            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).into(userImage);
+            Picasso.get().load(profileimage).resize(60,0).placeholder(R.drawable.ic_person_black_50dp).into(userImage);
 
         }
 

@@ -1,6 +1,7 @@
 package com.example.preschool;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,6 +29,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Comment;
@@ -125,6 +129,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             protected void onBindViewHolder(@NonNull final PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
 
                 final String PostKey = getRef(position).getKey();
+                final String urlImage=posts.getPostimage();
                 UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -147,7 +152,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 }
 
                 postsViewHolder.setDescription(posts.getDescription());
-                postsViewHolder.setPostImage(posts.getPostimage());
+                postsViewHolder.setPostImage(urlImage);
 
                 Calendar calFordTime = Calendar.getInstance();
                 int hours = calFordTime.get(Calendar.HOUR_OF_DAY);
@@ -164,7 +169,26 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 postsViewHolder.setLikeButtonStatus(PostKey);
                 postsViewHolder.setCommentPostButtonStatus(PostKey);
 
-                //click post activity chua lm
+                //click piture
+                postsViewHolder.postImages.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+//                        Dialog dialogImage=new Dialog(getContext(),android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                        Dialog dialogImage=new Dialog(getContext(),R.style.DialogViewImage);
+                        dialogImage.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialogImage.setCancelable(true);
+                        dialogImage.setContentView(R.layout.dialog_show_image_post);
+                        ImageView imageView=dialogImage.findViewById(R.id.image_post_view);
+//                        imageView.setImageDrawable(postsViewHolder.postImages.getDrawable());
+
+                        Picasso.get().load(urlImage).networkPolicy(NetworkPolicy.NO_CACHE)
+                                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                                .placeholder(postsViewHolder.postImages.getDrawable())
+                                .into(imageView);
+//                        Picasso.get().load(urlImage).into(imageView);
+                        dialogImage.show();
+                    }
+                });
 
                 // click option button
                 postsViewHolder.optionButton.setOnClickListener(new View.OnClickListener() {
@@ -277,7 +301,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         private ImageButton optionButton;
         private int countLikes;
         private int countComments;
-
+        private ImageView postImages;
         private String currentUserId;
         private DatabaseReference LikesRef;
         private DatabaseReference CommentsRef;
@@ -288,6 +312,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             DisplayNoOfLikes = itemView.findViewById(R.id.display_no_of_likes);
             DisplayNoOfComments = itemView.findViewById(R.id.display_no_of_comments);
             optionButton=itemView.findViewById(R.id.post_option_button);
+            postImages = itemView.findViewById(R.id.post_image);
             optionButton.setVisibility(View.GONE);
 
             /**
@@ -369,7 +394,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         }
 
         public void setPostImage(String postImage) {
-            ImageView postImages = (ImageView) itemView.findViewById(R.id.post_image);
             Picasso.get().load(postImage).resize(600, 0).into(postImages);
         }
 
@@ -377,7 +401,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private void SendUserToPostActivity() {
         Intent addNewPostIntent = new Intent(getActivity(), PostActivity.class);
-        //////////////////////////////////////////
         addNewPostIntent.putExtras(bundle);
         startActivity(addNewPostIntent);
     }

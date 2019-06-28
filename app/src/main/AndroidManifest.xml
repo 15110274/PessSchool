@@ -95,7 +95,8 @@
         <activity
             android:name=".CommentsActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".PostActivity" />
+        <activity android:name=".PostActivity"
+            android:theme="@style/AppTheme"/>
         <activity
             android:name=".SetupActivity"
             android:theme="@style/AppTheme" />

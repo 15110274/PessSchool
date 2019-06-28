@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,6 +31,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -80,6 +84,7 @@ public class CommentsActivity extends AppCompatActivity {
             idClass=bundle.getString("ID_CLASS");
             idTeacher=bundle.getString("ID_TEACHER");
             Post_Key=bundle.getString("KEY_POST");
+            bundle.remove("KEY_POST");
         }
 
 
@@ -155,6 +160,24 @@ public class CommentsActivity extends AppCompatActivity {
 
                     PostDescription.setText(description);
                     Picasso.get().load(postimage).resize(600,0).into(PostImage);
+
+                    PostImage.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Dialog dialogImage=new Dialog(CommentsActivity.this,R.style.DialogViewImage);
+                            dialogImage.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                            dialogImage.setCancelable(true);
+                            dialogImage.setContentView(R.layout.dialog_show_image_post);
+                            ImageView imageView=dialogImage.findViewById(R.id.image_post_view);
+
+                            Picasso.get().load(postimage).networkPolicy(NetworkPolicy.NO_CACHE)
+                                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+                                    .placeholder(PostImage.getDrawable())
+                                    .into(imageView);
+                            dialogImage.show();
+                        }
+                    });
+
                     UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -162,7 +185,7 @@ public class CommentsActivity extends AppCompatActivity {
                                 final String image=dataSnapshot.child("profileimage").getValue().toString();
                                 final String name=dataSnapshot.child("fullname").getValue().toString();
                                 PostName.setText(name);
-                                Picasso.get().load(image).resize(600,0).into(PostProfileImage);
+                                Picasso.get().load(image).resize(70,0).into(PostProfileImage);
                             }
 
                         }
@@ -296,7 +319,8 @@ public class CommentsActivity extends AppCompatActivity {
         }
         public void setAvatar(String urlAvatar){
             ImageView avatar=mView.findViewById(R.id.avatar_comment);
-            Picasso.get().load(urlAvatar).resize(50,0).placeholder(R.drawable.ic_person_black_24dp).into(avatar);
+            Picasso.get().load(urlAvatar).networkPolicy(NetworkPolicy.NO_CACHE)
+                    .memoryPolicy(MemoryPolicy.NO_CACHE).resize(50,0).placeholder(R.drawable.ic_person_black_24dp).into(avatar);
         }
 
         public void setComment(String comment) {

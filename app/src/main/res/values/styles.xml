@@ -16,6 +16,7 @@
         <item name="android:textColorSecondary">@color/background</item>
         //toolbar title color
         <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="colorButtonNormal">@color/colorAccent</item>
     </style>
 
 
@@ -66,11 +67,10 @@
 
 
     <!-- Night/day Mode theme   -->
-    <style name="DarkTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimary">#212121</item>
-        <item name="colorPrimaryDark">#000000</item>
-        <item name="colorAccent">@color/colorAccent</item>
-
+    <style name="DialogViewImage" parent="ThemeOverlay.MaterialComponents">
+        <item name="android:background">#313131</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowAnimationStyle">@style/WindowAnimationTransiton</item>
     </style>
 

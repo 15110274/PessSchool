@@ -42,6 +42,7 @@
             android:layout_marginTop="50dp"
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
+            android:inputType="textEmailAddress"
             android:text="@string/testMail"
             android:drawableEnd="@drawable/ic_mail"
             android:textColorHint="@color/hintcolor"
@@ -84,36 +85,11 @@
             android:layout_marginStart="40dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="40dp"
-            android:layout_marginBottom="0dp"
+            android:layout_marginBottom="20dp"
             android:text="@string/sign_in"
             android:background="@drawable/large_button"
             android:textColor="@color/background" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="15dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="70dp"
-            android:text="@string/dontHaveAccount"
-            android:textColor="@color/textcolor"
-            android:textAlignment="center" />
-
-        <TextView
-            android:id="@+id/register_account_link"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:text="@string/createNewAccount"
-            android:textAlignment="center"
-            android:onClick="createNewAcc"
-            android:textColor="@color/red" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="20dp">
-        </LinearLayout>
 
     </LinearLayout>
 

@@ -50,7 +50,7 @@ public class SettingActivity extends AppCompatActivity {
         // Change dark mode for app
         sharedPref = new SharedPref(this);
         if (sharedPref.loadNightModeState()) {
-            setTheme(R.style.DarkTheme);
+//            setTheme(R.style.DarkTheme);
         } else setTheme(R.style.AppTheme);
 
         myswitch = (Switch) findViewById(R.id.myswitch);

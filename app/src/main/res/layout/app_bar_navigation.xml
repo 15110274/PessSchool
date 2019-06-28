@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             app:layout_scrollFlags="scroll|enterAlways|snap"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:background="?attr/colorPrimary"
             android:layoutDirection="rtl"
             android:minHeight="?attr/actionBarSize"
@@ -26,7 +26,8 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:gravity="center">
 
                 <ImageView
                     android:id="@+id/toolbar_logo"
