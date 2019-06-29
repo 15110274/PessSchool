@@ -3,7 +3,11 @@ package com.example.preschool;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    public String fullname,username,idclass,classname,birthday,parentof,profileimage,userid,email,role;
+    public String fullname,username,idclass,classname,birthday,parentof,profileimage,userid,email,role,deleted;
+
+    public String getDeleted() {
+        return deleted;
+    }
 
     public String getRole() {
         return role;

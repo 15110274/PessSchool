@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditProfileActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/edit_classname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edit_username"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="15dp"
+            android:padding="12dp"
+            android:textColor="@android:color/background_dark"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:hint="class's name"/>
+
+        <Spinner
+            android:id="@+id/teacherSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:padding="8dp"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@id/edit_classname"/>
+
+        <TextView
+            android:id="@+id/border1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="5dp"
+            android:background="@color/colorAccent"
+            android:layout_below="@id/teacherSpinner"/>
+
+        <Button
+            android:id="@+id/update_class_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_below="@+id/border1"
+            android:text="Update Class Button"
+            android:layout_margin="20dp"
+            android:textColor="@color/colorAccent"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textAllCaps="false"
+            />
+    </RelativeLayout>
+
+</RelativeLayout>

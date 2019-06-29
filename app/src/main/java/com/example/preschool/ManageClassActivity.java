@@ -8,10 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -133,8 +135,8 @@ public class ManageClassActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //xóa class
+                                final String classID= getRef(position).getKey();
                                 if(which==2){
-                                    final String classID= getRef(position).getKey();
                                     ClassRef.child(classID).removeValue();
                                     UserRef.addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -142,8 +144,8 @@ public class ManageClassActivity extends AppCompatActivity {
                                             if(dataSnapshot.exists()){
                                                 for (DataSnapshot children: dataSnapshot.getChildren()) {
                                                     if(children.hasChild("idclass")&&children.child("idclass").getValue().toString().equals(classID)){
-                                                        UserRef.child(children.getKey()).child("idclass").setValue("null");
-                                                        UserRef.child(children.getKey()).child("classname").setValue("null");
+                                                        UserRef.child(children.getKey()).child("idclass").setValue("");
+                                                        UserRef.child(children.getKey()).child("classname").setValue("");
                                                     }
                                                 }
                                             }
@@ -156,18 +158,16 @@ public class ManageClassActivity extends AppCompatActivity {
                                         }
                                     });
                                 }
-//                                if (which == 0) {
-//                                    Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
-//                                    profileintent.putExtra("visit_user_id",usersIDs);
-//                                    profileintent.putExtra("idTeacher",idTeacher);
-//                                    profileintent.putExtra("idClass",idClass);
-//                                    startActivity(profileintent);
-//                                }
-//                                if (which == 1) {
-//                                    Intent chatintent = new Intent(ManageUserActivity.this, MessageActivity.class);
-//                                    chatintent.putExtra("userid", usersIDs);
-//                                    startActivity(chatintent);
-//                                }
+                                if (which == 0) {
+                                    Intent intent = new Intent(ManageClassActivity.this, ViewClassActivity.class);
+                                    intent.putExtra("CLASS_ID",classID);
+                                    startActivity(intent);
+                                }
+                                if (which == 1) {
+                                    Intent intent = new Intent(ManageClassActivity.this, EditClassActivity.class);
+                                    intent.putExtra("CLASS_ID",classID);
+                                    startActivity(intent);
+                                }
                             }
                         });
                         builder.show();
@@ -213,5 +213,18 @@ public class ManageClassActivity extends AppCompatActivity {
             params.height = 0;
             layout.setLayoutParams(params);
         }
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(ManageClassActivity.this, AdminActivity.class);
+        startActivity(intent);
     }
 }
