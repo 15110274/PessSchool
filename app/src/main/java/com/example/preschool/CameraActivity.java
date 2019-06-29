@@ -44,19 +44,6 @@ public class CameraActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.camera);
     }
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // chuyen ve trang trc ko bi mat du lieu
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-    @Override
-    public void onBackPressed() {
-        Intent intent=new Intent(CameraActivity.this, MainActivity.class);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
+
+
 }

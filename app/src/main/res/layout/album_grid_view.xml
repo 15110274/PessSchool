@@ -19,6 +19,7 @@
         <ImageView
             android:id="@+id/img_thumbnail"
             android:layout_width="match_parent"
+            android:background="@color/backgroundDark"
             android:layout_height="160dp"
             android:layout_below="@+id/title_album"
             android:scaleType="centerCrop" />

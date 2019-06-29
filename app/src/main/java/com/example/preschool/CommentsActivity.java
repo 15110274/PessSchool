@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.app.Dialog;
@@ -43,22 +44,23 @@ public class CommentsActivity extends AppCompatActivity {
     private RecyclerView CommentsList;
     private ImageButton PostCommentButton;
     private EditText CommentInputText;
-    private DatabaseReference UsersRef,PostsRef,LikesRef;
+    private DatabaseReference UsersRef, PostsRef, LikesRef;
+    private ValueEventListener commentListener;
     private ImageView PostImage;
-    private TextView PostDescription,PostName;
+    private TextView PostDescription, PostName;
     private CircleImageView PostProfileImage;
     private TextView PostTime;
-    private TextView LikeButton,CommentButton;
+    private TextView LikeButton, CommentButton;
 
-    private DatabaseReference clickPostRef,CommentsRef;
+    private DatabaseReference clickPostRef, CommentsRef;
 
-    private String Post_Key, current_user_id,idClass,idTeacher;
+    private String Post_Key, current_user_id, idClass, idTeacher;
     private FirebaseAuth mAuth;
-    private String postimage,profileimage,description,time,postname;
-    Boolean LikeChecker=false;
+    private String postimage, profileimage, description, time, postname;
+    Boolean LikeChecker = false;
 
-    private TextView DisplayNoOfLikes,DisplayNoOfComments;
-    int countLikes,countComments;
+    private TextView DisplayNoOfLikes, DisplayNoOfComments;
+    int countLikes, countComments;
 
     private Bundle bundle;
 
@@ -79,61 +81,60 @@ public class CommentsActivity extends AppCompatActivity {
         });
 
         //Get Bundle
-        bundle=getIntent().getExtras();
-        if(bundle!=null){
-            idClass=bundle.getString("ID_CLASS");
-            idTeacher=bundle.getString("ID_TEACHER");
-            Post_Key=bundle.getString("KEY_POST");
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            idClass = bundle.getString("ID_CLASS");
+            idTeacher = bundle.getString("ID_TEACHER");
+            Post_Key = bundle.getString("KEY_POST");
             bundle.remove("KEY_POST");
         }
 
 
-        PostName=findViewById(R.id.post_user_name);
-        PostImage=findViewById(R.id.post_image);
-        PostDescription=findViewById(R.id.post_description);
-        PostProfileImage=findViewById(R.id.post_profile_image);
-        PostTime=findViewById(R.id.post_minute);
-        LikeButton=findViewById(R.id.like_button);
-        CommentButton=findViewById(R.id.comment_button);
-        DisplayNoOfLikes=findViewById(R.id.display_no_of_likes);
+        PostName = findViewById(R.id.post_user_name);
+        PostImage = findViewById(R.id.post_image);
+        PostDescription = findViewById(R.id.post_description);
+        PostProfileImage = findViewById(R.id.post_profile_image);
+        PostTime = findViewById(R.id.post_minute);
+        LikeButton = findViewById(R.id.like_button);
+        CommentButton = findViewById(R.id.comment_button);
+        DisplayNoOfLikes = findViewById(R.id.display_no_of_likes);
 
 
-        mAuth= FirebaseAuth.getInstance();
-        current_user_id=mAuth.getCurrentUser().getUid();
-        UsersRef= FirebaseDatabase.getInstance().getReference().child("Users");
+        mAuth = FirebaseAuth.getInstance();
+        current_user_id = mAuth.getCurrentUser().getUid();
+        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
-        PostsRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts").child(Post_Key).child("Comments");
+        PostsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts").child(Post_Key).child("Comments");
 
 
-
-        clickPostRef= FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts").child(Post_Key);
+        clickPostRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts").child(Post_Key);
         LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
 
-        CommentsList=findViewById(R.id.comments_list);
+        CommentsList = findViewById(R.id.comments_list);
         CommentsList.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         CommentsList.setLayoutManager(linearLayoutManager);
 
-        CommentInputText=findViewById(R.id.comment_input);
-        PostCommentButton=findViewById(R.id.post_comment_btn);
+        CommentInputText = findViewById(R.id.comment_input);
+        PostCommentButton = findViewById(R.id.post_comment_btn);
 
-        DisplayNoOfComments=findViewById(R.id.display_no_of_comments);
+        DisplayNoOfComments = findViewById(R.id.display_no_of_comments);
 
-        CommentsRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
+        CommentsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
 
         PostCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
+                commentListener = UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists()){
-                            String userName=dataSnapshot.child("username").getValue().toString();
-                            String urlAvatar=dataSnapshot.child("profileimage").getValue().toString();
-                            ValidateComment(userName,urlAvatar);
+                        if (dataSnapshot.exists()) {
+                            String userName = dataSnapshot.child("username").getValue().toString();
+                            String urlAvatar = dataSnapshot.child("profileimage").getValue().toString();
+                            ValidateComment(userName, urlAvatar);
                             CommentInputText.setText("");
                         }
                     }
@@ -148,27 +149,27 @@ public class CommentsActivity extends AppCompatActivity {
         clickPostRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
+                if (dataSnapshot.exists()) {
                     setLikeButtonStatus(Post_Key);
                     setCommentPostButtonStatus(Post_Key);
 
-                    description=dataSnapshot.child("description").getValue().toString();
+                    description = dataSnapshot.child("description").getValue().toString();
 
-                    postimage=dataSnapshot.child("postimage").getValue().toString();
-                    time=dataSnapshot.child("time").getValue().toString();
+                    postimage = dataSnapshot.child("postimage").getValue().toString();
+                    time = dataSnapshot.child("time").getValue().toString();
 
 
                     PostDescription.setText(description);
-                    Picasso.get().load(postimage).resize(600,0).into(PostImage);
+                    Picasso.get().load(postimage).resize(600, 0).into(PostImage);
 
                     PostImage.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Dialog dialogImage=new Dialog(CommentsActivity.this,R.style.DialogViewImage);
+                            Dialog dialogImage = new Dialog(CommentsActivity.this, R.style.DialogViewImage);
                             dialogImage.requestWindowFeature(Window.FEATURE_NO_TITLE);
                             dialogImage.setCancelable(true);
                             dialogImage.setContentView(R.layout.dialog_show_image_post);
-                            ImageView imageView=dialogImage.findViewById(R.id.image_post_view);
+                            ImageView imageView = dialogImage.findViewById(R.id.image_post_view);
 
                             Picasso.get().load(postimage).networkPolicy(NetworkPolicy.NO_CACHE)
                                     .memoryPolicy(MemoryPolicy.NO_CACHE)
@@ -181,11 +182,11 @@ public class CommentsActivity extends AppCompatActivity {
                     UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.exists()){
-                                final String image=dataSnapshot.child("profileimage").getValue().toString();
-                                final String name=dataSnapshot.child("fullname").getValue().toString();
+                            if (dataSnapshot.exists()) {
+                                final String image = dataSnapshot.child("profileimage").getValue().toString();
+                                final String name = dataSnapshot.child("fullname").getValue().toString();
                                 PostName.setText(name);
-                                Picasso.get().load(image).resize(70,0).into(PostProfileImage);
+                                Picasso.get().load(image).resize(70, 0).into(PostProfileImage);
                             }
 
                         }
@@ -205,18 +206,17 @@ public class CommentsActivity extends AppCompatActivity {
                     LikeButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            LikeChecker=true;
+                            LikeChecker = true;
                             LikesRef.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if(LikeChecker.equals(true)){
-                                        if(dataSnapshot.child(Post_Key).hasChild(current_user_id)){
+                                    if (LikeChecker.equals(true)) {
+                                        if (dataSnapshot.child(Post_Key).hasChild(current_user_id)) {
                                             LikesRef.child(Post_Key).child(current_user_id).removeValue();
-                                            LikeChecker=false;
-                                        }
-                                        else{
+                                            LikeChecker = false;
+                                        } else {
                                             LikesRef.child(Post_Key).child(current_user_id).setValue(true);
-                                            LikeChecker=false;
+                                            LikeChecker = false;
                                         }
                                     }
                                 }
@@ -238,17 +238,17 @@ public class CommentsActivity extends AppCompatActivity {
         });
 
     }
-    public void setCommentPostButtonStatus(final String PostKey){
+
+    public void setCommentPostButtonStatus(final String PostKey) {
         CommentsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child(PostKey).child("Comments").hasChild(current_user_id)){
-                    countComments=(int)dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
-                    DisplayNoOfComments.setText((Integer.toString(countComments)+" Comments"));
-                }
-                else{
-                    countComments=(int)dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
-                    DisplayNoOfComments.setText((Integer.toString(countComments)+" Comments"));
+                if (dataSnapshot.child(PostKey).child("Comments").hasChild(current_user_id)) {
+                    countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                    DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
+                } else {
+                    countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                    DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
                 }
             }
 
@@ -258,22 +258,22 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
     }
-    public void setLikeButtonStatus(final String PostKey){
+
+    public void setLikeButtonStatus(final String PostKey) {
 
         LikesRef.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child(PostKey).hasChild(current_user_id)){
-                    countLikes=(int)dataSnapshot.child(PostKey).getChildrenCount();
-                    LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp,0,0,0);
-                    DisplayNoOfLikes.setText((Integer.toString(countLikes)+" Likes"));
+                if (dataSnapshot.child(PostKey).hasChild(current_user_id)) {
+                    countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+                    LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp, 0, 0, 0);
+                    DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                     LikeButton.setTextColor(Color.parseColor("#FF5722"));
-                }
-                else{
-                    countLikes=(int)dataSnapshot.child(PostKey).getChildrenCount();
-                    LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp,0,0,0);
-                    DisplayNoOfLikes.setText((Integer.toString(countLikes)+" Likes"));
+                } else {
+                    countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+                    LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp, 0, 0, 0);
+                    DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                     LikeButton.setTextColor(Color.parseColor("#959292"));
                 }
             }
@@ -303,7 +303,7 @@ public class CommentsActivity extends AppCompatActivity {
             @Override
             public CommentsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.comments_layout,parent,false);
+                        .inflate(R.layout.comments_layout, parent, false);
                 return new CommentsViewHolder(view);
             }
         };
@@ -311,77 +311,84 @@ public class CommentsActivity extends AppCompatActivity {
         CommentsList.setAdapter(firebaseRecyclerAdapter);
     }
 
-    public static class CommentsViewHolder extends RecyclerView.ViewHolder{
+    public static class CommentsViewHolder extends RecyclerView.ViewHolder {
         View mView;
-        public CommentsViewHolder(View itemView){
+
+        public CommentsViewHolder(View itemView) {
             super(itemView);
-            mView=itemView;
+            mView = itemView;
         }
-        public void setAvatar(String urlAvatar){
-            ImageView avatar=mView.findViewById(R.id.avatar_comment);
+
+        public void setAvatar(String urlAvatar) {
+            ImageView avatar = mView.findViewById(R.id.avatar_comment);
             Picasso.get().load(urlAvatar).networkPolicy(NetworkPolicy.NO_CACHE)
-                    .memoryPolicy(MemoryPolicy.NO_CACHE).resize(50,0).placeholder(R.drawable.ic_person_black_24dp).into(avatar);
+                    .memoryPolicy(MemoryPolicy.NO_CACHE).resize(50, 0).placeholder(R.drawable.ic_person_black_24dp).into(avatar);
         }
 
         public void setComment(String comment) {
-            TextView myComment=mView.findViewById(R.id.comment_text);
+            TextView myComment = mView.findViewById(R.id.comment_text);
             myComment.setText(comment);
         }
 
 
         public void setDate(String date) {
-            TextView myDate=mView.findViewById(R.id.comment_date);
-            myDate.setText("Date: "+date);
+            TextView myDate = mView.findViewById(R.id.comment_date);
+            myDate.setText("Date: " + date);
         }
-
 
 
         public void setTime(String time) {
-            TextView myTime=mView.findViewById(R.id.comment_time);
-            myTime.setText("Time: "+time);
+            TextView myTime = mView.findViewById(R.id.comment_time);
+            myTime.setText("Time: " + time);
         }
 
         public void setUsername(String username) {
-            TextView myUserName=mView.findViewById(R.id.comment_username);
+            TextView myUserName = mView.findViewById(R.id.comment_username);
             myUserName.setText(username);
         }
     }
 
     private void ValidateComment(String userName, String urlAvatar) {
-        String commentText=CommentInputText.getText().toString();
-        if(TextUtils.isEmpty(commentText)){
-            Toast.makeText(this,"please write text to comment...",Toast.LENGTH_SHORT).show();
-        }
-        else{
-            Calendar calFordDate=Calendar.getInstance();
-            SimpleDateFormat currentDate=new SimpleDateFormat("dd-MM-yyyy");
-            final String saveCurrentDate=currentDate.format(calFordDate.getTime());
+        String commentText = CommentInputText.getText().toString();
+        if (TextUtils.isEmpty(commentText)) {
+            Toast.makeText(this, "please write text to comment...", Toast.LENGTH_SHORT).show();
+        } else {
+            Calendar calFordDate = Calendar.getInstance();
+            SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
+            final String saveCurrentDate = currentDate.format(calFordDate.getTime());
 
-            Calendar calFordTime=Calendar.getInstance();
-            SimpleDateFormat currentTime=new SimpleDateFormat("HH:mm:ss");
-            final String saveCurrentTime=currentTime.format(calFordDate.getTime());
+            Calendar calFordTime = Calendar.getInstance();
+            SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
+            final String saveCurrentTime = currentTime.format(calFordDate.getTime());
 
-            final String RandomKey=FirebaseDatabase.getInstance().getReference().push().getKey();
-            HashMap commentsMap=new HashMap();
-            commentsMap.put("uid",current_user_id);
-            commentsMap.put("comment",commentText);
-            commentsMap.put("date",saveCurrentDate);
-            commentsMap.put("time",saveCurrentTime);
-            commentsMap.put("username",userName);
-            commentsMap.put("avatar",urlAvatar);
-            PostsRef.child(RandomKey).updateChildren(commentsMap)
+            final String RandomKey = FirebaseDatabase.getInstance().getReference().push().getKey();
+            HashMap commentsMap = new HashMap();
+            commentsMap.put("uid", current_user_id);
+            commentsMap.put("comment", commentText);
+            commentsMap.put("date", saveCurrentDate);
+            commentsMap.put("time", saveCurrentTime);
+            commentsMap.put("username", userName);
+            commentsMap.put("avatar", urlAvatar);
+            PostsRef.child(RandomKey).setValue(commentsMap)
                     .addOnCompleteListener(new OnCompleteListener() {
                         @Override
                         public void onComplete(@NonNull Task task) {
-                            if(task.isSuccessful()){
+                            if (task.isSuccessful()) {
                                 Toast.makeText(CommentsActivity.this,"Successful",Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                Toast.makeText(CommentsActivity.this,"Error",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(CommentsActivity.this, "Không thể bình luận, kiểm tra đường truyền mạng của bạn", Toast.LENGTH_SHORT).show();
 
                             }
                         }
                     });
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Toast.makeText(CommentsActivity.this, "onPause", Toast.LENGTH_SHORT).show();
+        if(commentListener!=null)
+            UsersRef.child(current_user_id).removeEventListener(commentListener);
     }
 }

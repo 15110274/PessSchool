@@ -36,6 +36,7 @@ public class PersonProfileActivity extends AppCompatActivity {
     private CircleImageView userProfileImage;
 
     private DatabaseReference UsersRef;
+    private ValueEventListener UserListener;
     private FirebaseAuth mAuth;
 
     private String current_user_id, visitUserId, idClass, idTeacher, className;
@@ -70,24 +71,29 @@ public class PersonProfileActivity extends AppCompatActivity {
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
-        UsersRef.child(visitUserId).addValueEventListener(new ValueEventListener() {
+        UserListener= UsersRef.child(visitUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
-                    String myUserName = dataSnapshot.child("username").getValue().toString();
-                    String myProfileName = dataSnapshot.child("fullname").getValue().toString();
-                    String myBirthday = dataSnapshot.child("birthday").getValue().toString();
-                    String myClass = dataSnapshot.child("classname").getValue().toString();
-                    String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+                    try {
+                        String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
+                        String myUserName = dataSnapshot.child("username").getValue().toString();
+                        String myProfileName = dataSnapshot.child("fullname").getValue().toString();
+                        String myBirthday = dataSnapshot.child("birthday").getValue().toString();
+                        String myClass = dataSnapshot.child("classname").getValue().toString();
+                        String myParentOf = dataSnapshot.child("parentof").getValue().toString();
 
-                    Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
+                        Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
 
-                    userName.setText(myUserName);
-                    userProfName.setText(myProfileName);
-                    userBirthDay.setText("Sinh nhật: " + myBirthday);
-                    userClass.setText("Lớp: " + myClass);
-                    userParentof.setText("Phụ huynh của bé: " + myParentOf);
+                        userName.setText(myUserName);
+                        userProfName.setText(myProfileName);
+                        userBirthDay.setText("Sinh nhật: " + myBirthday);
+                        userClass.setText("Lớp: " + myClass);
+                        userParentof.setText("Phụ huynh của bé: " + myParentOf);
+                    }catch (Exception e){
+
+                    }
+
                 }
             }
 
@@ -109,5 +115,9 @@ public class PersonProfileActivity extends AppCompatActivity {
         userClass = findViewById(R.id.person_class);
     }
 
-
+    @Override
+    protected void onPause() {
+        super.onPause();
+        UsersRef.child(current_user_id).removeEventListener(UserListener);
+    }
 }

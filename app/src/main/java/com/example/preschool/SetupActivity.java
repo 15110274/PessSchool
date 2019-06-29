@@ -58,7 +58,7 @@ public class SetupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
-        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
+//        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
         UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
         UserName = findViewById(R.id.setup_username);
@@ -211,13 +211,8 @@ public class SetupActivity extends AppCompatActivity {
             userMap.put("birthday", birthday);
 
             userMap.put("userid", currentUserID);
-            ClassRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
-                    UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
-
+            UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                         public void onComplete(@NonNull Task task) {
                             if (task.isSuccessful()) {
                                 SendUserToMainActivity();
@@ -230,13 +225,32 @@ public class SetupActivity extends AppCompatActivity {
                             }
                         }
                     });
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
+//            ClassRef.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//
+//                    UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+//
+//                        public void onComplete(@NonNull Task task) {
+//                            if (task.isSuccessful()) {
+//                                SendUserToMainActivity();
+//                                Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
+//                                loadingBar.dismiss();
+//                            } else {
+//                                String message = task.getException().getMessage();
+//                                Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+//                                loadingBar.dismiss();
+//                            }
+//                        }
+//                    });
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
 
         }
     }

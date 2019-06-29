@@ -168,7 +168,7 @@ public class NewAlbumActivity extends AppCompatActivity {
                 mUploadTask = fileReference.putFile(uriList.get(i))
 
                         .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            private static final String TAG = "PhotoAlbumActivity";
+                            private static final String TAG = "ViewAllAlbumActivity";
 
                             @Override
                             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {

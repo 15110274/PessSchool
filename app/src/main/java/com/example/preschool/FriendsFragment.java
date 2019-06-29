@@ -41,7 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FriendsFragment extends Fragment {
     private RecyclerView myFriendList;
-    private DatabaseReference FriendsRef, UsersRef;
+    private DatabaseReference UserStateRef, UsersRef;
     private ValueEventListener FiendListener, UsersListener;
     private FirebaseAuth mAuth;
     private String current_user_id, idClass, idTeacher, idFriend;
@@ -63,6 +63,8 @@ public class FriendsFragment extends Fragment {
             idClass = bundle.getString("ID_CLASS");
             idTeacher = bundle.getString("ID_TEACHER");
         }
+
+        UserStateRef=FirebaseDatabase.getInstance().getReference("UserState");
 //        FriendsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Friends").child(current_user_id);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         myFriendList = view.findViewById(R.id.friend_list);
@@ -91,7 +93,7 @@ public class FriendsFragment extends Fragment {
         currentStateMap.put("date", saveCurrentDate);
         currentStateMap.put("type", state);
 
-        UsersRef.child(current_user_id).child("userState")
+        UserStateRef.child(current_user_id)
                 .updateChildren(currentStateMap);
     }
 
@@ -113,8 +115,7 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if (FiendListener != null && UsersListener != null) {
-            FriendsRef.removeEventListener(FiendListener);
+        if (UsersListener != null) {
             UsersRef.removeEventListener(UsersListener);
         }
     }
@@ -137,18 +138,33 @@ public class FriendsFragment extends Fragment {
                 setQuery(showAllFriendsQuery, User.class).build();
         adapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull FriendsViewHolder friendsViewHolder, final int i, @NonNull final User user) {
+            protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, final int i, @NonNull final User user) {
 
                 try {
                     friendsViewHolder.user_name.setText(user.getUsername());
                     friendsViewHolder.kid_name.setText("Bé " + user.getParentof());
                     friendsViewHolder.setProfileImage(user.getProfileimage());
                     // Online/Offline
-                    if (user.getUserState().getType().equals("online")) {
-                        friendsViewHolder.online.setVisibility(View.VISIBLE);
-                    } else {
-                        friendsViewHolder.online.setVisibility(View.GONE);
-                    }
+                    UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if(dataSnapshot.child("type").getValue().toString().equals("online")){
+                                friendsViewHolder.online.setVisibility(View.VISIBLE);
+                            } else {
+                                friendsViewHolder.online.setVisibility(View.GONE);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+//                    if (user.getUserState().getType().equals("online")) {
+//                        friendsViewHolder.online.setVisibility(View.VISIBLE);
+//                    } else {
+//                        friendsViewHolder.online.setVisibility(View.GONE);
+//                    }
                     final String visit_user_id = getRef(i).getKey();
                     friendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override

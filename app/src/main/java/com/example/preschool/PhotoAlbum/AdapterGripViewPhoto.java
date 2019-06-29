@@ -2,8 +2,6 @@ package com.example.preschool.PhotoAlbum;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.preschool.R;
-import com.example.preschool.StartActivity;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -49,7 +46,7 @@ public class AdapterGripViewPhoto extends RecyclerView.Adapter<AdapterGripViewPh
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(context,ViewPhotoAlbumActivity.class);
+                Intent intent=new Intent(context, ViewPhotoActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra("IMAGE_LINK",imageUrls);
                 context.startActivity(intent);

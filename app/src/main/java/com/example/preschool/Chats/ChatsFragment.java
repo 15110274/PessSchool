@@ -47,14 +47,14 @@ public class ChatsFragment extends Fragment {
     private ChatListAdapter userAdapter;
     private List<User> mUsers;
     private FirebaseUser fuser;
-    private DatabaseReference ChatListRef, UsersRef, MessRef;
+    private DatabaseReference ChatListRef, UsersRef, MessRef, UserStateRef;
     private ChatList listIdChatUser;
     private String idClass;
     private String current_user_id;
     private FirebaseRecyclerAdapter adapter;
     private Bundle bundle;
 
-    private ValueEventListener ChatListListener, UserListener;
+    private ValueEventListener ChatListListener, UserListener, UserStateListener;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,6 +75,7 @@ public class ChatsFragment extends Fragment {
         fuser = FirebaseAuth.getInstance().getCurrentUser();
         current_user_id = fuser.getUid();
 
+        UserStateRef=FirebaseDatabase.getInstance().getReference("UserState");
         UsersRef = FirebaseDatabase.getInstance().getReference("Users");
         ChatListRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("ChatList").child(current_user_id);
         MessRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("Messages");
@@ -134,9 +135,26 @@ public class ChatsFragment extends Fragment {
                         User user = dataSnapshot.getValue(User.class);
                         chatListViewHolder.username.setText(user.getUsername());
                         Picasso.get().load(user.getProfileimage()).into(chatListViewHolder.profile_image);
-                        if (user.getUserState().getType().equals("online"))
-                            chatListViewHolder.is_online.setVisibility(View.VISIBLE);
-                        else chatListViewHolder.is_online.setVisibility(View.GONE);
+
+                        // online/offline
+                        UserStateListener= UserStateRef.child(s).addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.exists()){
+                                    if(dataSnapshot.child("type").getValue().equals("online"))
+                                        chatListViewHolder.is_online.setVisibility(View.VISIBLE);
+                                    else chatListViewHolder.is_online.setVisibility(View.GONE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+//                        if (user.getUserState().getType().equals("online"))
+//                            chatListViewHolder.is_online.setVisibility(View.VISIBLE);
+//                        else chatListViewHolder.is_online.setVisibility(View.GONE);
 
                         // Get Last Mess
                         Query query = MessRef.child(idChat(user.userid, current_user_id)).orderByKey().limitToLast(1);
@@ -222,25 +240,32 @@ public class ChatsFragment extends Fragment {
         currentStateMap.put("date", saveCurrentDate);
         currentStateMap.put("type", state);
 
-        UsersRef.child(fuser.getUid()).child("userState")
+        UserStateRef.child(fuser.getUid())
                 .updateChildren(currentStateMap);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+//        updateUserStatus("online");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-//        updateUserStatus("online");
+        updateUserStatus("online");
     }
 
     @Override
     public void onStop() {
         super.onStop();
-//        if(UsersRef!=null){
-//                UsersRef.removeEventListener(UserListener);
+        updateUserStatus("offline");
+        if(UserStateListener!=null){
+                UserStateRef.removeEventListener(UserStateListener);
 //            }
 //            if(ChatListRef!=null){
 //                ChatListRef.removeEventListener(ChatListListener);
-//        }
+        }
 
     }
 }

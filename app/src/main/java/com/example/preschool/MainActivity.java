@@ -19,7 +19,7 @@ import com.example.preschool.NghiPhep.DonNghiPhepActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepFullViewActivity;
 import com.example.preschool.Notification.NotificationFragment;
 import com.example.preschool.Notifications.Token;
-import com.example.preschool.PhotoAlbum.PhotoAlbumActivity;
+import com.example.preschool.PhotoAlbum.ViewAllAlbumActivity;
 import com.example.preschool.Setting.SettingActivity;
 import com.example.preschool.TimeTable.TimeTableActivity;
 import com.google.android.material.navigation.NavigationView;
@@ -53,12 +53,13 @@ public class MainActivity extends AppCompatActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private FirebaseAuth mAuth;
-    private DatabaseReference UsersRef,ClassRef;
+    private DatabaseReference UsersRef,ClassRef,UserStateRef;
     private TextView txtclassName;
     private String currentUserID;
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private Bundle bundle;
+    private int countExit=0;
 
     private String idClass, idTeacher, className;
     @Override
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity
         currentUserID = mAuth.getCurrentUser().getUid();
         // Update token
         updateToken(FirebaseInstanceId.getInstance().getToken());
+
+        UserStateRef=FirebaseDatabase.getInstance().getReference("UserState");
 //        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
 //        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("classmane").toString();
 
@@ -152,22 +155,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-//    private void SendUserToFindFriendActivity(Bundle bundle) {
-//        Intent friendsIntent=new Intent(MainActivity.this,FindFriendsActivity.class);
-//        friendsIntent.putExtras(bundle);
-//        startActivity(friendsIntent);
-//
-//    }
-
-    //
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        if(mAuth.getCurrentUser()==null){
-//            SendUserToLoginActivity();
-//        }
-//    }
-
 
     /**
      * Check xem user đã có full name hay chưa, nếu chưa gửi sang trang SetupActivity
@@ -191,29 +178,41 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        countExit++;
+        if(countExit==1){
+            Toast.makeText(MainActivity.this,"Nhấn lần nữa để thoát",Toast.LENGTH_SHORT).show();
+        }
+        else finish();
 
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawer.isDrawerOpen(Gravity.RIGHT)) {
-                    drawer.closeDrawer(Gravity.RIGHT);
-                } else {
-                    drawer.openDrawer(Gravity.RIGHT);
-                }
-            }
-        });
+//        drawer = findViewById(R.id.drawer_layout);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//
+//        drawer.addDrawerListener(toggle);
+//        toggle.syncState();
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (drawer.isDrawerOpen(Gravity.RIGHT)) {
+//                    drawer.closeDrawer(Gravity.RIGHT);
+//                } else {
+//                    drawer.openDrawer(Gravity.RIGHT);
+//                }
+//            }
+//        });
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-//        updateUserStatus("online");
+        updateUserStatus("online");
 //        Toast.makeText(this,"Main Start",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        countExit=0;
     }
 
     @Override
@@ -238,7 +237,7 @@ public class MainActivity extends AppCompatActivity
 
         switch (id){
             case R.id.photoalbum:
-                intent=new Intent(MainActivity.this, PhotoAlbumActivity.class);
+                intent=new Intent(MainActivity.this, ViewAllAlbumActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
@@ -335,7 +334,7 @@ public class MainActivity extends AppCompatActivity
         currentStateMap.put("date",saveCurrentDate);
         currentStateMap.put("type",state);
 
-        UsersRef.child("userState")
+        UserStateRef.child(currentUserID)
                 .setValue(currentStateMap);
     }
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

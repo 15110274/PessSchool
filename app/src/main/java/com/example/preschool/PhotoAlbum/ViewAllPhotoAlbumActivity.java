@@ -5,11 +5,9 @@ import android.os.Bundle;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.DialogTitle;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -33,7 +31,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class ViewAllPhotoActivity extends AppCompatActivity {
+public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private FloatingActionButton fab;
@@ -126,7 +124,7 @@ public class ViewAllPhotoActivity extends AppCompatActivity {
             case R.id.action_rename_album:
                 if(isTeacher){
                     renameAlbum();
-                }else Toast.makeText(ViewAllPhotoActivity.this,"Bạn không phải là giảo viên",Toast.LENGTH_SHORT).show();
+                }else Toast.makeText(ViewAllPhotoAlbumActivity.this,"Bạn không phải là giảo viên",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_save_on_device:
 //                saveOnDevice();
@@ -134,7 +132,7 @@ public class ViewAllPhotoActivity extends AppCompatActivity {
             case R.id.action_delete_album:
                 if(isTeacher){
 //                    deleteAlbum();
-                }else Toast.makeText(ViewAllPhotoActivity.this,"Bạn không phải là giảo viên",Toast.LENGTH_SHORT).show();
+                }else Toast.makeText(ViewAllPhotoAlbumActivity.this,"Bạn không phải là giảo viên",Toast.LENGTH_SHORT).show();
                 break;
 
 
@@ -145,7 +143,7 @@ public class ViewAllPhotoActivity extends AppCompatActivity {
     }
 
     private void renameAlbum() {
-        final Dialog dialogRenameAlbum=new Dialog(ViewAllPhotoActivity.this);
+        final Dialog dialogRenameAlbum=new Dialog(ViewAllPhotoAlbumActivity.this);
         dialogRenameAlbum.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogRenameAlbum.setContentView(R.layout.dialog_rename_album);
 
@@ -166,7 +164,7 @@ public class ViewAllPhotoActivity extends AppCompatActivity {
                         }
                     });
                 }
-                else Toast.makeText(ViewAllPhotoActivity.this,"Nhập gì đi chứ man!!!",Toast.LENGTH_SHORT).show();
+                else Toast.makeText(ViewAllPhotoAlbumActivity.this,"Nhập gì đi chứ man!!!",Toast.LENGTH_SHORT).show();
 
 //                albumRef.child("name").setValue(txtNewName.getText().toString()).addOnSuccessListener(new OnSuccessListener<Void>() {
 //                    @Override

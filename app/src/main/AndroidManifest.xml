@@ -25,7 +25,7 @@
             android:name=".ViewAccountActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".PhotoAlbum.ViewAllPhotoActivity"
+            android:name=".PhotoAlbum.ViewAllPhotoAlbumActivity"
             android:theme="@style/AppThemeActionbar.NoActionBar" />
         <activity
             android:name=".Menu.ViewMenuActivity"
@@ -76,10 +76,10 @@
             android:name=".NghiPhep.DonNghiPhepActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".PhotoAlbum.ViewPhotoAlbumActivity"
+            android:name=".PhotoAlbum.ViewPhotoActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".PhotoAlbum.PhotoAlbumActivity"
+            android:name=".PhotoAlbum.ViewAllAlbumActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".PhotoAlbum.NewAlbumActivity"

@@ -37,9 +37,12 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -51,7 +54,7 @@ public class MessageActivity extends AppCompatActivity {
     private CircleImageView profile_image;
     private TextView username;
     private TextView lastseen;
-    private DatabaseReference UsersRef, ClassRef;
+    private DatabaseReference UsersRef, ClassRef, UserStateRef;
     private ImageButton btn_send;
     private ImageButton info_user;
     private EditText text_send;
@@ -83,6 +86,7 @@ public class MessageActivity extends AppCompatActivity {
         current_user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
         childToChat = idChat(current_user_id, idReciver);
 
+        UserStateRef = FirebaseDatabase.getInstance().getReference("UserState");
         UsersRef = FirebaseDatabase.getInstance().getReference("Users");
         ClassRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass);
 
@@ -94,8 +98,6 @@ public class MessageActivity extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // and this
-//                startActivity(new Intent(MessageActivity.this, MainActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 finish();
             }
         });
@@ -113,14 +115,14 @@ public class MessageActivity extends AppCompatActivity {
         lastseen = findViewById(R.id.last_seen);
         btn_send = findViewById(R.id.btn_send);
         text_send = findViewById(R.id.text_send);
-        info_user=findViewById(R.id.info_user);
+        info_user = findViewById(R.id.info_user);
 
 //        fuser = FirebaseAuth.getInstance().getCurrentUser();
 
         info_user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent=new Intent(MessageActivity.this, PersonProfileActivity.class);
+                intent = new Intent(MessageActivity.this, PersonProfileActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -130,7 +132,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String msg = text_send.getText().toString();
                 if (!msg.equals("")) {
-                    notify = true;
+//                    notify = true;
                     sendMessage(current_user_id, idReciver, msg);
                     setChatList(current_user_id, idReciver);
 
@@ -153,12 +155,24 @@ public class MessageActivity extends AppCompatActivity {
                     //and this
                     Picasso.get().load(user.getProfileimage()).resize(70, 0).into(profile_image);
                 }
-                if (user.getUserState().getType().equals("online")) {
-                    lastseen.setText("online");
-                } else {
-                    lastseen.setText(user.getUserState().getTime());
-                }
+                UserStateRef.child(idReciver).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String state=dataSnapshot.child("type").getValue().toString();
+                            if (state.equals("online")||state.equals("chatting"))
+                                lastseen.setText("online");
+                            else
+                                lastseen.setText(dataSnapshot.child("time").getValue().toString());
 
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
                 readMesagges(user.getProfileimage());
             }
 
@@ -179,21 +193,20 @@ public class MessageActivity extends AppCompatActivity {
 
     private void setChatList(final String current_user_id, final String idReciver) {
         // add user to chat fragment
-        chatList=new ChatList();
+        chatList = new ChatList();
         ClassRef.child("ChatList").child(current_user_id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<String> list=new ArrayList<String>();
+                ArrayList<String> list = new ArrayList<String>();
                 if (!dataSnapshot.exists()) {
                     list.add(idReciver);
                     chatList.setUidList(list);
                     ClassRef.child("ChatList").child(current_user_id).setValue(chatList);
-                }
-                else {
+                } else {
                     chatList.setUidList(dataSnapshot.getValue(ChatList.class).getUidList());
                     list.add(idReciver);
-                    for(String s:chatList.getUidList()){
-                        if(!s.equals(idReciver))
+                    for (String s : chatList.getUidList()) {
+                        if (!s.equals(idReciver))
                             list.add(s);
                     }
                     chatList.setUidList(list);
@@ -210,17 +223,16 @@ public class MessageActivity extends AppCompatActivity {
         ClassRef.child("ChatList").child(idReciver).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                ArrayList<String> list=new ArrayList<String>();
+                ArrayList<String> list = new ArrayList<String>();
                 if (!dataSnapshot.exists()) {
                     list.add(current_user_id);
                     chatList.setUidList(list);
                     ClassRef.child("ChatList").child(idReciver).setValue(chatList);
-                }
-                else {
+                } else {
                     chatList.setUidList(dataSnapshot.getValue(ChatList.class).getUidList());
                     list.add(current_user_id);
-                    for(String s:chatList.getUidList()){
-                        if(!s.equals(current_user_id))
+                    for (String s : chatList.getUidList()) {
+                        if (!s.equals(current_user_id))
                             list.add(s);
                     }
 
@@ -268,6 +280,7 @@ public class MessageActivity extends AppCompatActivity {
 
         final String msg = message;
 
+        // send Notification
         UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -327,7 +340,7 @@ public class MessageActivity extends AppCompatActivity {
     // Show all message
     private void readMesagges(final String imageurl) {
         mchat = new ArrayList<>();
-        Query query= ClassRef.child("Messages").child(childToChat).orderByKey().limitToLast(50);
+        Query query = ClassRef.child("Messages").child(childToChat).orderByKey().limitToLast(50);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -347,33 +360,46 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
     }
+    private void updateUserStatus(String state){
+        String saveCurrentDate,saveCurrentTime;
+        Calendar calForDate=Calendar.getInstance();
+        SimpleDateFormat currentDate= new SimpleDateFormat("MM dd,yyyy");
+        saveCurrentDate=currentDate.format(calForDate.getTime());
 
-    private void currentUser(String userid) {
-        SharedPreferences.Editor editor = getSharedPreferences("PREFS", MODE_PRIVATE).edit();
-        editor.putString("currentuser", userid);
-        editor.apply();
-    }
+        Calendar calForTime=Calendar.getInstance();
+        SimpleDateFormat currentTime=new SimpleDateFormat("hh:mm a");
+        saveCurrentTime=currentTime.format(calForTime.getTime());
 
-    private void status(String status) {
-        UsersRef.child(current_user_id).child("userState");
-        HashMap<String, Object> hashMap = new HashMap<>();
-        hashMap.put("type", status);
-        UsersRef.child(current_user_id).child("userState").updateChildren(hashMap);
+        Map currentStateMap=new HashMap();
+        currentStateMap.put("time",saveCurrentTime);
+        currentStateMap.put("date",saveCurrentDate);
+        currentStateMap.put("type",state);
+
+        UserStateRef.child(current_user_id)
+                .setValue(currentStateMap);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        status("online");
-//        currentUser(current_user_id);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateUserStatus("chatting");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         ClassRef.child("Messages").child(childToChat).removeEventListener(seenListener);
-//        status("offline");
-//        currentUser("none");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updateUserStatus("offline");
     }
 }
 

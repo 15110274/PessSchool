@@ -1,6 +1,5 @@
 package com.example.preschool.PhotoAlbum;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -27,7 +26,7 @@ import com.google.firebase.database.Query;
 import com.squareup.picasso.Picasso;
 
 
-public class PhotoAlbumActivity extends AppCompatActivity {
+public class ViewAllAlbumActivity extends AppCompatActivity {
 
     private FloatingActionButton fab;
     private RecyclerView myRecycleView;
@@ -35,7 +34,7 @@ public class PhotoAlbumActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private String currentUserID;
     private Bundle bundle;
-    private FirebaseRecyclerAdapter<Album, PhotoAlbumActivity.ItemViewHolder> myRecycleViewAdpter;
+    private FirebaseRecyclerAdapter<Album, ViewAllAlbumActivity.ItemViewHolder> myRecycleViewAdpter;
 
     ////////////////////////////////
     private String idClass,idTeacher;
@@ -100,16 +99,16 @@ public class PhotoAlbumActivity extends AppCompatActivity {
         FirebaseRecyclerOptions AlbumOptions = new FirebaseRecyclerOptions.Builder<Album>().setQuery(personsQuery, Album.class).build();
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         myRecycleView.setLayoutManager(gridLayoutManager);
-        myRecycleViewAdpter = new FirebaseRecyclerAdapter<Album, PhotoAlbumActivity.ItemViewHolder>(AlbumOptions) {
+        myRecycleViewAdpter = new FirebaseRecyclerAdapter<Album, ViewAllAlbumActivity.ItemViewHolder>(AlbumOptions) {
             @Override
-            protected void onBindViewHolder(PhotoAlbumActivity.ItemViewHolder holder, final int position, final Album album) {
+            protected void onBindViewHolder(ViewAllAlbumActivity.ItemViewHolder holder, final int position, final Album album) {
                 holder.setTitle(album.getName());
                 holder.setImage(album.getImageUrlList().get(0));
                 holder.setSoLuongAnh(String.valueOf(album.getImageUrlList().size()));
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(getApplicationContext(), ViewAllPhotoActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), ViewAllPhotoAlbumActivity.class);
 
                         bundle.putString("POSITION_ALBUM",getRef(position).getKey());
                         intent.putExtras(bundle);
@@ -119,12 +118,12 @@ public class PhotoAlbumActivity extends AppCompatActivity {
             }
 
             @Override
-            public PhotoAlbumActivity.ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            public ViewAllAlbumActivity.ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
                 View view = LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.album_grid_view, parent, false);
 
-                return new PhotoAlbumActivity.ItemViewHolder(view);
+                return new ViewAllAlbumActivity.ItemViewHolder(view);
             }
         };
 

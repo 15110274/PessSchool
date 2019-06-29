@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     android:orientation="vertical"
-    tools:context=".PhotoAlbum.PhotoAlbumActivity">
+    tools:context=".PhotoAlbum.ViewAllAlbumActivity">
 
 
     <androidx.appcompat.widget.Toolbar
