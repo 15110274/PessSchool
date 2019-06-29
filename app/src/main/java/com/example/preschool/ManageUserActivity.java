@@ -12,7 +12,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -33,6 +35,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -214,6 +219,8 @@ public class ManageUserActivity extends AppCompatActivity {
                     loadingBar.setMessage("Please wait, while we are creating your new Account...");
                     loadingBar.show();
                     loadingBar.setCanceledOnTouchOutside(true);
+                    loadingBar.dismiss();
+
                     mAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
@@ -259,9 +266,68 @@ public class ManageUserActivity extends AppCompatActivity {
                                     }
                                     else
                                     {
-                                        String message = task.getException().getMessage();
-                                        Toast.makeText(ManageUserActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
-                                        loadingBar.dismiss();
+                                        try
+                                        {
+                                            throw task.getException();
+                                        }
+                                        catch (FirebaseAuthUserCollisionException existEmail)
+                                        {
+                                            final DatabaseReference ref=FirebaseDatabase.getInstance().getReference().child("Users");
+                                            ref.addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                    final int[] success = {0};
+                                                    if(dataSnapshot.exists()){
+                                                        for (final DataSnapshot children: dataSnapshot.getChildren()) {
+                                                            //xác định nếu ko có role thì đã xóa
+                                                            if(!children.hasChild("role")){
+                                                                //nếu email tạo trùng với email đã xóa thì chỉ cần thêm dữ liệu, ko cần tạo lại user
+                                                                if(children.child("email").getValue().toString().equals(UserEmail.getText().toString())){
+                                                                    UserEmail.setText("");
+                                                                    final HashMap userMap = new HashMap();
+                                                                    userMap.put("role",role.get(roleChoose));
+                                                                    if(roleChoose==1||roleChoose==2){
+                                                                        userMap.put("idclass", classId.get(classChoose));
+                                                                        userMap.put("classname",className.get(classChoose));
+                                                                    }
+                                                                    ref.child(children.getKey()).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                success[0] =1;
+                                                                                if(roleChoose==2){
+                                                                                    ClassRef.child(classId.get(classChoose)).child("teacher").setValue(children.getKey());
+                                                                                }
+                                                                                //recreate();
+                                                                                Toast.makeText(ManageUserActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
+                                                                                loadingBar.dismiss();
+                                                                            } else {
+                                                                                String message = task.getException().getMessage();
+                                                                                Toast.makeText(ManageUserActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+                                                                                loadingBar.dismiss();
+                                                                            }
+                                                                        }
+                                                                    });
+
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    if(success[0]==0){
+                                                        Toast.makeText(ManageUserActivity.this, "Email Existed", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                        }
+                                        catch (Exception e) {
+                                            Toast.makeText(ManageUserActivity.this, "Error Occured: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            loadingBar.dismiss();
+                                        }
                                     }
                                 }
 
@@ -270,9 +336,7 @@ public class ManageUserActivity extends AppCompatActivity {
             }
 
         });
-
     }
-
     private void LoadAccountClass(final String roleChoose, final String idClassChoose) {
         FirebaseRecyclerOptions<User> options=new FirebaseRecyclerOptions.Builder<User>().
                 setQuery(UsersRef, User.class).build();
@@ -283,7 +347,7 @@ public class ManageUserActivity extends AppCompatActivity {
                 if(!roleChoose.equals("Choose Role...")){
                     //nếu ko chọn class thì sẽ hiển thị theo role
                     if(idClassChoose.equals("")){
-                        if(model.getRole().equals(roleChoose)){
+                        if(model.getRole()!=null&&model.getRole().equals(roleChoose)){
                             if(model.getFullname()!=null)
                                 usersViewHolder.setFullname(model.getFullname());
                             usersViewHolder.setProfileImage(model.getProfileimage());
@@ -293,7 +357,7 @@ public class ManageUserActivity extends AppCompatActivity {
                     }
                     //nếu vừa chọn role vừa chọn class thì hiển theo role rồi hiển thị theo class
                     else{
-                        if(model.getRole().equals(roleChoose)&&model.getIdclass().equals(idClassChoose)){
+                        if(model.getRole()!=null&&model.getIdclass()!=null&&model.getRole().equals(roleChoose)&&model.getIdclass().equals(idClassChoose)){
                             if(model.getFullname()!=null)
                                 usersViewHolder.setFullname(model.getFullname());
                             usersViewHolder.setProfileImage(model.getProfileimage());
@@ -304,10 +368,13 @@ public class ManageUserActivity extends AppCompatActivity {
                 }
                 //ngược lại hiển thị toàn bộ user
                 else{
-                    if(model.getFullname()!=null)
-                        usersViewHolder.setFullname(model.getFullname());
-                    usersViewHolder.setProfileImage(model.getProfileimage());
-                    usersViewHolder.setEmail(model.getEmail());
+                    if(model.getRole()!=null){
+                        if(model.getFullname()!=null)
+                            usersViewHolder.setFullname(model.getFullname());
+                        usersViewHolder.setProfileImage(model.getProfileimage());
+                        usersViewHolder.setEmail(model.getEmail());
+                    }
+                    else usersViewHolder.Layout_hide();
                 }
                 final String usersIDs = getRef(position).getKey();
                 usersViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -327,6 +394,7 @@ public class ManageUserActivity extends AppCompatActivity {
                                 if(which==2){
                                     final String userID= getRef(position).getKey();
                                     UsersRef.child(userID).removeValue();
+                                    UsersRef.child(userID).child("email").setValue(model.getEmail());
                                     //xóa user
                                     ClassRef.addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -334,11 +402,10 @@ public class ManageUserActivity extends AppCompatActivity {
                                             if(dataSnapshot.exists()){
                                                 for (DataSnapshot children: dataSnapshot.getChildren()) {
                                                     if(children.hasChild("teacher")&&children.child("teacher").getValue().toString().equals(userID)){
-                                                        ClassRef.child(children.getKey()).child("teacher").setValue("null");
+                                                        ClassRef.child(children.getKey()).child("teacher").setValue("");
                                                     }
                                                 }
                                             }
-
                                         }
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -356,18 +423,6 @@ public class ManageUserActivity extends AppCompatActivity {
                                     intent.putExtra("USER_ID",usersIDs);
                                     startActivity(intent);
                                 }
-//                                if (which == 0) {
-//                                    Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
-//                                    profileintent.putExtra("visit_user_id",usersIDs);
-//                                    profileintent.putExtra("idTeacher",idTeacher);
-//                                    profileintent.putExtra("idClass",idClass);
-//                                    startActivity(profileintent);
-//                                }
-//                                if (which == 1) {
-//                                    Intent chatintent = new Intent(ManageUserActivity.this, MessageActivity.class);
-//                                    chatintent.putExtra("userid", usersIDs);
-//                                    startActivity(chatintent);
-//                                }
                             }
                         });
                         builder.show();
@@ -422,5 +477,4 @@ public class ManageUserActivity extends AppCompatActivity {
             layout.setLayoutParams(params);
         }
     }
-
 }

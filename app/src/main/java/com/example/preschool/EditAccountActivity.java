@@ -348,7 +348,6 @@ public class EditAccountActivity extends AppCompatActivity {
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()){
                     Toast.makeText(EditAccountActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
-                    //finish();
                 }
                 else{
                     Toast.makeText(EditAccountActivity.this,"Error",Toast.LENGTH_SHORT).show();

@@ -15,9 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".EditClassActivity"></activity>
+        <activity android:name=".ViewClassActivity" />
         <activity
             android:name=".MyProfileActivity"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".EditAccountActivity"
             android:theme="@style/AppTheme" />
@@ -65,7 +67,7 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".EditProfileActivity"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".NghiPhep.DonNghiPhepViewActivity"
             android:theme="@style/AppTheme" />
@@ -95,8 +97,9 @@
         <activity
             android:name=".CommentsActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".PostActivity"
-            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".PostActivity"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".SetupActivity"
             android:theme="@style/AppTheme" />
