@@ -109,7 +109,7 @@
             android:layout_below="@+id/border2"
             android:text="Update Account Button"
             android:layout_margin="20dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/background"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textAllCaps="false"

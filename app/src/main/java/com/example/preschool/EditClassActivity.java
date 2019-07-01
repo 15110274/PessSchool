@@ -39,6 +39,7 @@ public class EditClassActivity extends AppCompatActivity {
     private final ArrayList<String> teacherid=new ArrayList<>();
     private final ArrayList<String> teachername=new ArrayList<>();
     private int teacherChoose=0;
+    private int positionOld=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,31 @@ public class EditClassActivity extends AppCompatActivity {
                     }
 
                 }
+                ClassRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.hasChild("classname")){
+                            String name = dataSnapshot.child("classname").getValue().toString();
+                            className.setText(name);
+                        }
+                        if(dataSnapshot.hasChild("teacher")){
+                            String teacher=dataSnapshot.child("teacher").getValue().toString();
+                            int vitri=0;
+                            for(int i=1;i<teacherid.size();i++){
+                                if(teacherid.get(i).equals(teacher)){
+                                    vitri=i;
+                                }
+                            }
+                            teacherSpinner.setSelection(vitri);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -106,41 +132,24 @@ public class EditClassActivity extends AppCompatActivity {
             }
         };
         autoComplete.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        autoComplete.notifyDataSetChanged();
         teacherSpinner.setAdapter(autoComplete);
+        final int[] count = {0};
         teacherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 teacherChoose=position;
+                if(count[0]==0){
+                    positionOld=position;
+                }
+                count[0]++;
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        ClassRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("classname")){
-                    String name = dataSnapshot.child("classname").getValue().toString();
-                    className.setText(name);
-                }
-                if(dataSnapshot.hasChild("teacher")){
-                    String teacher=dataSnapshot.child("teacher").getValue().toString();
-                    int vitri=0;
-                    for(int i=1;i<teacherid.size();i++){
-                        if(teacherid.get(i).equals(teacher)){
-                            vitri=i;
-                        }
-                    }
-                    teacherSpinner.setSelection(vitri);
-                }
+        //
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
         UpdateClassButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,7 +157,6 @@ public class EditClassActivity extends AppCompatActivity {
             }
         });
     }
-
     private void ValidateClassInfo() {
         final String name=className.getText().toString();
         loadingBar.setTitle("Class Update");
@@ -157,17 +165,17 @@ public class EditClassActivity extends AppCompatActivity {
         loadingBar.show();
         HashMap classMap=new HashMap();
         classMap.put("classname",name);
-        if(teacherChoose!=0){
+        if(teacherChoose!=0&&teacherChoose!=positionOld){
             classMap.put("teacher",teacherid.get(teacherChoose));
         }
         ClassRef.updateChildren(classMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()){
-                    if(teacherChoose!=0){
-                        UserRef.child(teacherid.get(teacherChoose)).addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(teacherChoose!=0&&teacherChoose!=positionOld){
+//                        UserRef.child(teacherid.get(teacherChoose)).addValueEventListener(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 HashMap userMap=new HashMap();
                                 userMap.put("idclass",getIntent().getStringExtra("CLASS_ID"));
                                 userMap.put("classname",name);
@@ -177,13 +185,22 @@ public class EditClassActivity extends AppCompatActivity {
 
                                     }
                                 });
-                            }
+                                HashMap userMap2=new HashMap();
+                                userMap2.put("idclass","");
+                                userMap2.put("classname","");
+                                UserRef.child(teacherid.get(positionOld)).updateChildren(userMap2).addOnCompleteListener(new OnCompleteListener() {
+                                    @Override
+                                    public void onComplete(@NonNull Task task) {
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    }
+                                });
+//                            }
 
-                            }
-                        });
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        });
                     }
                     Toast.makeText(EditClassActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
                 }
@@ -195,6 +212,7 @@ public class EditClassActivity extends AppCompatActivity {
         });
         Intent intent=new Intent(EditClassActivity.this, ViewClassActivity.class);
         intent.putExtra("CLASS_ID",getIntent().getStringExtra("CLASS_ID"));
+        intent.putExtra("test",teacherid);
         startActivity(intent);
     }
 }
