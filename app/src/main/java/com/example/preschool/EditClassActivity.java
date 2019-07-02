@@ -40,7 +40,7 @@ public class EditClassActivity extends AppCompatActivity {
     private final ArrayList<String> teachername=new ArrayList<>();
     private int teacherChoose=0;
     private int positionOld=0;
-    private ValueEventListener UsersEventListener, ClasEventListener;
+    private ValueEventListener UsersEventListener, ClassEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +75,7 @@ public class EditClassActivity extends AppCompatActivity {
                     }
 
                 }
-                ClasEventListener=ClassRef.addValueEventListener(new ValueEventListener() {
+                ClassEventListener=ClassRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.hasChild("classname")){
@@ -220,8 +220,8 @@ public class EditClassActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(ClasEventListener!=null){
-            ClassRef.removeEventListener(ClasEventListener);
+        if(ClassEventListener!=null){
+            ClassRef.removeEventListener(ClassEventListener);
         }
         if(UsersEventListener!=null){
             UserRef.removeEventListener(UsersEventListener);

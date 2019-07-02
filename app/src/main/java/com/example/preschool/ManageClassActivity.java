@@ -50,6 +50,8 @@ public class ManageClassActivity extends AppCompatActivity {
     private FloatingActionButton CreateClassButton;
     private ProgressDialog loadingBar;
     private DatabaseReference ClassRef,UserRef;
+    private ValueEventListener userEventListener;
+
     private int positionChoose=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +140,7 @@ public class ManageClassActivity extends AppCompatActivity {
                                 final String classID= getRef(position).getKey();
                                 if(which==2){
                                     ClassRef.child(classID).removeValue();
-                                    UserRef.addValueEventListener(new ValueEventListener() {
+                                    userEventListener= UserRef.addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                             if(dataSnapshot.exists()){
@@ -226,5 +228,14 @@ public class ManageClassActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent=new Intent(ManageClassActivity.this, AdminActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(userEventListener!=null){
+            UserRef.removeEventListener(userEventListener);
+        }
+
     }
 }
