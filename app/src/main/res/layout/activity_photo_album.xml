@@ -12,7 +12,7 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_photo_album"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar">
 

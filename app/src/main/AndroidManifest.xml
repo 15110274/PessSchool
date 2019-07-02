@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppThemeActionbar"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".EditClassActivity"></activity>
+        <activity android:name=".EditPostActivity"
+            android:theme="@style/AppTheme"/>
+        <activity android:name=".EditClassActivity" />
         <activity android:name=".ViewClassActivity" />
         <activity
             android:name=".MyProfileActivity"

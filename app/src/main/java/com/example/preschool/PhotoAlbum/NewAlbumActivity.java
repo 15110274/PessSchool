@@ -162,6 +162,7 @@ public class NewAlbumActivity extends AppCompatActivity {
         final Album album = new Album();
         if (uriList != null) {
             for (int i = 0; i < uriList.size(); i++) {
+
                 StorageReference fileReference = mStorageRef.child(mEditTextAlbumName.getText().toString()).child(System.currentTimeMillis() + "." +
                         getFileExtension(uriList.get(i)));
 

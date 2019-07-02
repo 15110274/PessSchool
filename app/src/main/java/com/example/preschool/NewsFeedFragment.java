@@ -8,6 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -43,6 +45,7 @@ import java.util.Map;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -62,6 +65,9 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private FirebaseRecyclerAdapter adapter;
     private Boolean isTeacher=false;
+
+
+    private static int firstVisibleInListview;
 
     @SuppressLint("RestrictedApi")
     @Nullable
@@ -108,6 +114,24 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         linearLayoutManager.setStackFromEnd(true);
         postList.setLayoutManager(linearLayoutManager);
 
+        postList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if(isTeacher){
+                    if (dy > 0) {
+                        // Scrolling up
+                        addPost.setVisibility(View.GONE);
+
+                    } else {
+                        // Scrolling down
+                        addPost.show();
+                    }
+                }
+
+            }
+        });
+
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
         LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
 //        DisplayAllUsersPosts();
@@ -116,6 +140,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         return view;
 
     }
+
 
 
     //hiển thị bảng tin
@@ -194,32 +219,59 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 postsViewHolder.optionButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        CharSequence options[] = new CharSequence[]{
-                                "Edit this post",
-                                "Delete this post"
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                        builder.setTitle("Select Option");
-
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                        PopupMenu popup = new PopupMenu(getContext(), v);
+                        MenuInflater inflater = popup.getMenuInflater();
+                        inflater.inflate(R.menu.menu_option_post, popup.getMenu());
+                        popup.show();
+                        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (which == 0) {
-//                                                Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
-//                                                profileintent.putExtra("visit_user_id",usersIDs);
-//                                                profileintent.putExtra("idTeacher",idTeacher);
-//                                                profileintent.putExtra("idClass",idClass);
-//                                                startActivity(profileintent);
-                                }
-                                if (which == 1) {
-                                    PostsRef.child(PostKey).removeValue();
-//
+                            public boolean onMenuItemClick(MenuItem item) {
+                                switch (item.getItemId()) {
+                                    case R.id.action_edit_post:
+                                        // Edit Post
+                                        Intent intent=new Intent(getContext(),EditPostActivity.class);
+                                        intent.putExtra("POST_KEY",PostKey);
+                                        intent.putExtra("ID_CLASS",idClass);
+                                        startActivity(intent);
+                                        return true;
+                                    case R.id.action_delete_post:
+                                        // Delete post
+                                        PostsRef.child(PostKey).removeValue();
+                                        return true;
+                                    default:
+                                        return false;
                                 }
                             }
                         });
-                        builder.show();
+
+
+//                        CharSequence options[] = new CharSequence[]{
+//                                "Edit this post",
+//                                "Delete this post"
+//                        };
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                        builder.setTitle("Select Option");
+//
+//                        builder.setItems(options, new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                if (which == 0) {
+////                                                Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
+////                                                profileintent.putExtra("visit_user_id",usersIDs);
+////                                                profileintent.putExtra("idTeacher",idTeacher);
+////                                                profileintent.putExtra("idClass",idClass);
+////                                                startActivity(profileintent);
+//                                }
+//                                if (which == 1) {
+//                                    PostsRef.child(PostKey).removeValue();
+////
+//                                }
+//                            }
+//                        });
+//                        builder.show();
                     }
                 });
+
 
                 //cmt
                 postsViewHolder.CommentPostButton.setOnClickListener(new View.OnClickListener() {
