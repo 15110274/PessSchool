@@ -276,7 +276,6 @@ public class ManageUserActivity extends AppCompatActivity {
                                             ref.addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                    final int[] success = {0};
                                                     if(dataSnapshot.exists()){
                                                         for (final DataSnapshot children: dataSnapshot.getChildren()) {
                                                             //xác định nếu ko có role thì đã xóa
@@ -294,7 +293,6 @@ public class ManageUserActivity extends AppCompatActivity {
                                                                         @Override
                                                                         public void onComplete(@NonNull Task task) {
                                                                             if (task.isSuccessful()) {
-                                                                                success[0] =1;
                                                                                 if(roleChoose==2){
                                                                                     ClassRef.child(classId.get(classChoose)).child("teacher").setValue(children.getKey());
                                                                                 }
@@ -312,9 +310,6 @@ public class ManageUserActivity extends AppCompatActivity {
                                                                 }
                                                             }
                                                         }
-                                                    }
-                                                    if(success[0]==0){
-                                                        Toast.makeText(ManageUserActivity.this, "Email Existed", Toast.LENGTH_SHORT).show();
                                                     }
                                                 }
 

@@ -48,17 +48,19 @@ public class ViewAccountActivity extends AppCompatActivity {
         UsersRef.child(getIntent().getStringExtra("USER_ID")).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String myRole=dataSnapshot.child("role").getValue().toString();
+                if(dataSnapshot.hasChild("role")){
+                    String myRole=dataSnapshot.child("role").getValue().toString();
+                    if(myRole.equals("Admin")){
+                        userClass.setVisibility(View.GONE);
+                        userParentof.setVisibility(View.GONE);
+                    }
+                    else{
+                        String myClass = dataSnapshot.child("classname").getValue().toString();
+                        userClass.setText("Lớp: " + myClass);
+                    }
+                    userRole.setText("Role: "+myRole);
+                }
                 String myEmail=dataSnapshot.child("email").getValue().toString();
-                if(myRole.equals("Admin")){
-                    userClass.setVisibility(View.GONE);
-                    userParentof.setVisibility(View.GONE);
-                }
-                else{
-                    String myClass = dataSnapshot.child("classname").getValue().toString();
-                    userClass.setText("Lớp: " + myClass);
-                }
-                userRole.setText("Role: "+myRole);
                 userEmail.setText("Email: "+myEmail);
                 if(dataSnapshot.hasChild("profileimage")){
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();

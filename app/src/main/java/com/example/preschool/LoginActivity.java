@@ -1,7 +1,9 @@
 package com.example.preschool;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -15,8 +17,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -167,75 +172,89 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
+                                final FirebaseUser currentUser = mAuth.getCurrentUser();
                                 currentUserID = mAuth.getCurrentUser().getUid();
-                                UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
-                                UsersEventListener = UsersRef.addValueEventListener(new ValueEventListener() {
+                                UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+                                UsersEventListener =
+                                        UsersRef.child(currentUserID).addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        if (!dataSnapshot.hasChild("fullname")) {
-
-                                            //Send user to SetupActivity
-                                            Intent setupIntent = new Intent(LoginActivity.this, SetupActivity.class);
-                                            setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                            finish();
-                                            startActivity(setupIntent);
-                                        } else if (currentUserID.equals("Z85jCL2QLARLYoQGPjltOB5kCOE2")) {
-
-                                            //Send user to AdminActivity
-                                            Intent intent = new Intent(LoginActivity.this, AdminActivity.class);
-                                            finish();
-                                            startActivity(intent);
-
-                                        } else {
-                                            // Send user to MainActivity
-                                            ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
-                                            idClass = dataSnapshot.child("idclass").getValue().toString();
-                                            ClasEventListener = ClassRef.addValueEventListener(new ValueEventListener() {
+                                        //xác nhận tài khoản đã bị xóa, hủy tài khoản
+                                        if (!dataSnapshot.hasChild("role")) {
+                                            DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                                 @Override
-                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                    idTeacher = dataSnapshot.child(idClass).child("teacher").getValue().toString();
-                                                    String className = dataSnapshot.child(idClass).child("classname").getValue().toString();
-                                                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                                    Bundle bundleStart = new Bundle();
-
-                                                    // Đóng gói dữ liệu vào bundle
-                                                    bundleStart.putString("ID_CLASS", idClass);
-                                                    bundleStart.putString("CLASS_NAME", className);
-                                                    bundleStart.putString("ID_TEACHER", idTeacher);
-                                                    mainIntent.putExtras(bundleStart);
-                                                    finish();
-                                                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                                    startActivity(mainIntent);
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    switch (which){
+                                                        case DialogInterface.BUTTON_POSITIVE:
+                                                            UsersRef.child(currentUserID).removeValue();
+                                                            AuthCredential credential = EmailAuthProvider
+                                                                    .getCredential(currentUser.getEmail(), "123456");
+                                                            currentUser.reauthenticate(credential).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                @Override
+                                                                public void onComplete(@NonNull Task<Void> task) {
+                                                                    currentUser.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                        @Override
+                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                            if (task.isSuccessful()) {
+                                                                                startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+                                                                                finish();
+                                                                            }
+                                                                        }
+                                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                                        @Override
+                                                                        public void onFailure(@NonNull Exception e) {
+                                                                            Toast.makeText(LoginActivity.this, "that bai", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                    }
                                                 }
+                                            };
+                                            AlertDialog.Builder ab = new AlertDialog.Builder(LoginActivity.this);
+                                            loadingBar.dismiss();
+                                            ab.setMessage("Tài khoản của bạn đã hết hạn. Vui lòng liên hệ với nhà trường để được " +
+                                                    "cấp tài khoản mới ").setPositiveButton("Yes", dialogClickListener)
+                                                    .show();
 
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        }
+                                        //ngược lại đăng nhập vào
+                                        else {
+                                            if(dataSnapshot.child("role").getValue().toString().equals("Admin")){
+                                                intent = new Intent(LoginActivity.this, AdminActivity.class);
+                                                startActivity(intent);
+                                            }
+                                            else{
+                                                if (!dataSnapshot.hasChild("fullname")) {
+                                                    intent = new Intent(LoginActivity.this, SetupActivity.class);
+                                                    startActivity(intent);
+                                                } else {
+                                                    final String idClass;
+                                                    idClass = dataSnapshot.child("idclass").getValue().toString();
+                                                    DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
+                                                    ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                            String idTeacher = dataSnapshot.child("teacher").getValue().toString();
+                                                            String className = dataSnapshot.child("classname").getValue().toString();
+                                                            Bundle bundleStart = new Bundle();
+                                                            intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                            // Đóng gói dữ liệu vào bundle
+                                                            bundleStart.putString("ID_CLASS", idClass);
+                                                            bundleStart.putString("CLASS_NAME", className);
+                                                            bundleStart.putString("ID_TEACHER", idTeacher);
+                                                            intent.putExtras(bundleStart);
 
+                                                            startActivity(intent);
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                        }
+                                                    });
                                                 }
-                                            });
-//                                            ClasEventListener=ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//                                                @Override
-//                                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                                    final String idTeacher = dataSnapshot.child(idClass).child("teacher").getValue().toString();
-//                                                    String className = dataSnapshot.child(idClass).child("classname").getValue().toString();
-//                                                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-//                                                    Bundle bundleStart = new Bundle();
-//
-//                                                    // Đóng gói dữ liệu vào bundle
-//                                                    bundleStart.putString("ID_CLASS", idClass);
-//                                                    bundleStart.putString("CLASS_NAME", className);
-//                                                    bundleStart.putString("ID_TEACHER", idTeacher);
-//                                                    mainIntent.putExtras(bundleStart);
-//                                                    finish();
-//                                                    //mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                                                    startActivity(mainIntent);
-//                                                }
-//
-//                                                @Override
-//                                                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                                }
-//                                            });
+                                            }
                                         }
                                     }
 
