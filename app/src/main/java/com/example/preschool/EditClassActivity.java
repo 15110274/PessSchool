@@ -40,6 +40,7 @@ public class EditClassActivity extends AppCompatActivity {
     private final ArrayList<String> teachername=new ArrayList<>();
     private int teacherChoose=0;
     private int positionOld=0;
+    private ValueEventListener UsersEventListener, ClasEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,7 @@ public class EditClassActivity extends AppCompatActivity {
         teachername.add("Choose Teacher...");
         teacherid.add("");
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        database.child("Users").addValueEventListener(new ValueEventListener() {
+        UsersEventListener=database.child("Users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
@@ -74,7 +75,7 @@ public class EditClassActivity extends AppCompatActivity {
                     }
 
                 }
-                ClassRef.addValueEventListener(new ValueEventListener() {
+                ClasEventListener=ClassRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.hasChild("classname")){
@@ -214,5 +215,17 @@ public class EditClassActivity extends AppCompatActivity {
         intent.putExtra("CLASS_ID",getIntent().getStringExtra("CLASS_ID"));
         intent.putExtra("test",teacherid);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(ClasEventListener!=null){
+            ClassRef.removeEventListener(ClasEventListener);
+        }
+        if(UsersEventListener!=null){
+            UserRef.removeEventListener(UsersEventListener);
+        }
+        finish();
     }
 }
