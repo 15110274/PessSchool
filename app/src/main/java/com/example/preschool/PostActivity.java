@@ -146,10 +146,9 @@ public class PostActivity extends AppCompatActivity {
 
     private void StoringImageToFirebaseStorage() {
         Calendar calFordDate = Calendar.getInstance();
-        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MMMM-yyyy");
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
         saveCurrentDate = currentDate.format(calFordDate.getTime());
 
-        Calendar calFordTime = Calendar.getInstance();
         SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
         saveCurrentTime = currentTime.format(calFordDate.getTime());
         final String childString = PostsRef.push().getKey();

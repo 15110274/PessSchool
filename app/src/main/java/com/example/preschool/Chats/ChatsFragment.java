@@ -212,7 +212,7 @@ public class ChatsFragment extends Fragment {
     private void setTextLastMess(String theLastMessage, TextView last_msg, Boolean seen) {
 
         if (seen) {
-            last_msg.setTextColor(Color.parseColor("#555555"));
+            last_msg.setTextColor(Color.parseColor("#A9A9A9"));
         } else last_msg.setTextColor(Color.parseColor("#ffa000"));
         try {// Có  dấu Enter
             if (theLastMessage.indexOf("\n") < 20)

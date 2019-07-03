@@ -67,8 +67,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     private Boolean isTeacher=false;
 
 
-    private static int firstVisibleInListview;
-
     @SuppressLint("RestrictedApi")
     @Nullable
     @Override
@@ -187,8 +185,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
                 String saveCurrentTime = currentTime.format(calFordTime.getTime());
 
-                postsViewHolder.setMinute(posts.getTime());
-//                postsViewHolder.setDate(posts.getDate());
+                postsViewHolder.setTime(posts.getTime());
+                postsViewHolder.setDate(posts.getDate());
 //                postsViewHolder.SetTime(posts.getTime());
 
                 postsViewHolder.setLikeButtonStatus(PostKey);
@@ -346,7 +344,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         DisplayAllUsersPosts();
     }
 
-    public static class PostsViewHolder extends RecyclerView.ViewHolder {
+    private static class PostsViewHolder extends RecyclerView.ViewHolder {
 
         private TextView LikePostButton, CommentPostButton;
         private TextView DisplayNoOfLikes, DisplayNoOfComments;
@@ -435,9 +433,13 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             Picasso.get().load(profileimage).resize(200, 0).into(image);
         }
 
-        public void setMinute(String minute) {
-            TextView PostMinute = itemView.findViewById(R.id.post_minute);
-            PostMinute.setText(minute + " min ago");
+        public void setTime(String minute) {
+            TextView postTime = itemView.findViewById(R.id.post_time);
+            postTime.setText(minute);
+        }
+        private void setDate(String date){
+            TextView postDate = itemView.findViewById(R.id.post_date);
+            postDate.setText(date);
         }
 
         public void setDescription(String description) {

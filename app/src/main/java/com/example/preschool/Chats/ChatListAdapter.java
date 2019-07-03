@@ -163,13 +163,13 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         switch (theLastMessage) {
             case "default":
                 last_msg.setText("No Message");
-                last_msg.setTextColor(Color.parseColor("#555555"));
+                last_msg.setTextColor(Color.parseColor("#03A9F4"));
                 break;
 
             default:
                 if (seen) {
-                    last_msg.setTextColor(Color.parseColor("#555555"));
-                } else last_msg.setTextColor(Color.parseColor("#ffa000"));
+                    last_msg.setTextColor(Color.parseColor("#03A9F4"));
+                } else last_msg.setTextColor(Color.parseColor("#03A9F4"));
                 try {// Có  dấu Enter
                     if (theLastMessage.indexOf("\n") < 20)
                         last_msg.setText(theLastMessage.substring(0, theLastMessage.indexOf("\n")) + "...");

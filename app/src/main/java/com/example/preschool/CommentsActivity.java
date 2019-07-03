@@ -49,14 +49,14 @@ public class CommentsActivity extends AppCompatActivity {
     private ImageView PostImage;
     private TextView PostDescription, PostName;
     private CircleImageView PostProfileImage;
-    private TextView PostTime;
+    private TextView PostTime, PostDate;
     private TextView LikeButton, CommentButton;
 
     private DatabaseReference clickPostRef, CommentsRef;
 
     private String Post_Key, current_user_id, idClass, idTeacher;
     private FirebaseAuth mAuth;
-    private String postimage, profileimage, description, time, postname;
+    private String postimage, profileimage, description, time,date, postname;
     Boolean LikeChecker = false;
 
     private TextView DisplayNoOfLikes, DisplayNoOfComments;
@@ -94,7 +94,8 @@ public class CommentsActivity extends AppCompatActivity {
         PostImage = findViewById(R.id.post_image);
         PostDescription = findViewById(R.id.post_description);
         PostProfileImage = findViewById(R.id.post_profile_image);
-        PostTime = findViewById(R.id.post_minute);
+        PostTime = findViewById(R.id.post_time);
+        PostDate=findViewById(R.id.post_date);
         LikeButton = findViewById(R.id.like_button);
         CommentButton = findViewById(R.id.comment_button);
         DisplayNoOfLikes = findViewById(R.id.display_no_of_likes);
@@ -112,7 +113,7 @@ public class CommentsActivity extends AppCompatActivity {
         LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
 
         CommentsList = findViewById(R.id.comments_list);
-        CommentsList.setHasFixedSize(true);
+        CommentsList.setHasFixedSize(false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -157,6 +158,7 @@ public class CommentsActivity extends AppCompatActivity {
 
                     postimage = dataSnapshot.child("postimage").getValue().toString();
                     time = dataSnapshot.child("time").getValue().toString();
+                    date=dataSnapshot.child("date").getValue().toString();
 
 
                     PostDescription.setText(description);
@@ -197,6 +199,7 @@ public class CommentsActivity extends AppCompatActivity {
                         }
                     });
                     PostTime.setText(time);
+                    PostDate.setText(date);
                     CommentButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -374,20 +377,20 @@ public class CommentsActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(CommentsActivity.this,"Successful",Toast.LENGTH_SHORT).show();
+//                                Toast.makeText(CommentsActivity.this,"Successful",Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(CommentsActivity.this, "Không thể bình luận, kiểm tra đường truyền mạng của bạn", Toast.LENGTH_SHORT).show();
 
                             }
                         }
-                    });
+                    })
+            ;
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Toast.makeText(CommentsActivity.this, "onPause", Toast.LENGTH_SHORT).show();
         if(commentListener!=null)
             UsersRef.child(current_user_id).removeEventListener(commentListener);
     }

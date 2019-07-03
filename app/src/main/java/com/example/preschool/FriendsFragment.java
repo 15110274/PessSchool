@@ -64,7 +64,7 @@ public class FriendsFragment extends Fragment {
             idTeacher = bundle.getString("ID_TEACHER");
         }
 
-        UserStateRef=FirebaseDatabase.getInstance().getReference("UserState");
+        UserStateRef = FirebaseDatabase.getInstance().getReference("UserState");
 //        FriendsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Friends").child(current_user_id);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         myFriendList = view.findViewById(R.id.friend_list);
@@ -148,7 +148,7 @@ public class FriendsFragment extends Fragment {
                     UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.child("type").getValue().toString().equals("online")){
+                            if (dataSnapshot.child("type").getValue().toString().equals("online")) {
                                 friendsViewHolder.online.setVisibility(View.VISIBLE);
                             } else {
                                 friendsViewHolder.online.setVisibility(View.GONE);
@@ -202,6 +202,7 @@ public class FriendsFragment extends Fragment {
                     friendsViewHolder.user_name.setText("Phụ huynh chưa đăng nhập");
                     friendsViewHolder.online.setVisibility(View.GONE);
                 }
+
 
             }
 
