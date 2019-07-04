@@ -44,13 +44,13 @@
                     android:layout_height="30dp"
                     android:gravity="center"
                     android:textStyle="bold"
-                    android:textAllCaps="true"
                     android:layout_marginEnd="60dp"
                     android:layout_marginStart="-10dp"
                     android:layout_alignParentEnd="true"
+                    android:fontFamily="@font/lobster_regular"
                     android:text="Ten lop"
                     android:textColor="@color/background"
-                    android:textSize="20sp" />
+                    android:textSize="22sp" />
 
 
             </RelativeLayout>

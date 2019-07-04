@@ -8,6 +8,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -32,16 +35,18 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
 public class PostActivity extends AppCompatActivity {
-    private Toolbar mToolbar;
     private ProgressDialog loadingBar;
 
-    private ImageButton SelectPostImage;
+    private ImageView SelectPostImage;
+    private Bitmap bitmap;
     private Button UpdatePostButton;
     private EditText PostDescription;
     private Uri ImageUri;
@@ -123,7 +128,8 @@ public class PostActivity extends AppCompatActivity {
 
         if (requestCode == Gallery_Pick && resultCode == RESULT_OK && data != null) {
             ImageUri = data.getData();
-            SelectPostImage.setImageURI(ImageUri);
+            Picasso.get().load(ImageUri).resize(1440,0).into(SelectPostImage);
+//            SelectPostImage.setImageURI(ImageUri);
         }
     }
 
@@ -140,11 +146,23 @@ public class PostActivity extends AppCompatActivity {
             loadingBar.show();
             loadingBar.setCanceledOnTouchOutside(true);
 
-            StoringImageToFirebaseStorage();
+            uploadImageToFirebase();
         }
     }
+    private void uploadImageToFirebase(){
 
-    private void StoringImageToFirebaseStorage() {
+        //Image khi load lên ImageButton đã được resize bằng Picasso
+        // nên upload bitmap từ ImageButton giúp giảm dung lượng ảnh
+//        Bitmap bitmap= SelectPostImage.getDrawingCache();
+        bitmap=((BitmapDrawable) SelectPostImage.getDrawable()).getBitmap();
+//        if(bitmap==null){
+//            Toast.makeText(PostActivity.this,"null",Toast.LENGTH_LONG).show();
+//        }
+        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+        byte[] data = bao.toByteArray();
+
+
         Calendar calFordDate = Calendar.getInstance();
         SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
         saveCurrentDate = currentDate.format(calFordDate.getTime());
@@ -154,12 +172,8 @@ public class PostActivity extends AppCompatActivity {
         final String childString = PostsRef.push().getKey();
 
 
-        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(ImageUri.getLastPathSegment() + ".jpg");
-        //dem count post
-
-        filePath.putFile(ImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-
-
+        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(childString + ".jpg");
+        filePath.putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
@@ -226,7 +240,93 @@ public class PostActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
+
+//    private void StoringImageToFirebaseStorage() {
+//        Calendar calFordDate = Calendar.getInstance();
+//        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
+//        saveCurrentDate = currentDate.format(calFordDate.getTime());
+//
+//        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
+//        saveCurrentTime = currentTime.format(calFordDate.getTime());
+//        final String childString = PostsRef.push().getKey();
+//
+//
+//        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(ImageUri.getLastPathSegment() + ".jpg");
+//        //dem count post
+//
+//        filePath.putFile(ImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//
+//
+//            @Override
+//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+//                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//                            final String downloadUrl = uri.toString();
+//                            //lưu hình ảnh lên posts
+//                            PostsRef.child(childString).child("postimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//                                    if (task.isSuccessful()) {
+//                                        Toast.makeText(PostActivity.this, "Image success", Toast.LENGTH_SHORT).show();
+//                                        loadingBar.dismiss();
+//                                        SendUserToNewsFeedActivity();
+//                                    } else {
+//                                        Toast.makeText(PostActivity.this, "Image fail", Toast.LENGTH_SHORT).show();
+//                                        loadingBar.dismiss();
+//                                    }
+//                                }
+//                            });
+//
+//                        }
+//                    });
+//                    //lưu các mục còn lại lên posts
+//                    usersListener = UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(DataSnapshot dataSnapshot) {
+//                            if (dataSnapshot.exists()) {
+//
+//                                HashMap postsMap = new HashMap();
+//                                postsMap.put("uid", current_user_id);
+//                                postsMap.put("date", saveCurrentDate);
+//                                postsMap.put("time", saveCurrentTime);
+//                                postsMap.put("description", Description);
+//
+//                                PostsRef.child(childString).updateChildren(postsMap)
+//                                        .addOnCompleteListener(new OnCompleteListener() {
+//                                            @Override
+//                                            public void onComplete(@NonNull Task task) {
+//                                                if (task.isSuccessful()) {
+//                                                    Toast.makeText(PostActivity.this, "New Post is updated successfully.", Toast.LENGTH_SHORT).show();
+//                                                    loadingBar.dismiss();
+//                                                    SendUserToNewsFeedActivity();
+//                                                } else {
+//                                                    Toast.makeText(PostActivity.this, "Error Occured while updating your post.", Toast.LENGTH_SHORT).show();
+//                                                    loadingBar.dismiss();
+//                                                }
+//                                            }
+//                                        });
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(DatabaseError databaseError) {
+//
+//                        }
+//                    });
+//
+//                } else {
+//                    String message = task.getException().getMessage();
+//                    Toast.makeText(PostActivity.this, "Error:" + message, Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//    }
 
     private void SendUserToNewsFeedActivity() {
         finish();
