@@ -1,6 +1,7 @@
 package com.example.preschool;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -39,7 +40,7 @@ public class EditClassActivity extends AppCompatActivity {
     private final ArrayList<String> teacherid=new ArrayList<>();
     private final ArrayList<String> teachername=new ArrayList<>();
     private int teacherChoose=0;
-    private int positionOld=0;
+    private int teacherOld=0;
     private ValueEventListener UsersEventListener, ClassEventListener;
 
     @Override
@@ -56,7 +57,8 @@ public class EditClassActivity extends AppCompatActivity {
         teachername.add("Choose Teacher...");
         teacherid.add("");
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        UsersEventListener=database.child("Users").addValueEventListener(new ValueEventListener() {
+//        UsersEventListener=
+        UserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
@@ -75,7 +77,7 @@ public class EditClassActivity extends AppCompatActivity {
                     }
 
                 }
-                ClassEventListener=ClassRef.addValueEventListener(new ValueEventListener() {
+                ClassRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.hasChild("classname")){
@@ -85,9 +87,15 @@ public class EditClassActivity extends AppCompatActivity {
                         if(dataSnapshot.hasChild("teacher")){
                             String teacher=dataSnapshot.child("teacher").getValue().toString();
                             int vitri=0;
-                            for(int i=1;i<teacherid.size();i++){
-                                if(teacherid.get(i).equals(teacher)){
-                                    vitri=i;
+                            if(teacher=="")
+                            {
+                                vitri=0;
+                            }
+                            else{
+                                for(int i=1;i<teacherid.size();i++){
+                                    if(teacherid.get(i).equals(teacher)){
+                                        vitri=i;
+                                    }
                                 }
                             }
                             teacherSpinner.setSelection(vitri);
@@ -97,6 +105,20 @@ public class EditClassActivity extends AppCompatActivity {
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                    }
+                });
+                final int[] temp = {0};
+                teacherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        teacherChoose=position;
+                        if(temp[0] ==0){
+                            teacherOld=position;
+                        }
+                        temp[0]++;
+                    }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
                     }
                 });
 
@@ -131,26 +153,20 @@ public class EditClassActivity extends AppCompatActivity {
                 view.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                 return view;
             }
+            public View getView(int position, View convertView, ViewGroup parent) {
+                // Cast the spinner collapsed item (non-popup item) as a text view
+                TextView tv = (TextView) super.getView(position, convertView, parent);
+
+                // Set the text color of spinner item
+                tv.setTextColor(Color.GRAY);
+
+                // Return the view
+                return tv;
+            }
+
         };
         autoComplete.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        autoComplete.notifyDataSetChanged();
         teacherSpinner.setAdapter(autoComplete);
-        final int[] count = {0};
-        teacherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                teacherChoose=position;
-                if(count[0]==0){
-                    positionOld=position;
-                }
-                count[0]++;
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-        //
-
         UpdateClassButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,48 +176,25 @@ public class EditClassActivity extends AppCompatActivity {
     }
     private void ValidateClassInfo() {
         final String name=className.getText().toString();
-        loadingBar.setTitle("Class Update");
-        loadingBar.setMessage("Please wait, while we updating your class...");
-        loadingBar.setCanceledOnTouchOutside(true);
-        loadingBar.show();
         HashMap classMap=new HashMap();
         classMap.put("classname",name);
-        if(teacherChoose!=0&&teacherChoose!=positionOld){
+        if(teacherChoose!=0&&teacherChoose!=teacherOld){
             classMap.put("teacher",teacherid.get(teacherChoose));
         }
+
         ClassRef.updateChildren(classMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
-                if(task.isSuccessful()){
-                    if(teacherChoose!=0&&teacherChoose!=positionOld){
-//                        UserRef.child(teacherid.get(teacherChoose)).addValueEventListener(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                HashMap userMap=new HashMap();
-                                userMap.put("idclass",getIntent().getStringExtra("CLASS_ID"));
-                                userMap.put("classname",name);
-                                UserRef.child(teacherid.get(teacherChoose)).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
-                                    @Override
-                                    public void onComplete(@NonNull Task task) {
-
-                                    }
-                                });
-                                HashMap userMap2=new HashMap();
-                                userMap2.put("idclass","");
-                                userMap2.put("classname","");
-                                UserRef.child(teacherid.get(positionOld)).updateChildren(userMap2).addOnCompleteListener(new OnCompleteListener() {
-                                    @Override
-                                    public void onComplete(@NonNull Task task) {
-
-                                    }
-                                });
-//                            }
-
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                            }
-//                        });
+                if(task.isSuccessful()) {
+                    if (teacherChoose != 0&&teacherChoose!=teacherOld) {
+                        HashMap userMap = new HashMap();
+                        userMap.put("idclass", getIntent().getStringExtra("CLASS_ID"));
+                        userMap.put("classname", name);
+                        UserRef.child(teacherid.get(teacherChoose)).updateChildren(userMap);
+                        HashMap userMap2 = new HashMap();
+                        userMap2.put("idclass", "");
+                        userMap2.put("classname", "");
+                        UserRef.child(teacherid.get(teacherOld)).updateChildren(userMap2);
                     }
                     Toast.makeText(EditClassActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
                 }
