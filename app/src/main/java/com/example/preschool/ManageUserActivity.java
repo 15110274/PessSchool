@@ -59,6 +59,8 @@ public class ManageUserActivity extends AppCompatActivity {
     private int classChoose=0;
     private int roleChoose=0;
     private String userIdJustAdd;
+    private ValueEventListener ClassEventListener,UsersEventListener,updateClass;
+    final ArrayList<String> classId=new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,11 +108,11 @@ public class ManageUserActivity extends AppCompatActivity {
         roleSpinner.setAdapter(roleAdapter );
 
         final ArrayList<String> className=new ArrayList<>();
-        final ArrayList<String> classId=new ArrayList<>();
+
         className.add("Choose Class...");
         classId.add("");
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        database.child("Class").addValueEventListener(new ValueEventListener() {
+        ClassEventListener=database.child("Class").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
@@ -152,7 +154,9 @@ public class ManageUserActivity extends AppCompatActivity {
             }
         };
         autoComplete.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        autoComplete.notifyDataSetChanged();
         classNameSpinner.setAdapter(autoComplete);
+
         classNameSpinner.setVisibility(View.GONE);
 
         roleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -210,7 +214,7 @@ public class ManageUserActivity extends AppCompatActivity {
                 else if(roleChoose==0){
                     Toast.makeText(ManageUserActivity.this, "Please choose role...", Toast.LENGTH_SHORT).show();
                 }
-                else if(roleChoose!=0 && classChoose==0){
+                else if(roleChoose!=0 && classChoose==0&&roleChoose!=3){
                     Toast.makeText(ManageUserActivity.this, "Please choose class...", Toast.LENGTH_SHORT).show();
                 }
                 else
@@ -220,7 +224,7 @@ public class ManageUserActivity extends AppCompatActivity {
                     loadingBar.show();
                     loadingBar.setCanceledOnTouchOutside(true);
                     loadingBar.dismiss();
-
+                    final String mail=mAuth.getCurrentUser().getEmail();
                     mAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
@@ -243,16 +247,32 @@ public class ManageUserActivity extends AppCompatActivity {
                                             public void onComplete(@NonNull Task task) {
                                                 if (task.isSuccessful()) {
                                                     if(roleChoose==2){
+//                                                        ClassRef.child(classId.get(classChoose)).addValueEventListener(new ValueEventListener() {
+//                                                            @Override
+//                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                                                if(dataSnapshot.child("teacher").getValue().toString()!=""){
+//                                                                    String teacher=dataSnapshot.child("teacher").getValue().toString();
+//                                                                    UsersRef.child(teacher).child("idclass").setValue("");
+//                                                                    UsersRef.child(teacher).child("classname").setValue("");
+//                                                                }
+//                                                            }
+//
+//                                                            @Override
+//                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                                            }
+//                                                        });
                                                         ClassRef.child(classId.get(classChoose)).child("teacher").setValue(userIdJustAdd);
                                                     }
                                                     Toast.makeText(ManageUserActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
                                                     mAuth.signOut();
-                                                    mAuth.signInWithEmailAndPassword("khoandv@gmail.com", "123456")
+                                                    mAuth.signInWithEmailAndPassword(mail, "123456")
                                                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                                                 @Override
                                                                 public void onComplete(@NonNull Task<AuthResult> task)
                                                                 {
-                                                                    recreate();
+                                                                    Intent intent=new Intent(ManageUserActivity.this,ManageUserActivity.class);
+                                                                    startActivity(intent);
                                                                 }
                                                             });
                                                     loadingBar.dismiss();
@@ -273,7 +293,7 @@ public class ManageUserActivity extends AppCompatActivity {
                                         catch (FirebaseAuthUserCollisionException existEmail)
                                         {
                                             final DatabaseReference ref=FirebaseDatabase.getInstance().getReference().child("Users");
-                                            ref.addValueEventListener(new ValueEventListener() {
+                                            UsersEventListener=ref.addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                                     if(dataSnapshot.exists()){
@@ -293,8 +313,29 @@ public class ManageUserActivity extends AppCompatActivity {
                                                                         @Override
                                                                         public void onComplete(@NonNull Task task) {
                                                                             if (task.isSuccessful()) {
+                                                                                final String key=children.getKey();
                                                                                 if(roleChoose==2){
-                                                                                    ClassRef.child(classId.get(classChoose)).child("teacher").setValue(children.getKey());
+//                                                                                    updateClass=ClassRef.child(classId.get(classChoose)).addValueEventListener(new ValueEventListener() {
+//                                                                                        @Override
+//                                                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                                                                            if(dataSnapshot.exists()){
+//                                                                                                if(dataSnapshot.child("teacher").getValue().toString()!=""){
+//                                                                                                    String teacher=dataSnapshot.child("teacher").getValue().toString();
+//                                                                                                    if(teacher!=null){
+//                                                                                                        UsersRef.child(teacher).child("idclass").setValue("");
+//                                                                                                        UsersRef.child(teacher).child("classname").setValue("");
+//                                                                                                    }
+//                                                                                                }
+//                                                                                            }
+//
+//                                                                                        }
+//
+//                                                                                        @Override
+//                                                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                                                                                        }
+//                                                                                    });
+                                                                                    ClassRef.child(classId.get(classChoose)).child("teacher").setValue(key);
                                                                                 }
                                                                                 //recreate();
                                                                                 Toast.makeText(ManageUserActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
@@ -472,4 +513,32 @@ public class ManageUserActivity extends AppCompatActivity {
             layout.setLayoutParams(params);
         }
     }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(ManageUserActivity.this, AdminActivity.class);
+        startActivity(intent);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(ClassEventListener!=null){
+            ClassRef.removeEventListener(ClassEventListener);
+        }
+        if(UsersEventListener!=null){
+            UsersRef.removeEventListener(UsersEventListener);
+        }
+        if(updateClass!=null){
+            ClassRef.child(classId.get(classChoose)).removeEventListener(updateClass);
+        }
+        finish();
+    }
+
 }

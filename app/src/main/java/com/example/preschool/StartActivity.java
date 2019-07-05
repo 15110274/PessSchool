@@ -84,43 +84,64 @@ public class StartActivity extends AppCompatActivity {
 
                     }
                     //ngược lại đăng nhập vào
-                    else {
-                        if(dataSnapshot.child("role").getValue().toString().equals("Admin")){
-                            intent = new Intent(StartActivity.this, AdminActivity.class);
-                            startActivity(intent);
-                        }
-                        else{
-                            if (!dataSnapshot.hasChild("fullname")) {
-                                intent = new Intent(StartActivity.this, SetupActivity.class);
+                    else
+                        {
+                            if(dataSnapshot.child("role").getValue().toString().equals("Admin")){
+                                intent = new Intent(StartActivity.this, AdminActivity.class);
                                 startActivity(intent);
-                            } else {
-                                final String idClass;
-                                idClass = dataSnapshot.child("idclass").getValue().toString();
-                                DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
-                                ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        String idTeacher = dataSnapshot.child("teacher").getValue().toString();
-                                        String className = dataSnapshot.child("classname").getValue().toString();
-                                        Bundle bundleStart = new Bundle();
-                                        intent = new Intent(StartActivity.this, MainActivity.class);
-                                        // Đóng gói dữ liệu vào bundle
-                                        bundleStart.putString("ID_CLASS", idClass);
-                                        bundleStart.putString("CLASS_NAME", className);
-                                        bundleStart.putString("ID_TEACHER", idTeacher);
-                                        intent.putExtras(bundleStart);
-
-                                        startActivity(intent);
-                                    }
-
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                    }
-                                });
                             }
+                            else{
+                                    final String idClass;
+                                    idClass = dataSnapshot.child("idclass").getValue().toString();
+                                    if(idClass.equals("")) {
+                                        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                switch (which) {
+                                                    case DialogInterface.BUTTON_POSITIVE:
+                                                        startActivity(new Intent(StartActivity.this, LoginActivity.class));
+                                                        finish();
+                                                }
+                                            }
+                                        };
+                                        AlertDialog.Builder ab = new AlertDialog.Builder(StartActivity.this);
+                                        ab.setMessage("Bạn đang không thuộc lớp nào cả. Vui lòng liên hệ nhà trường để thêm lớp cho bạn ").setPositiveButton("Yes", dialogClickListener)
+                                                .show();
+                                    }
+                                    else {
+                                        if (!dataSnapshot.hasChild("fullname")) {
+                                            intent = new Intent(StartActivity.this, SetupActivity.class);
+                                            startActivity(intent);
+                                        }
+                                        else{
+
+                                                DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
+                                                ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        String idTeacher = dataSnapshot.child("teacher").getValue().toString();
+                                                        String className = dataSnapshot.child("classname").getValue().toString();
+                                                        Bundle bundleStart = new Bundle();
+                                                        intent = new Intent(StartActivity.this, MainActivity.class);
+                                                        // Đóng gói dữ liệu vào bundle
+                                                        bundleStart.putString("ID_CLASS", idClass);
+                                                        bundleStart.putString("CLASS_NAME", className);
+                                                        bundleStart.putString("ID_TEACHER", idTeacher);
+                                                        intent.putExtras(bundleStart);
+
+                                                        startActivity(intent);
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
+                                            }
+
+                                        }
+                                }
                         }
-                    }
                 }
 
                 @Override

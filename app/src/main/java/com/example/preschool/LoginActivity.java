@@ -212,11 +212,9 @@ public class LoginActivity extends AppCompatActivity {
                                                 }
                                             };
                                             AlertDialog.Builder ab = new AlertDialog.Builder(LoginActivity.this);
-                                            loadingBar.dismiss();
                                             ab.setMessage("Tài khoản của bạn đã hết hạn. Vui lòng liên hệ với nhà trường để được " +
                                                     "cấp tài khoản mới ").setPositiveButton("Yes", dialogClickListener)
                                                     .show();
-
                                         }
                                         //ngược lại đăng nhập vào
                                         else {
@@ -225,34 +223,54 @@ public class LoginActivity extends AppCompatActivity {
                                                 startActivity(intent);
                                             }
                                             else{
-                                                if (!dataSnapshot.hasChild("fullname")) {
-                                                    intent = new Intent(LoginActivity.this, SetupActivity.class);
-                                                    startActivity(intent);
-                                                } else {
-                                                    final String idClass;
-                                                    idClass = dataSnapshot.child("idclass").getValue().toString();
-                                                    DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
-                                                    ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                final String idClass;
+                                                idClass = dataSnapshot.child("idclass").getValue().toString();
+                                                if(idClass.equals("")) {
+                                                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                                                         @Override
-                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                                            String idTeacher = dataSnapshot.child("teacher").getValue().toString();
-                                                            String className = dataSnapshot.child("classname").getValue().toString();
-                                                            Bundle bundleStart = new Bundle();
-                                                            intent = new Intent(LoginActivity.this, MainActivity.class);
-                                                            // Đóng gói dữ liệu vào bundle
-                                                            bundleStart.putString("ID_CLASS", idClass);
-                                                            bundleStart.putString("CLASS_NAME", className);
-                                                            bundleStart.putString("ID_TEACHER", idTeacher);
-                                                            intent.putExtras(bundleStart);
-
-                                                            startActivity(intent);
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            switch (which) {
+                                                                case DialogInterface.BUTTON_POSITIVE:
+                                                                    startActivity(new Intent(LoginActivity.this, LoginActivity.class));
+                                                                    finish();
+                                                            }
                                                         }
+                                                    };
+                                                    AlertDialog.Builder ab = new AlertDialog.Builder(LoginActivity.this);
+                                                    ab.setMessage("Bạn đang không thuộc lớp nào cả. Vui lòng liên hệ nhà trường để thêm lớp cho bạn ").setPositiveButton("Yes", dialogClickListener)
+                                                            .show();
+                                                }
+                                                else {
+                                                    if (!dataSnapshot.hasChild("fullname")) {
+                                                        intent = new Intent(LoginActivity.this, SetupActivity.class);
+                                                        startActivity(intent);
+                                                    }
+                                                    else{
 
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                        DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
+                                                        ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                                String idTeacher = dataSnapshot.child("teacher").getValue().toString();
+                                                                String className = dataSnapshot.child("classname").getValue().toString();
+                                                                Bundle bundleStart = new Bundle();
+                                                                intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                                // Đóng gói dữ liệu vào bundle
+                                                                bundleStart.putString("ID_CLASS", idClass);
+                                                                bundleStart.putString("CLASS_NAME", className);
+                                                                bundleStart.putString("ID_TEACHER", idTeacher);
+                                                                intent.putExtras(bundleStart);
 
-                                                        }
-                                                    });
+                                                                startActivity(intent);
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                            }
+                                                        });
+                                                    }
+
                                                 }
                                             }
                                         }

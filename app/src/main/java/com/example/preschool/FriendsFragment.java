@@ -139,8 +139,10 @@ public class FriendsFragment extends Fragment {
         adapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, final int i, @NonNull final User user) {
-
                 try {
+                    if(user.getUserid().equals(idTeacher)){
+                        friendsViewHolder.isTeacher.setVisibility(View.VISIBLE);
+                    }
                     friendsViewHolder.user_name.setText(user.getUsername());
                     friendsViewHolder.kid_name.setText("Bé " + user.getParentof());
                     friendsViewHolder.setProfileImage(user.getProfileimage());
@@ -188,10 +190,14 @@ public class FriendsFragment extends Fragment {
                                         startActivity(profileIntent);
                                     }
                                     if (which == 1) {
-                                        Intent chatintent = new Intent(getActivity(), MessageActivity.class);
-                                        bundle.putString("VISIT_USER_ID", visit_user_id);
-                                        chatintent.putExtras(bundle);
-                                        startActivity(chatintent);
+                                        if (visit_user_id.equals(current_user_id)){
+                                            Toast.makeText(getContext(),"Không thể nhắn tin cho chính bạn",Toast.LENGTH_SHORT).show();
+                                        }else {
+                                            Intent chatintent = new Intent(getActivity(), MessageActivity.class);
+                                            bundle.putString("VISIT_USER_ID", visit_user_id);
+                                            chatintent.putExtras(bundle);
+                                            startActivity(chatintent);
+                                        }
                                     }
                                 }
                             });
@@ -202,7 +208,6 @@ public class FriendsFragment extends Fragment {
                     friendsViewHolder.user_name.setText("Phụ huynh chưa đăng nhập");
                     friendsViewHolder.online.setVisibility(View.GONE);
                 }
-
 
             }
 
@@ -303,7 +308,7 @@ public class FriendsFragment extends Fragment {
 //    }
 
     public static class FriendsViewHolder extends RecyclerView.ViewHolder {
-        private TextView hey_chat;
+        private TextView isTeacher;
         private ImageView user_image;
         private TextView user_name;
         private ImageView online;
@@ -311,22 +316,16 @@ public class FriendsFragment extends Fragment {
 
         public FriendsViewHolder(View itemView) {
             super(itemView);
-            hey_chat = itemView.findViewById(R.id.hey_chat);
             user_image = itemView.findViewById(R.id.all_users_profile_image);
             user_name = itemView.findViewById(R.id.all_users_profile_full_name);
-            hey_chat.setText("✌");
             online = itemView.findViewById(R.id.online);
             kid_name = itemView.findViewById(R.id.all_users_profile_kid_name);
-
+            isTeacher=itemView.findViewById(R.id.isTeacher);
         }
 
         public void setProfileImage(String profileimage) {
             Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).resize(100, 0).into(user_image);
 
-        }
-
-        public void setFullname(String fullname) {
-            user_name.setText(fullname);
         }
 
     }

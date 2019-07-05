@@ -340,7 +340,7 @@ public class MessageActivity extends AppCompatActivity {
     // Show all message
     private void readMesagges(final String imageurl) {
         mchat = new ArrayList<>();
-        Query query = ClassRef.child("Messages").child(childToChat).orderByKey().limitToLast(50);
+        Query query = ClassRef.child("Messages").child(childToChat).orderByKey();
 
         query.addValueEventListener(new ValueEventListener() {
             @Override

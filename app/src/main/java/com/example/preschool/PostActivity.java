@@ -114,7 +114,6 @@ public class PostActivity extends AppCompatActivity {
 
     }
 
-
     private void OpenGallery() {
         Intent galleryIntent = new Intent();
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
@@ -144,7 +143,7 @@ public class PostActivity extends AppCompatActivity {
             loadingBar.setTitle("Add New Post");
             loadingBar.setMessage("Please wait, while we are updating your new post...");
             loadingBar.show();
-            loadingBar.setCanceledOnTouchOutside(true);
+            loadingBar.setCanceledOnTouchOutside(false);
 
             uploadImageToFirebase();
         }

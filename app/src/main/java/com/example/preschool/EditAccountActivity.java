@@ -45,7 +45,7 @@ public class EditAccountActivity extends AppCompatActivity {
     private CircleImageView userProfImage;
     private ProgressDialog loadingBar;
 
-    private DatabaseReference EditUserRef;
+    private DatabaseReference EditUserRef,ClassRef;
     private FirebaseAuth mAuth;
     private String currentUserId;
     final static int Gallery_Pick = 1;
@@ -68,6 +68,7 @@ public class EditAccountActivity extends AppCompatActivity {
 
         EditUserRef= FirebaseDatabase.getInstance().getReference().child("Users").child(getIntent().getStringExtra("USER_ID"));
         UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
+        ClassRef= FirebaseDatabase.getInstance().getReference().child("Class");
 
         userProfImage=findViewById(R.id.edit_profile_image);
         userName=findViewById(R.id.edit_username);
@@ -225,9 +226,14 @@ public class EditAccountActivity extends AppCompatActivity {
                 roleSpinner.setSelection(vitri);
                 if(dataSnapshot.hasChild("idclass")){
                     editClass=dataSnapshot.child("idclass").getValue().toString();
-                    for(int i=1;i<classId.size();i++){
-                        if(classId.get(i).equals(editClass)){
-                            vitri=i;
+                    if(editClass.equals("")){
+                        vitri=0;
+                    }
+                    else{
+                        for(int i=1;i<classId.size();i++){
+                            if(classId.get(i).equals(editClass)){
+                                vitri=i;
+                            }
                         }
                     }
                     classNameSpinner.setSelection(vitri);
@@ -311,12 +317,9 @@ public class EditAccountActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
-                                            //Toast.makeText(EditAccountActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
-                                            //finish();
+
                                         } else {
-                                            //String message = task.getException().getMessage();
-                                            //Toast.makeText(EditAccountActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                                        }
+                                           }
                                     }
                                 });
                             }
@@ -347,6 +350,9 @@ public class EditAccountActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()){
+                    if(roleChoose==2){
+                        ClassRef.child(idclass).child("teacher").setValue(getIntent().getStringExtra("USER_ID"));
+                    }
                     Toast.makeText(EditAccountActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
                 }
                 else{
