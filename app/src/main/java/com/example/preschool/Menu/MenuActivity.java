@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -33,10 +34,10 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
     private Button btnSave;
     private DatabaseReference MenuRef;
     private String daysele;
-
+    private Button btnEdit;
     private String idClass;
     private Bundle bundle;
-
+    private Button btnDelete;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
@@ -65,6 +66,8 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
         edtTrua=findViewById(R.id.itrua);
         edtXe=findViewById(R.id.ixe);
         btnSave=findViewById(R.id.save);
+        btnDelete=findViewById(R.id.delete);
+        btnEdit=findViewById(R.id.edit);
         MenuRef= FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("Menu");
         //Calendar
         HorizontalPicker picker =(HorizontalPicker) findViewById(R.id.datePicker);
@@ -89,6 +92,37 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
             @Override
             public void onClick(View v) {
                 CreateMenu();
+                btnDelete.setVisibility(View.VISIBLE);
+                btnEdit.setVisibility(View.VISIBLE);
+                btnSave.setVisibility(View.INVISIBLE);
+                edtSang.setEnabled(false);
+                edtTrua.setEnabled(false);
+                edtXe.setEnabled(false);
+            }
+        });
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                edtSang.setEnabled(true);
+                edtTrua.setEnabled(true);
+                edtXe.setEnabled(true);
+
+
+                btnSave.setVisibility(View.VISIBLE);
+                btnEdit.setVisibility(View.INVISIBLE);
+                btnDelete.setVisibility(View.INVISIBLE);
+            }
+        });
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeleteMenu();
+                btnSave.setVisibility(View.VISIBLE);
+                btnEdit.setVisibility(View.INVISIBLE);
+                btnEdit.setVisibility(View.INVISIBLE);
+                edtSang.setEnabled(true);
+                edtTrua.setEnabled(true);
+                edtXe.setEnabled(true);
             }
         });
     }
@@ -105,14 +139,26 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Menu menu = dataSnapshot.getValue(Menu.class);
                         if(menu!=null){
+                            btnEdit.setVisibility(View.VISIBLE);
+                            btnSave.setVisibility(View.INVISIBLE);
+                            btnDelete.setVisibility(View.VISIBLE);
                             edtSang.setText(menu.getiSang());
                             edtTrua.setText(menu.getiTrua());
                             edtXe.setText(menu.getiChieu());
+                            edtSang.setEnabled(false);
+                            edtTrua.setEnabled(false);
+                            edtXe.setEnabled(false);
                         }
                         else {
+                            btnSave.setVisibility(View.VISIBLE);
+                            btnEdit.setVisibility(View.INVISIBLE);
+                            btnDelete.setVisibility(View.INVISIBLE);
                             edtSang.setText("");
                             edtTrua.setText("");
                             edtXe.setText("");
+                            edtSang.setEnabled(true);
+                            edtTrua.setEnabled(true);
+                            edtXe.setEnabled(true);
                         }
 
                     }
@@ -130,16 +176,33 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
 
         }
     }
-
+    //Delete Menu to firebase
+    public  void DeleteMenu(){
+        Toast.makeText(this, "Đã xóa", Toast.LENGTH_SHORT).show();
+        MenuRef.child(daysele).removeValue();
+    }
     // Create Menu to firebase
     public void CreateMenu(){
         String iSang = edtSang.getText().toString();
         String iTrua = edtTrua.getText().toString();
         String iXe= edtXe.getText().toString();
-        Menu menu = new Menu(iSang,iTrua,iXe);
-        MenuRef.child(daysele).setValue(menu);
-        Toast.makeText(this,"Bạn đã thêm thành công",Toast.LENGTH_SHORT).show();
-
-
+        if(iSang.equals("")&& iTrua.equals("")&& iXe.equals(""))
+        {
+            Toast.makeText(this,"Bạn cần nhập ít nhất một buổi",Toast.LENGTH_SHORT).show();
+        }else {
+            if(iSang.equals("")){
+                iSang="Không có món";
+            }
+            if(iTrua.equals("")){
+                iTrua="Không có món";
+            }
+            if(iXe.equals("")){
+                iXe="Không có món";
+            }
+            Menu menu = new Menu(iSang,iTrua,iXe);
+            MenuRef.child(daysele).setValue(menu);
+            Toast.makeText(this, "Đã lưu", Toast.LENGTH_SHORT).show();
+        }
     }
+
 }
