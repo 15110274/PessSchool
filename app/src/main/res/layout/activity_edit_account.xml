@@ -108,7 +108,7 @@
             android:layout_height="60dp"
             android:layout_below="@+id/border2"
             android:text="Update Account Button"
-            android:layout_margin="20dp"
+            android:layout_margin="5dp"
             android:textColor="@color/background"
             android:textSize="20sp"
             android:textStyle="bold"
