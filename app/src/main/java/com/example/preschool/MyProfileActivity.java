@@ -1,6 +1,7 @@
 package com.example.preschool;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -45,6 +46,9 @@ public class MyProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
 
     private String current_user_id, visitUserId, idClass, idTeacher, className;
+
+    private ProgressDialog loadingBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +68,7 @@ public class MyProfileActivity extends AppCompatActivity {
         addControlls();
 
         mAuth = FirebaseAuth.getInstance();
-        firebaseUser=mAuth.getCurrentUser();
+        firebaseUser = mAuth.getCurrentUser();
         current_user_id = firebaseUser.getUid();
 
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -98,8 +102,8 @@ public class MyProfileActivity extends AppCompatActivity {
         });
 
 
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_option_profile, menu);
@@ -111,9 +115,8 @@ public class MyProfileActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_edit_profile:
-            {
-                Intent intent=new Intent(MyProfileActivity.this, EditProfileActivity.class);
+            case R.id.action_edit_profile: {
+                Intent intent = new Intent(MyProfileActivity.this, EditProfileActivity.class);
                 startActivity(intent);
                 break;
             }
@@ -126,71 +129,86 @@ public class MyProfileActivity extends AppCompatActivity {
     }
 
     private void changePassWord() {
-        final Dialog dialogChangePassWord=new Dialog(MyProfileActivity.this);
+        final Dialog dialogChangePassWord = new Dialog(MyProfileActivity.this,android.R.style.Theme_DeviceDefault_Light_Dialog);
+        dialogChangePassWord.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogChangePassWord.setContentView(R.layout.dialog_change_password);
-//        dialogChangePassWord.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogChangePassWord.setCancelable(true);
         dialogChangePassWord.show();
 
         // Controlls
-        final EditText oldPass=dialogChangePassWord.findViewById(R.id.old_pass);
-        final EditText newPass=dialogChangePassWord.findViewById(R.id.new_pass);
-        final EditText reNewPass=dialogChangePassWord.findViewById(R.id.renew_pass);
-        Button btnChangePass=dialogChangePassWord.findViewById(R.id.btn_change_pass);
+        final EditText txtOldPass = dialogChangePassWord.findViewById(R.id.old_pass);
+        final EditText txtNewPass = dialogChangePassWord.findViewById(R.id.new_pass);
+        final EditText txtReNewPass = dialogChangePassWord.findViewById(R.id.renew_pass);
+        Button btnChangePass = dialogChangePassWord.findViewById(R.id.btn_change_pass);
 
 
         // Verify Password
         btnChangePass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(passWordVerify(oldPass.getText().toString(),newPass.getText().toString(),reNewPass.getText().toString())){
-                    mAuth.getCurrentUser().updatePassword(newPass.getText().toString())
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-//                                        Log.d(TAG, "User password updated.");
-                                        dialogChangePassWord.dismiss();
-                                        Toast.makeText(MyProfileActivity.this,"Đổi mật khẩu thành công",Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
 
-                }
-                dialogChangePassWord.dismiss();
+                String oldPass=txtOldPass.getText().toString();
+                String newPass=txtNewPass.getText().toString();
+                String reNewPass=txtReNewPass.getText().toString();
+
+                passWordVerify(oldPass,newPass,reNewPass);
+
             }
 
-            private boolean passWordVerify(String oldPass, String newPass, String reNewPass) {
-                if(oldPass.length()>=6){
+            private void passWordVerify(String oldPass, final String newPass, final String reNewPass) {
+                if (oldPass.length() >= 6) {
                     // Test login to check right Password
-                    if(loginTest(oldPass)){
-                        // Check new pass
-                        if(newPass.length()>=6){
-                            if(newPass.equals(reNewPass)){
-                                return true;
+                    mAuth.signInWithEmailAndPassword(getMyEmail(), oldPass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                if (newPass.length() >= 6) {
+                                    if (newPass.equals(reNewPass)) {
+                                        loadingBar = new ProgressDialog(MyProfileActivity.this,android.R.style.Theme_DeviceDefault_Light_Dialog);
+                                        loadingBar.setTitle("Đổi Mật Khẩu");
+                                        loadingBar.setMessage("Xin chờ quá trình đổi mật khẩu thành công");
+                                        loadingBar.setCanceledOnTouchOutside(false);
+                                        loadingBar.show();
+                                        mAuth.getCurrentUser().updatePassword(newPass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()){
+                                                    dialogChangePassWord.dismiss();
+                                                    loadingBar.dismiss();
+                                                    Toast.makeText(MyProfileActivity.this,"Đổi mật khẩu thành công",Toast.LENGTH_SHORT).show();
+                                                }
+                                                else {
+                                                    dialogChangePassWord.dismiss();
+                                                    loadingBar.dismiss();
+                                                    Toast.makeText(MyProfileActivity.this,"Không thể đổi mật khẩu",Toast.LENGTH_SHORT).show();
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else Toast.makeText(MyProfileActivity.this,"Mật khẩu không trùng khớp",Toast.LENGTH_SHORT).show();
+                                }
+                                else Toast.makeText(MyProfileActivity.this,"Mật khẩu phải hơn 6 ký tự",Toast.LENGTH_SHORT).show();
+
+                            } else {
+                                Toast.makeText(MyProfileActivity.this, "Sai Mật khẩu", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    }
-                    else
-                    Toast.makeText(MyProfileActivity.this,"Sai mật khẩu",Toast.LENGTH_SHORT).show();
+                    });
+
+
+
                 }
-                return false;
+                else  Toast.makeText(MyProfileActivity.this,"Mật khẩu phải hơn 6 ký tự",Toast.LENGTH_SHORT).show();
             }
         });
 
     }
-    private String getMyEmail(){
+
+    private String getMyEmail() {
         return firebaseUser.getEmail();
     }
-    private Boolean loginTest(String pass){
-//        mAuth.signInWithEmailAndPassword(getMyEmail(),pass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//            @Override
-//            public void onComplete(@NonNull Task<AuthResult> task) {
-//
-//            }
-//        });
-        return false;
-    }
+
+
 
     private void addControlls() {
         userProfileImage = findViewById(R.id.person_profile_pic);

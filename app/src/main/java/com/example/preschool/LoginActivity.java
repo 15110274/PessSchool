@@ -164,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             loadingBar.setTitle(R.string.login);
             loadingBar.setMessage(getString(R.string.message_login_successfully));
-            loadingBar.setCanceledOnTouchOutside(true);
+            loadingBar.setCanceledOnTouchOutside(false);
             loadingBar.show();
             // Sign With Email and Password by Firebase
             mAuth.signInWithEmailAndPassword(email, password)
