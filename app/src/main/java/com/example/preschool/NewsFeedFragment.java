@@ -162,10 +162,16 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists()){
-                            final String image=dataSnapshot.child("profileimage").getValue().toString();
-                            final String name=dataSnapshot.child("fullname").getValue().toString();
-                            postsViewHolder.setFullname(name);
-                            postsViewHolder.setProfileImage(image);
+                            try{
+                                final String image=dataSnapshot.child("profileimage").getValue().toString();
+                                final String name=dataSnapshot.child("fullname").getValue().toString();
+                                postsViewHolder.setFullname(name);
+                                postsViewHolder.setProfileImage(image);
+                            }catch (Exception e){
+                                postsViewHolder.setFullname("TK Đã xóa");
+                            }
+
+
                         }
 
                     }

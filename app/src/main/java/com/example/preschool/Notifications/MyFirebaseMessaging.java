@@ -45,7 +45,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
     }
 
     private void sendOreoNotification(RemoteMessage remoteMessage) {
-        String idClass = remoteMessage.getData().get("idClass");
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -56,7 +55,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         Intent intent = new Intent(this, MessageActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("VISIT_USER_ID", user);
-        bundle.putString("ID_CLASS", idClass);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -77,7 +75,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
     private void sendNotification(RemoteMessage remoteMessage) {
 
-        String idClass = remoteMessage.getData().get("idClass");
         String user = remoteMessage.getData().get("user");
         String icon = remoteMessage.getData().get("icon");
         String title = remoteMessage.getData().get("title");
@@ -88,7 +85,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         Intent intent = new Intent(this, MessageActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("VISIT_USER_ID", user);
-        bundle.putString("ID_CLASS", idClass);
         intent.putExtras(bundle);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, j, intent, PendingIntent.FLAG_ONE_SHOT);
