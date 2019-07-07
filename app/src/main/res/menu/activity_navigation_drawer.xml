@@ -21,9 +21,9 @@
         android:title="@string/timetable"
         android:icon="@drawable/ic_curriculum"></item>
     <item
-        android:id="@+id/camera"
-        android:title="@string/camera"
-        android:icon="@drawable/ic_camera"></item>
+        android:id="@+id/student"
+        android:title="@string/student"
+        android:icon="@drawable/ic_gender"></item>
     <item
         android:id="@+id/menu"
         android:title="@string/menu"

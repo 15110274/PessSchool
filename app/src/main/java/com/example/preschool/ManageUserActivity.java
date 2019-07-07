@@ -20,9 +20,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,8 +62,12 @@ public class ManageUserActivity extends AppCompatActivity {
     private int classChoose=0;
     private int roleChoose=0;
     private String userIdJustAdd;
+    private ListView listClass;
     private ValueEventListener ClassEventListener,UsersEventListener,updateClass;
     final ArrayList<String> classId=new ArrayList<>();
+    private CheckBox classCheckBox;
+    final ArrayList<String> checkList=new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,9 +76,11 @@ public class ManageUserActivity extends AppCompatActivity {
         UserEmail = findViewById(R.id.setup_email);
         CreateAccountButton = findViewById(R.id.create_button);
         classNameSpinner=findViewById(R.id.classNameSpinner);
-        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
-
         roleSpinner=findViewById(R.id.roleSniper);
+        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
+        listClass=findViewById(R.id.listClassListView);
+        listClass.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        classCheckBox=findViewById(R.id.listClassCheckbox);
         final ArrayList<String> role=new ArrayList<>();
         role.add("Choose Role...");
         role.add("Parent");
@@ -105,6 +114,7 @@ public class ManageUserActivity extends AppCompatActivity {
             }
         };
         roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        roleAdapter.notifyDataSetChanged();
         roleSpinner.setAdapter(roleAdapter );
 
         final ArrayList<String> className=new ArrayList<>();
@@ -121,6 +131,24 @@ public class ManageUserActivity extends AppCompatActivity {
                     className.add(classname);
                     classId.add(classid);
                 }
+                    for(int i=0;i<classId.size();i++){
+                        checkList.add(i,"0");
+                    }
+
+                listClass.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        CheckedTextView v = (CheckedTextView) view;
+                        if(v.isChecked()){
+                            checkList.set(position,"1");
+                        }
+                        else{
+                            checkList.set(position,"0");
+                        }
+                        Toast.makeText(ManageUserActivity.this, checkList.get(position), Toast.LENGTH_SHORT).show();
+
+                    }
+                });
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -158,11 +186,16 @@ public class ManageUserActivity extends AppCompatActivity {
         classNameSpinner.setAdapter(autoComplete);
 
         classNameSpinner.setVisibility(View.GONE);
+        classCheckBox.setVisibility(View.GONE);
+        listClass.setVisibility(View.GONE);
 
         roleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if(position==1||position==2){
+                    if(position==1){
+                        classCheckBox.setVisibility(View.VISIBLE);
+                    }
                     classNameSpinner.setVisibility(View.VISIBLE);
                     if(classChoose!=0)
                         LoadAccountClass(role.get(position),classId.get(classChoose));
@@ -181,6 +214,25 @@ public class ManageUserActivity extends AppCompatActivity {
 
             }
         });
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ManageUserActivity.this, android.R.layout.simple_list_item_checked , className);
+        listClass.setAdapter(arrayAdapter);
+
+        classCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(classCheckBox.isChecked()){
+                    classNameSpinner.setVisibility(View.GONE);
+                    myAccountList.setVisibility(View.GONE);
+                    listClass.setVisibility(View.VISIBLE);
+                }
+                else{
+                    classNameSpinner.setVisibility(View.VISIBLE);
+                    myAccountList.setVisibility(View.VISIBLE);
+                    listClass.setVisibility(View.GONE);
+                }
+            }
+        });
+
 
         loadingBar = new ProgressDialog(this);
         UsersRef=FirebaseDatabase.getInstance().getReference().child("Users");
@@ -201,12 +253,21 @@ public class ManageUserActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+
         CreateAccountButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
             {
                 final String email = UserEmail.getText().toString();
                 String password= "123456";
+                int temp=0;
+                for(int i=0;i<checkList.size();i++){
+                    if(checkList.get(i).equals("1")){
+                        temp=1;
+                        break;
+                    }
+                }
                 if(TextUtils.isEmpty(email))
                 {
                     Toast.makeText(ManageUserActivity.this, "Please write email...", Toast.LENGTH_SHORT).show();
@@ -214,7 +275,10 @@ public class ManageUserActivity extends AppCompatActivity {
                 else if(roleChoose==0){
                     Toast.makeText(ManageUserActivity.this, "Please choose role...", Toast.LENGTH_SHORT).show();
                 }
-                else if(roleChoose!=0 && classChoose==0&&roleChoose!=3){
+                else if(roleChoose!=0 && classChoose==0&&roleChoose!=3&&classCheckBox.isChecked()==false){
+                    Toast.makeText(ManageUserActivity.this, "Please choose class...", Toast.LENGTH_SHORT).show();
+                }
+                else if(classCheckBox.isChecked()==true&&temp==0){
                     Toast.makeText(ManageUserActivity.this, "Please choose class...", Toast.LENGTH_SHORT).show();
                 }
                 else
@@ -239,8 +303,27 @@ public class ManageUserActivity extends AppCompatActivity {
                                         userMap.put("email",email);
                                         userMap.put("role",role.get(roleChoose));
                                         if(roleChoose==1||roleChoose==2){
-                                            userMap.put("idclass", classId.get(classChoose));
-                                            userMap.put("classname",className.get(classChoose));
+                                            if(roleChoose==1&&classCheckBox.isChecked()==true){
+                                                for(int i=0;i<checkList.size();i++){
+                                                    if(checkList.get(i).equals("1")){
+                                                        userMap.put("classname",className.get(i));
+                                                        userMap.put("idclass", classId.get(i));
+                                                        break;
+                                                    }
+                                                }
+                                                ArrayList<String> temp=new ArrayList<>();
+                                                for(int i=0;i<checkList.size();i++){
+                                                    if(checkList.get(i).equals("1")){
+                                                       temp.add(classId.get(i));
+                                                    }
+                                                }
+                                                userMap.put("myclass",temp);
+
+                                            }
+                                            else{
+                                                userMap.put("classname",className.get(classChoose));
+                                                userMap.put("idclass", classId.get(classChoose));
+                                            }
                                         }
                                         UsersRef.child(userIdJustAdd).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                                             @Override

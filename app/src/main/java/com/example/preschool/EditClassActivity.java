@@ -40,7 +40,7 @@ public class EditClassActivity extends AppCompatActivity {
     private final ArrayList<String> teacherid=new ArrayList<>();
     private final ArrayList<String> teachername=new ArrayList<>();
     private int teacherChoose=0;
-    private int teacherOld=0;
+//    private int teacherOld=0;
     private ValueEventListener UsersEventListener, ClassEventListener;
 
     @Override
@@ -107,15 +107,15 @@ public class EditClassActivity extends AppCompatActivity {
 
                     }
                 });
-                final int[] temp = {0};
+//                final int[] temp = {0};
                 teacherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         teacherChoose=position;
-                        if(temp[0] ==0){
-                            teacherOld=position;
-                        }
-                        temp[0]++;
+//                        if(temp[0] ==0){
+//                            teacherOld=position;
+//                        }
+//                        temp[0]++;
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -178,7 +178,7 @@ public class EditClassActivity extends AppCompatActivity {
         final String name=className.getText().toString();
         HashMap classMap=new HashMap();
         classMap.put("classname",name);
-        if(teacherChoose!=0&&teacherChoose!=teacherOld){
+        if(teacherChoose!=0){
             classMap.put("teacher",teacherid.get(teacherChoose));
         }
 
@@ -186,16 +186,18 @@ public class EditClassActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()) {
-                    if (teacherChoose != 0&&teacherChoose!=teacherOld) {
+                    if (teacherChoose != 0) {
                         HashMap userMap = new HashMap();
                         userMap.put("idclass", getIntent().getStringExtra("CLASS_ID"));
                         userMap.put("classname", name);
                         UserRef.child(teacherid.get(teacherChoose)).updateChildren(userMap);
-                        HashMap userMap2 = new HashMap();
-                        userMap2.put("idclass", "");
-                        userMap2.put("classname", "");
-                        UserRef.child(teacherid.get(teacherOld)).updateChildren(userMap2);
                     }
+//                    if(teacherOld!=0){
+//                        HashMap userMap2 = new HashMap();
+//                        userMap2.put("idclass", "");
+//                        userMap2.put("classname", "");
+//                        UserRef.child(teacherid.get(teacherOld)).updateChildren(userMap2);
+//                    }
                     Toast.makeText(EditClassActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
                 }
                 else{
