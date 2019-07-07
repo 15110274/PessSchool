@@ -110,7 +110,7 @@
             android:name=".ChangeClassActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".CameraActivity"
+            android:name=".StudentActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".HelpActivity"

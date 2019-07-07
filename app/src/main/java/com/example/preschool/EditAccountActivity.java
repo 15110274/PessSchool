@@ -58,6 +58,7 @@ public class EditAccountActivity extends AppCompatActivity {
     final ArrayList<String> role=new ArrayList<>();
     private final ArrayList<String> className=new ArrayList<>();
     private final ArrayList<String> classId=new ArrayList<>();
+    private int classOld=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -184,10 +185,15 @@ public class EditAccountActivity extends AppCompatActivity {
 
             }
         });
+        final int[] temp = {0};
         classNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 classChoose=position;
+                if(temp[0] ==0){
+                    classOld=position;
+                }
+                temp[0]++;
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -352,6 +358,27 @@ public class EditAccountActivity extends AppCompatActivity {
                 if(task.isSuccessful()){
                     if(roleChoose==2){
                         ClassRef.child(idclass).child("teacher").setValue(getIntent().getStringExtra("USER_ID"));
+//                        final DatabaseReference UsersRef= FirebaseDatabase.getInstance().getReference().child("Users");
+//                        UsersRef.addValueEventListener(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                for(DataSnapshot children:dataSnapshot.getChildren()){
+//                                    if(children.getKey()!=getIntent().getStringExtra("USER_ID")&&children.hasChild("role")){
+//                                        if(children.child("role").getValue().toString().equals("Teacher")){
+//                                            if(children.child("idclass").getValue().toString().equals(classId.get(classChoose))){
+//                                                UsersRef.child(children.getKey()).child("idclass").setValue("");
+//                                                UsersRef.child(children.getKey()).child("classname").setValue("");
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        });
                     }
                     Toast.makeText(EditAccountActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
                 }

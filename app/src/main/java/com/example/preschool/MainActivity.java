@@ -261,8 +261,8 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
-            case R.id.camera:
-                intent=new Intent(MainActivity.this, CameraActivity.class);
+            case R.id.student:
+                intent=new Intent(MainActivity.this, StudentActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
