@@ -17,8 +17,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
         android:textSize="24sp"
-        android:text="Choise class"/>
+        android:gravity="center"
+        android:text="Chọn lớp bạn muốn chuyển"/>
 
     <Spinner
         android:id="@+id/spinner"
@@ -33,7 +35,10 @@
         android:id="@+id/btn_change_class"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/button_shape"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/large_button"
         android:textColor="@android:color/white"
         android:text="Change"/>
 

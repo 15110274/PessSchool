@@ -2,6 +2,7 @@ package com.example.preschool;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -23,6 +24,8 @@ import com.example.preschool.Chats.MessageActivity;
 import com.example.preschool.TimeLine.Posts;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +34,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -157,10 +162,16 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.exists()){
-                            final String image=dataSnapshot.child("profileimage").getValue().toString();
-                            final String name=dataSnapshot.child("fullname").getValue().toString();
-                            postsViewHolder.setFullname(name);
-                            postsViewHolder.setProfileImage(image);
+                            try{
+                                final String image=dataSnapshot.child("profileimage").getValue().toString();
+                                final String name=dataSnapshot.child("fullname").getValue().toString();
+                                postsViewHolder.setFullname(name);
+                                postsViewHolder.setProfileImage(image);
+                            }catch (Exception e){
+                                postsViewHolder.setFullname("TK Đã xóa");
+                            }
+
+
                         }
 
                     }
@@ -234,7 +245,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                                         return true;
                                     case R.id.action_delete_post:
                                         // Delete post
-                                        PostsRef.child(PostKey).removeValue();
+                                        deletePost(PostKey,urlImage);
                                         return true;
                                     default:
                                         return false;
@@ -334,7 +345,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     @Override
     public void onPause() {
         super.onPause();
-        adapter.stopListening();
+
     }
 
     @Override
@@ -342,6 +353,47 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         super.onStart();
 //        adapter.startListening();
         DisplayAllUsersPosts();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        adapter.stopListening();
+    }
+
+    private void deletePost(final String keyPost, final String postUrl){
+
+        final AlertDialog.Builder dialogDeletePost=new AlertDialog.Builder(getContext(),android.R.style.Theme_Material_Light_Dialog_Alert);
+        dialogDeletePost.setMessage("Xóa bài đăng?");
+        dialogDeletePost.setCancelable(false);
+        dialogDeletePost.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // Delete imagePost on CloudStorage
+                FirebaseStorage storage = FirebaseStorage.getInstance();
+                StorageReference storageRef = storage.getReferenceFromUrl(postUrl);
+                storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        PostsRef.child(keyPost).removeValue();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(),"Không thể xóa được",Toast.LENGTH_SHORT);
+                    }
+                });
+                dialogInterface.dismiss();
+            }
+        }).setNegativeButton("Không", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+        dialogDeletePost.show();
+
     }
 
     private static class PostsViewHolder extends RecyclerView.ViewHolder {

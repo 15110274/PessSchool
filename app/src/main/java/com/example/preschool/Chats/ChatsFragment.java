@@ -77,8 +77,8 @@ public class ChatsFragment extends Fragment {
 
         UserStateRef=FirebaseDatabase.getInstance().getReference("UserState");
         UsersRef = FirebaseDatabase.getInstance().getReference("Users");
-        ChatListRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("ChatList").child(current_user_id);
-        MessRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("Messages");
+        ChatListRef = FirebaseDatabase.getInstance().getReference("ChatList").child(current_user_id);
+        MessRef = FirebaseDatabase.getInstance().getReference("Messages");
 
         getChatList();
 
@@ -171,20 +171,13 @@ public class ChatsFragment extends Fragment {
                                         setTextLastMess(child.child("message").getValue().toString()
                                                 ,chatListViewHolder.last_msg,child.child("isseen").getValue(Boolean.class));
                                     }
-
-
                                 }
-
                             }
-
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                             }
                         });
-
-
-
                     }
 
                     @Override
@@ -195,10 +188,10 @@ public class ChatsFragment extends Fragment {
                 chatListViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent chatintent = new Intent(getActivity(), MessageActivity.class);
+                        Intent chatIntent = new Intent(getActivity(), MessageActivity.class);
                         bundle.putString("VISIT_USER_ID", s);
-                        chatintent.putExtras(bundle);
-                        startActivity(chatintent);
+                        chatIntent.putExtras(bundle);
+                        startActivity(chatIntent);
                     }
                 });
             }

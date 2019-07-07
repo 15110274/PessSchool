@@ -2,7 +2,6 @@ package com.example.preschool.Notifications;
 
 public class Data {
     private String user;
-    private String idClass;
     private int icon;
     private String body;
     private String title;
@@ -14,14 +13,6 @@ public class Data {
 
     public void setUser(String user) {
         this.user = user;
-    }
-
-    public String getIdClass() {
-        return idClass;
-    }
-
-    public void setIdClass(String idClass) {
-        this.idClass = idClass;
     }
 
     public int getIcon() {
@@ -56,9 +47,8 @@ public class Data {
         this.sented = sented;
     }
 
-    public Data(String user, String idClass, int icon, String body, String title, String sented) {
+    public Data(String user, int icon, String body, String title, String sented) {
         this.user = user;
-        this.idClass = idClass;
         this.icon = icon;
         this.body = body;
         this.title = title;

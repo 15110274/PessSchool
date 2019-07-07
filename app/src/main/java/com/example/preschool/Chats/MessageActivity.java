@@ -54,7 +54,7 @@ public class MessageActivity extends AppCompatActivity {
     private CircleImageView profile_image;
     private TextView username;
     private TextView lastseen;
-    private DatabaseReference UsersRef, ClassRef, UserStateRef;
+    private DatabaseReference UsersRef, MessagesRef, UserStateRef,ChatListRef;
     private ImageButton btn_send;
     private ImageButton info_user;
     private EditText text_send;
@@ -64,7 +64,7 @@ public class MessageActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private Intent intent;
     private ValueEventListener seenListener;
-    private String idReciver, current_user_id, idClass;
+    private String idReciver, current_user_id;
 
     private APIService apiService;
 
@@ -80,7 +80,6 @@ public class MessageActivity extends AppCompatActivity {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             idReciver = bundle.getString("VISIT_USER_ID");
-            idClass = bundle.getString("ID_CLASS");
         }
 
         current_user_id = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -88,7 +87,8 @@ public class MessageActivity extends AppCompatActivity {
 
         UserStateRef = FirebaseDatabase.getInstance().getReference("UserState");
         UsersRef = FirebaseDatabase.getInstance().getReference("Users");
-        ClassRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass);
+        ChatListRef=FirebaseDatabase.getInstance().getReference("ChatList");
+        MessagesRef = FirebaseDatabase.getInstance().getReference("Messages");
 
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -194,14 +194,14 @@ public class MessageActivity extends AppCompatActivity {
     private void setChatList(final String current_user_id, final String idReciver) {
         // add user to chat fragment
         chatList = new ChatList();
-        ClassRef.child("ChatList").child(current_user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+        ChatListRef.child(current_user_id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<String> list = new ArrayList<String>();
                 if (!dataSnapshot.exists()) {
                     list.add(idReciver);
                     chatList.setUidList(list);
-                    ClassRef.child("ChatList").child(current_user_id).setValue(chatList);
+                    ChatListRef.child(current_user_id).setValue(chatList);
                 } else {
                     chatList.setUidList(dataSnapshot.getValue(ChatList.class).getUidList());
                     list.add(idReciver);
@@ -210,7 +210,7 @@ public class MessageActivity extends AppCompatActivity {
                             list.add(s);
                     }
                     chatList.setUidList(list);
-                    ClassRef.child("ChatList").child(current_user_id).setValue(chatList);
+                    ChatListRef.child(current_user_id).setValue(chatList);
                 }
             }
 
@@ -220,14 +220,14 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        ClassRef.child("ChatList").child(idReciver).addListenerForSingleValueEvent(new ValueEventListener() {
+        ChatListRef.child(idReciver).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<String> list = new ArrayList<String>();
                 if (!dataSnapshot.exists()) {
                     list.add(current_user_id);
                     chatList.setUidList(list);
-                    ClassRef.child("ChatList").child(idReciver).setValue(chatList);
+                    ChatListRef.child(idReciver).setValue(chatList);
                 } else {
                     chatList.setUidList(dataSnapshot.getValue(ChatList.class).getUidList());
                     list.add(current_user_id);
@@ -237,7 +237,7 @@ public class MessageActivity extends AppCompatActivity {
                     }
 
                     chatList.setUidList(list);
-                    ClassRef.child("ChatList").child(idReciver).setValue(chatList);
+                    ChatListRef.child(idReciver).setValue(chatList);
                 }
             }
 
@@ -249,7 +249,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void seenMessage(final String idReciver) {
-        seenListener = ClassRef.child("Messages").child(childToChat).addValueEventListener(new ValueEventListener() {
+        seenListener = MessagesRef.child(childToChat).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -276,7 +276,7 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("message", message.trim());
         hashMap.put("isseen", false);
 
-        ClassRef.child("Messages").child(childToChat).push().setValue(hashMap);
+        MessagesRef.child(childToChat).push().setValue(hashMap);
 
         final String msg = message;
 
@@ -284,6 +284,7 @@ public class MessageActivity extends AppCompatActivity {
         UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                notify = true;
                 User user = dataSnapshot.getValue(User.class);
                 if (notify) {
                     sendNotifiaction(receiver, user.getUsername(), msg);
@@ -306,7 +307,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(current_user_id, idClass, R.mipmap.ic_launcher, username + ": " + message, "New Message",
+                    Data data = new Data(current_user_id, R.mipmap.ic_launcher, username + ": " + message, "New Message",
                             idReciver);
 
                     Sender sender = new Sender(data, token.getToken());
@@ -340,7 +341,7 @@ public class MessageActivity extends AppCompatActivity {
     // Show all message
     private void readMesagges(final String imageurl) {
         mchat = new ArrayList<>();
-        Query query = ClassRef.child("Messages").child(childToChat).orderByKey().limitToLast(50);
+        Query query = MessagesRef.child(childToChat).orderByKey();
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -393,7 +394,7 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        ClassRef.child("Messages").child(childToChat).removeEventListener(seenListener);
+        MessagesRef.child(childToChat).removeEventListener(seenListener);
     }
 
     @Override
