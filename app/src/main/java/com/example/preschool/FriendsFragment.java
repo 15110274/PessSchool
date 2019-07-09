@@ -171,11 +171,11 @@ public class FriendsFragment extends Fragment {
 
 
                             CharSequence options[] = new CharSequence[]{
-                                    user.getUsername() + "'s Profile",
-                                    "Send Message"
+                                    "Thông tin của "+user.getUsername(),
+                                    "Gửi tin nhắn"
                             };
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setTitle("Select Option");
+//                            builder.setTitle("Select Option");
 
                             builder.setItems(options, new DialogInterface.OnClickListener() {
                                 @Override
