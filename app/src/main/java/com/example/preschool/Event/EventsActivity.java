@@ -112,6 +112,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -165,14 +166,24 @@ public class EventsActivity extends AppCompatActivity {
             addEvent.setVisibility(View.VISIBLE);
         }
         calendarView = findViewById(R.id.calendarView);
+
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 String x;
-                if((month+1)<10){
-                    x= dayOfMonth + "-0" + (month +1) + "-" + year; }
-                else {
-                    x= dayOfMonth + "-" + (month +1) + "-" + year;
+                if(dayOfMonth<10){
+                    if((month+1)<10){
+                        x= "0"+dayOfMonth + "-0" + (month +1) + "-" + year;}
+                    else {
+                        x= "0"+dayOfMonth + "-" + (month +1) + "-" + year;
+                    }
+                }
+                else{
+                    if((month+1)<10){
+                        x= dayOfMonth + "-0" + (month +1) + "-" + year;}
+                    else {
+                        x= dayOfMonth + "-" + (month +1) + "-" + year;
+                    }
                 }
                 try {
                     EventsRef.child(x).addValueEventListener(new ValueEventListener() {
@@ -201,10 +212,8 @@ public class EventsActivity extends AppCompatActivity {
                         }
                     });
                 } catch (Exception e) {
-                    showEvent.setText("hehe");
+
                 }
-
-
             }
         });
 
@@ -216,6 +225,59 @@ public class EventsActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Calendar cal = Calendar.getInstance();
+        int dayOfMonth=cal.get(Calendar.DAY_OF_MONTH);
+        int month=cal.get(Calendar.MONTH);
+        int year=cal.get(Calendar.YEAR);
+        String x;
+        if(dayOfMonth<10){
+            if((month+1)<10){
+                x= "0"+dayOfMonth + "-0" + (month +1) + "-" + year;}
+            else {
+                x= "0"+dayOfMonth + "-" + (month +1) + "-" + year;
+            }
+        }
+        else{
+            if((month+1)<10){
+                x= dayOfMonth + "-0" + (month +1) + "-" + year;}
+            else {
+                x= dayOfMonth + "-" + (month +1) + "-" + year;
+            }
+        }
+        try {
+            EventsRef.child(x).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Event event = dataSnapshot.getValue(Event.class);
+                    if(event!=null){
+                        if(event.getTimeStart().equals("Cả ngày")==false){
+                            showEvent.setText("Sự kiện:"+event.getNameEvent() +"\n" +"Thời gian từ: " +event.getTimeStart()+
+                                    " đên "+ event.getTimeEnd()+"\n"+"Mô tả: "+event.getDescription()+"\n"+"Địa điểm: " +event.getPosition());
+                        }else {
+                            showEvent.setText("Sự kiện:"+event.getNameEvent() +"\n" +"Thời gian: " +event.getTimeStart()+
+                                    "\n"+"Mô tả: "+event.getDescription()+"\n"+"Địa điểm: " +event.getPosition());
+                        }
+
+                    }
+                    else {
+                        showEvent.setText("Không có sự kiện");
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        } catch (Exception e) {
+            showEvent.setText("hehe");
+        }
     }
 
     @Override
