@@ -2,12 +2,15 @@ package com.example.preschool.TimeTable;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -25,28 +28,37 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.preschool.EditAccountActivity;
+import com.example.preschool.ManageUserActivity;
 import com.example.preschool.R;
+import com.example.preschool.ViewAccountActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.jhonnyx2012.horizontalpicker.DatePickerListener;
 import com.github.jhonnyx2012.horizontalpicker.HorizontalPicker;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import org.joda.time.DateTime;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class TimeTableActivity extends AppCompatActivity implements DatePickerListener {
     private EditText EdtDiscription;
     private TextView TxtStart;
     private TextView TxtEnd;
-    private ImageButton BtnSave;
+    private ImageButton BtnSave, BtnEdit;
     private DatabaseReference TimeTableRef;
     private String dateSelect, idClass, idTeacher;
     private RecyclerView myTimeTableList;
@@ -79,7 +91,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
 
         addControlls();
         TimeTableRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("TimeTable");
-
+        BtnEdit.setVisibility(View.GONE);
 
         if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(idTeacher)) {
             linearLayout.setVisibility(View.VISIBLE);
@@ -169,6 +181,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
         TxtStart = findViewById(R.id.nStart);
         TxtEnd = findViewById(R.id.nEnd);
         BtnSave = findViewById(R.id.save);
+        BtnEdit=findViewById(R.id.edit);
 
         picker = findViewById(R.id.datePicker);
         picker.setListener(this)
@@ -191,7 +204,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
 
     public void CreateSchedule() {
         String timestart = TxtStart.getText().toString();
-        String timeend = TxtEnd.getText().toString();
+        final String timeend = TxtEnd.getText().toString();
         String description = EdtDiscription.getText().toString();
         if (!TextUtils.isEmpty(timestart) && !TextUtils.isEmpty(timeend) && !TextUtils.isEmpty(description)) {
             String id = TimeTableRef.push().getKey();
@@ -201,18 +214,15 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
                 public void onSuccess(Void aVoid) {
                     Toast.makeText(TimeTableActivity.this, "Bạn đã thêm thành công", Toast.LENGTH_SHORT).show();
                     EdtDiscription.setText("");
-                    TxtStart.setText("00:00");
+                    TxtStart.setText(timeend);
                     TxtEnd.setText("00:00");
 
-                    DisplayAllTimeTable(dateSelect);
+                    //DisplayAllTimeTable(dateSelect);
                 }
             });
-
         } else {
             Toast.makeText(this, "Bạn phải điền đủ nội dung", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     @Override
@@ -221,18 +231,82 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
         DisplayAllTimeTable(dateSelect);
     }
 
-    private void DisplayAllTimeTable(String dateSelect) {
-
-        FirebaseRecyclerOptions<TimeTable> options = new FirebaseRecyclerOptions.Builder<TimeTable>().setQuery(TimeTableRef.child(dateSelect)
+    private void DisplayAllTimeTable(final String dateSelect) {
+        Query query=TimeTableRef.child(dateSelect).orderByChild("timeStart");
+        FirebaseRecyclerOptions<TimeTable> options = new FirebaseRecyclerOptions.Builder<TimeTable>().setQuery(query
                 ,TimeTable.class)
                 .build();
         adapter = new FirebaseRecyclerAdapter<TimeTable, TimeTableViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull TimeTableViewHolder timeTableViewHolder, int position, @NonNull TimeTable timeTable) {
+            protected void onBindViewHolder(@NonNull TimeTableViewHolder timeTableViewHolder, final int position, @NonNull TimeTable timeTable) {
                 timeTableViewHolder.timeStart.setText(timeTable.getTimeStart());
                 timeTableViewHolder.timeEnd.setText(timeTable.getTimeEnd());
                 timeTableViewHolder.description.setText(timeTable.getDescription());
+                timeTableViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                    String id= getRef(position).getKey();
+                    @Override
+                    public void onClick(View v) {
+                        CharSequence options[] = new CharSequence[]{
+                                "Edit TimeTable",
+                                "Delete TimeTable"
+                        };
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(TimeTableActivity.this);
+                        builder.setTitle("Select Option");
 
+                        builder.setItems(options, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if(which==1){
+                                    TimeTableRef.child(dateSelect).child(id).removeValue();
+                                }
+                                if(which==0){
+                                    TimeTableRef.child(dateSelect).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                                            if(dataSnapshot.exists()){
+                                                TxtStart.setText(dataSnapshot.child("timeStart").getValue().toString());
+                                                TxtEnd.setText(dataSnapshot.child("timeEnd").getValue().toString());
+                                                EdtDiscription.setText(dataSnapshot.child("description").getValue().toString());
+                                            }
+                                            BtnSave.setVisibility(View.GONE);
+                                            BtnEdit.setVisibility(View.VISIBLE);
+                                            BtnEdit.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    String timestart = TxtStart.getText().toString();
+                                                    String timeend = TxtEnd.getText().toString();
+                                                    String description = EdtDiscription.getText().toString();
+                                                    final TimeTable off = new TimeTable(timestart, timeend, description);
+                                                    final HashMap timetable=new HashMap();
+                                                    timetable.put("timeStart",timestart);
+                                                    timetable.put("timeEnd",timeend);
+                                                    timetable.put("description",description);
+                                                    TimeTableRef.child(dateSelect).child(id).updateChildren(timetable).addOnCompleteListener(new OnCompleteListener() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task task) {
+                                                            EdtDiscription.setText("");
+                                                            TxtStart.setText("00:00");
+                                                            TxtEnd.setText("00:00");
+                                                            BtnEdit.setVisibility(View.GONE);
+                                                            BtnSave.setVisibility(View.VISIBLE);
+                                                        }
+                                                    });
+
+                                                }
+                                            });
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                        builder.show();
+                    }
+                });
             }
 
             @NonNull
@@ -268,6 +342,5 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
     @Override
     protected void onStop() {
         super.onStop();
-        adapter.stopListening();
     }
 }

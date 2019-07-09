@@ -20,7 +20,6 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="parent">Parent</string>
     <string name="nenableDarkMode">Enable Dark Mode</string>
     <string name="darkMode">Dark mode</string>
     <string name="testMail">tanphatngcd1@gmail.com</string>

@@ -241,8 +241,6 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
-            case R.id.parent:
-                break;
             case R.id.permissonform:
                 if(idTeacher.equals(currentUserID)){
                     intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
