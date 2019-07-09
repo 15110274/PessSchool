@@ -52,5 +52,8 @@
     <string name="logout">Đăng xuất</string>
     <string name="register">Register</string>
     <string name="menu">Thực đơn</string>
+    <string name="send">Gửi</string>
+    <string name="edit">Sửa</string>
+    <string name="save">Lưu</string>
 
 </resources>

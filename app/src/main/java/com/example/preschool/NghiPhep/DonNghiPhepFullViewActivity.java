@@ -39,7 +39,7 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Don xin phep");
+        getSupportActionBar().setTitle("Đơn xin phép");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
