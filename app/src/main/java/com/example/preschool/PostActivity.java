@@ -49,8 +49,6 @@ public class PostActivity extends AppCompatActivity {
     private ProgressDialog loadingBar;
 
     private ImageView SelectPostImage, img1, img2, img3, img4;
-    private Bitmap bitmap;
-    private byte[] data;
     private Button PostButton;
     private EditText PostDescription;
     private Uri ImageUri;
@@ -195,16 +193,17 @@ public class PostActivity extends AppCompatActivity {
 
         final String childString = PostsRef.push().getKey();
 
-        bitmap = ((BitmapDrawable) img1.getDrawable()).getBitmap();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
-        data = bao.toByteArray();
+        Bitmap bitmap1 = ((BitmapDrawable) img1.getDrawable()).getBitmap();
+        bitmap1.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+        final byte[] data1;
+        data1 = bao.toByteArray();
         final StorageReference filePath = PostsImagesRefrence.child("Post Images").child(childString);
 
-        filePath.child(childString + "1" + ".jpg").putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        filePath.child(childString + "1" + ".jpg").putBytes(data1).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
-                    data.clone();
+                    data1.clone();
                     Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
                     result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
@@ -212,15 +211,17 @@ public class PostActivity extends AppCompatActivity {
                             String downloadUrl = uri.toString();
                             arrayListImage.add(downloadUrl);
                             try {
-                                bitmap = ((BitmapDrawable) img2.getDrawable()).getBitmap();
-                                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
-                                data = bao.toByteArray();
+                                Bitmap bitmap2 = ((BitmapDrawable) img2.getDrawable()).getBitmap();
+                                ByteArrayOutputStream bao2 = new ByteArrayOutputStream();
+                                bitmap2.compress(Bitmap.CompressFormat.JPEG, 70, bao2);
+                                final byte[] data2;
+                                data2 = bao2.toByteArray();
 
-                                filePath.child(childString + "2" + ".jpg").putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                filePath.child(childString + "2" + ".jpg").putBytes(data2).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                                         if (task.isSuccessful()) {
-                                            data.clone();
+                                            data2.clone();
                                             Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
                                             result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                 @Override
@@ -228,15 +229,17 @@ public class PostActivity extends AppCompatActivity {
                                                     String downloadUrl = uri.toString();
                                                     arrayListImage.add(downloadUrl);
                                                     try {
-                                                        bitmap = ((BitmapDrawable) img3.getDrawable()).getBitmap();
-                                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
-                                                        data = bao.toByteArray();
+                                                        Bitmap bitmap3 = ((BitmapDrawable) img3.getDrawable()).getBitmap();
+                                                        ByteArrayOutputStream bao3 = new ByteArrayOutputStream();
+                                                        bitmap3.compress(Bitmap.CompressFormat.JPEG, 70, bao3);
+                                                        final byte[] data3;
+                                                        data3 = bao3.toByteArray();
 
-                                                        filePath.child(childString + "3" + ".jpg").putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                                        filePath.child(childString + "3" + ".jpg").putBytes(data3).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                                                                 if (task.isSuccessful()) {
-                                                                    data.clone();
+                                                                    data3.clone();
                                                                     Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
                                                                     result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                                         @Override
@@ -244,15 +247,17 @@ public class PostActivity extends AppCompatActivity {
                                                                             String downloadUrl = uri.toString();
                                                                             arrayListImage.add(downloadUrl);
                                                                             try {
-                                                                                bitmap = ((BitmapDrawable) img4.getDrawable()).getBitmap();
-                                                                                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
-                                                                                data = bao.toByteArray();
+                                                                                Bitmap bitmap4 = ((BitmapDrawable) img4.getDrawable()).getBitmap();
+                                                                                ByteArrayOutputStream bao4 = new ByteArrayOutputStream();
+                                                                                bitmap4.compress(Bitmap.CompressFormat.JPEG, 70, bao4);
+                                                                                final byte[] data4;
+                                                                                data4 = bao4.toByteArray();
 
-                                                                                filePath.child(childString + "4" + ".jpg").putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                                                                filePath.child(childString + "4" + ".jpg").putBytes(data4).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                                                                                     @Override
                                                                                     public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                                                                                         if (task.isSuccessful()) {
-                                                                                            data.clone();
+                                                                                            data4.clone();
                                                                                             Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
                                                                                             result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                                                                                                 @Override
