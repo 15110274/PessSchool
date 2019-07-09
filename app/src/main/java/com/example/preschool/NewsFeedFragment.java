@@ -59,6 +59,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -153,7 +154,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     //hiển thị bảng tin
     private void DisplayAllUsersPosts() {
         Query SortPostsInDecendingOrder = PostsRef;
-        FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>().setQuery(SortPostsInDecendingOrder, Posts.class).build();
+        final FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>().setQuery(SortPostsInDecendingOrder, Posts.class).build();
         adapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
 
 
@@ -174,8 +175,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                             } catch (Exception e) {
                                 postsViewHolder.setFullname("TK Đã xóa");
                             }
-
-
                         }
 
                     }
@@ -200,30 +199,39 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 //                SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
 //                String saveCurrentTime = currentTime.format(calFordTime.getTime());
 
-                postsViewHolder.setTime(posts.getDate()+" "+posts.getTime());
+                postsViewHolder.setTime(posts.getDate() + " " + posts.getTime());
                 postsViewHolder.setDate(posts.getDate());
 //                postsViewHolder.SetTime(posts.getTime());
 
                 postsViewHolder.setLikeButtonStatus(PostKey);
                 postsViewHolder.setCommentPostButtonStatus(PostKey);
 
+//                postsViewHolder.postImages.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Toast.makeText(getContext(),"Click",Toast.LENGTH_SHORT).show();
+//                    }
+//                });
                 //click piture
 //                postsViewHolder.postImages.setOnClickListener(new View.OnClickListener() {
 //                    @Override
 //                    public void onClick(View view) {
+//                        Toast.makeText(getContext(),"Click",Toast.LENGTH_SHORT).show();
 ////                        Dialog dialogImage=new Dialog(getContext(),android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-//                        Dialog dialogImage=new Dialog(getContext(),R.style.DialogViewImage);
+//                        Dialog dialogImage = new Dialog(getContext(), R.style.DialogViewImage);
 //                        dialogImage.requestWindowFeature(Window.FEATURE_NO_TITLE);
 //                        dialogImage.setCancelable(true);
 //                        dialogImage.setContentView(R.layout.dialog_show_image_post);
-//                        ImageView imageView=dialogImage.findViewById(R.id.image_post_view);
+//                        ViewPager viewPager = dialogImage.findViewById(R.id.image_post_view);
+//                        AdapterImagePostView adapterImagePostView=new AdapterImagePostView(getContext(),urlImage);
+//                        viewPager.setAdapter(adapterImagePostView);
 ////                        imageView.setImageDrawable(postsViewHolder.postImages.getDrawable());
 //
-//                        Picasso.get().load(urlImage).networkPolicy(NetworkPolicy.NO_CACHE)
-//                                .memoryPolicy(MemoryPolicy.NO_CACHE)
-//                                .placeholder(postsViewHolder.postImages.getDrawable())
-//                                .into(imageView);
-////                        Picasso.get().load(urlImage).into(imageView);
+////                        Picasso.get().load(urlImage).networkPolicy(NetworkPolicy.NO_CACHE)
+////                                .memoryPolicy(MemoryPolicy.NO_CACHE)
+////                                .placeholder(postsViewHolder.postImages.getDrawable())
+////                                .into(imageView);
+//////                        Picasso.get().load(urlImage).into(imageView);
 //                        dialogImage.show();
 //                    }
 //                });
@@ -515,11 +523,11 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             String nowTime = currentTime.format(calFordTime.getTime());
             ReturnMinute returnMinute = new ReturnMinute();
             long a = returnMinute.getMinute(minute, nowTime);
-            if(a<=60){
+            if (a <= 60) {
                 postTime.setText((String.valueOf(a) + " phút trước"));
-            }else {
-                if(a>1440) postTime.setText((String.valueOf(a/1440) + " ngày trước"));
-                else postTime.setText((String.valueOf(a/60) + " giờ trước"));
+            } else {
+                if (a > 1440) postTime.setText((String.valueOf(a / 1440) + " ngày trước"));
+                else postTime.setText((String.valueOf(a / 60) + " giờ trước"));
             }
         }
 
@@ -533,7 +541,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             postDescription.setText(description);
         }
 
-        public void setPostImage(Context context, ArrayList<String> postImageList) {
+        public void setPostImage(final Context context, ArrayList<String> postImageList) {
             AdapterImagePost adapter = new AdapterImagePost(context, postImageList);
             postImages.setAdapter(adapter);
 //            Picasso.get().load(postImage).resize(600, 0).into(postImages);
