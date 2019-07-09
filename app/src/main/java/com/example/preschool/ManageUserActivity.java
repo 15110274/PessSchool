@@ -1,6 +1,7 @@
 package com.example.preschool;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -214,7 +215,30 @@ public class ManageUserActivity extends AppCompatActivity {
 
             }
         });
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ManageUserActivity.this, android.R.layout.simple_list_item_checked , className);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(ManageUserActivity.this, android.R.layout.simple_list_item_checked , className){
+            @Override
+            public boolean isEnabled(int position) {
+                if(position == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View view=super.getView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0){
+                    tv.setTextColor(getResources().getColor(R.color.hintcolor));
+                }
+                return view;
+            }
+        };
         listClass.setAdapter(arrayAdapter);
 
         classCheckBox.setOnClickListener(new View.OnClickListener() {

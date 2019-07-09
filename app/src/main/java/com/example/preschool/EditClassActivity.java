@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -40,15 +41,16 @@ public class EditClassActivity extends AppCompatActivity {
     private final ArrayList<String> teacherid=new ArrayList<>();
     private final ArrayList<String> teachername=new ArrayList<>();
     private int teacherChoose=0;
-//    private int teacherOld=0;
-    private ValueEventListener UsersEventListener, ClassEventListener;
+    private int teacherOld=0;
+    private String classEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_class);
         mAuth=FirebaseAuth.getInstance();
-        ClassRef= FirebaseDatabase.getInstance().getReference().child("Class").child(getIntent().getStringExtra("CLASS_ID"));
+        classEdit=getIntent().getStringExtra("CLASS_ID");
+        ClassRef= FirebaseDatabase.getInstance().getReference().child("Class");
         UserRef= FirebaseDatabase.getInstance().getReference().child("Users");
         className=findViewById(R.id.edit_classname);
         UpdateClassButton=findViewById(R.id.update_class_button);
@@ -56,9 +58,7 @@ public class EditClassActivity extends AppCompatActivity {
         teacherSpinner=findViewById(R.id.teacherSpinner);
         teachername.add("Choose Teacher...");
         teacherid.add("");
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-//        UsersEventListener=
-        UserRef.addValueEventListener(new ValueEventListener() {
+        ValueEventListener ref1=UserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
@@ -77,7 +77,7 @@ public class EditClassActivity extends AppCompatActivity {
                     }
 
                 }
-                ClassRef.addValueEventListener(new ValueEventListener() {
+                ValueEventListener ref2=ClassRef.child(classEdit).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if(dataSnapshot.hasChild("classname")){
@@ -107,15 +107,17 @@ public class EditClassActivity extends AppCompatActivity {
 
                     }
                 });
-//                final int[] temp = {0};
+
+                final int[] temp = {0};
                 teacherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         teacherChoose=position;
-//                        if(temp[0] ==0){
-//                            teacherOld=position;
-//                        }
-//                        temp[0]++;
+                        if(temp[0] ==0){
+                            teacherOld= position;
+                            Toast.makeText(EditClassActivity.this, teacherOld+"", Toast.LENGTH_SHORT).show();
+                        }
+                        temp[0]++;
                     }
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
@@ -174,6 +176,7 @@ public class EditClassActivity extends AppCompatActivity {
             }
         });
     }
+
     private void ValidateClassInfo() {
         final String name=className.getText().toString();
         HashMap classMap=new HashMap();
@@ -182,13 +185,28 @@ public class EditClassActivity extends AppCompatActivity {
             classMap.put("teacher",teacherid.get(teacherChoose));
         }
 
-        ClassRef.updateChildren(classMap).addOnCompleteListener(new OnCompleteListener() {
+        ClassRef.child(classEdit).updateChildren(classMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()) {
                     if (teacherChoose != 0) {
+//                        ValueEventListener ref3=UserRef.child(teacherid.get(teacherChoose)).addValueEventListener(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                                String classNew=dataSnapshot.child("idclass").getValue().toString();
+//                                if(classNew!=""){
+//                                    ClassRef.child(classNew).child("teacher").setValue("");
+//
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                            }
+//                        });
                         HashMap userMap = new HashMap();
-                        userMap.put("idclass", getIntent().getStringExtra("CLASS_ID"));
+                        userMap.put("idclass", classEdit);
                         userMap.put("classname", name);
                         UserRef.child(teacherid.get(teacherChoose)).updateChildren(userMap);
                     }
@@ -207,20 +225,8 @@ public class EditClassActivity extends AppCompatActivity {
             }
         });
         Intent intent=new Intent(EditClassActivity.this, ViewClassActivity.class);
-        intent.putExtra("CLASS_ID",getIntent().getStringExtra("CLASS_ID"));
+        intent.putExtra("CLASS_ID",classEdit);
         intent.putExtra("test",teacherid);
         startActivity(intent);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(ClassEventListener!=null){
-            ClassRef.removeEventListener(ClassEventListener);
-        }
-        if(UsersEventListener!=null){
-            UserRef.removeEventListener(UsersEventListener);
-        }
-        finish();
     }
 }
