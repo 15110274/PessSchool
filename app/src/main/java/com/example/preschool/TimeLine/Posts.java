@@ -1,23 +1,10 @@
 package com.example.preschool.TimeLine;
 
-public class Posts
-{
-    public String uid, time, date, postimage, description, profileimage, fullname;
+import java.util.ArrayList;
 
-    public Posts()
-    {
-
-    }
-
-    public Posts(String uid, String time, String date, String postimage, String description, String profileimage, String fullname) {
-        this.uid = uid;
-        this.time = time;
-        this.date = date;
-        this.postimage = postimage;
-        this.description = description;
-        this.profileimage = profileimage;
-        this.fullname = fullname;
-    }
+public class Posts {
+    private String uid, time, date, description, profileimage, fullname;
+    private ArrayList<String> postimage;
 
     public String getUid() {
         return uid;
@@ -43,14 +30,6 @@ public class Posts
         this.date = date;
     }
 
-    public String getPostimage() {
-        return postimage;
-    }
-
-    public void setPostimage(String postimage) {
-        this.postimage = postimage;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -73,5 +52,26 @@ public class Posts
 
     public void setFullname(String fullname) {
         this.fullname = fullname;
+    }
+
+    public ArrayList<String> getPostimage() {
+        return postimage;
+    }
+
+    public void setPostimage(ArrayList<String> postimage) {
+        this.postimage = postimage;
+    }
+
+    public Posts() {
+    }
+
+    public Posts(String uid, String time, String date, String description, String profileimage, String fullname, ArrayList<String> postimage) {
+        this.uid = uid;
+        this.time = time;
+        this.date = date;
+        this.description = description;
+        this.profileimage = profileimage;
+        this.fullname = fullname;
+        this.postimage = postimage;
     }
 }
