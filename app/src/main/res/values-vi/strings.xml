@@ -21,7 +21,6 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="parent">Thông tin phụ huynh</string>
     <string name="nenableDarkMode">Kích hoạt nền tối</string>
     <string name="darkMode">Chế độ nền tối</string>
     <string name="testMail">tanphatngcd1@gmail.com</string>

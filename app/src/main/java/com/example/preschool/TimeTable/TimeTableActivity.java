@@ -220,12 +220,9 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
                     //DisplayAllTimeTable(dateSelect);
                 }
             });
-
         } else {
             Toast.makeText(this, "Bạn phải điền đủ nội dung", Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
     @Override

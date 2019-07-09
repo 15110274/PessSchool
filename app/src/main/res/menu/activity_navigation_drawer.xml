@@ -9,17 +9,13 @@
         android:icon="@drawable/ic_photoalbum"
         ></item>
     <item
-        android:id="@+id/parent"
-        android:title="@string/parent"
-        android:icon="@drawable/ic_parent"></item>
-    <item
         android:id="@+id/permissonform"
         android:title="@string/permissonform"
-        android:icon="@drawable/ic_event"></item>
+        android:icon="@drawable/ic_curriculum"></item>
     <item
         android:id="@+id/timetable"
         android:title="@string/timetable"
-        android:icon="@drawable/ic_curriculum"></item>
+        android:icon="@drawable/ic_event"></item>
     <item
         android:id="@+id/student"
         android:title="@string/student"
