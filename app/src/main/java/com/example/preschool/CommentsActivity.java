@@ -315,7 +315,7 @@ public class CommentsActivity extends AppCompatActivity {
                 commentsViewHolder.setUsername(comments.getUsername());
                 commentsViewHolder.setComment(comments.getComment());
                 commentsViewHolder.setDate(comments.getDate());
-                commentsViewHolder.setTime(comments.getTime());
+                commentsViewHolder.setTime(comments.getDate()+" "+comments.getTime());
                 commentsViewHolder.setAvatar(comments.getAvatar());
 
             }
@@ -360,7 +360,17 @@ public class CommentsActivity extends AppCompatActivity {
 
         public void setTime(String time) {
             TextView myTime = mView.findViewById(R.id.comment_time);
-            myTime.setText("Time: " + time);
+            Calendar calFordTime = Calendar.getInstance();
+            SimpleDateFormat currentTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            String nowTime = currentTime.format(calFordTime.getTime());
+            ReturnMinute returnMinute = new ReturnMinute();
+            long a = returnMinute.getMinute(time, nowTime);
+            if (a <= 60) {
+                myTime.setText((String.valueOf(a) + " phút trước"));
+            } else {
+                if (a > 1440) myTime.setText((String.valueOf(a / 1440) + " ngày trước"));
+                else myTime.setText((String.valueOf(a / 60) + " giờ trước"));
+            }
         }
 
         public void setUsername(String username) {

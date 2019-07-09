@@ -44,7 +44,6 @@ import java.util.Map;
 public class ChatsFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private ChatListAdapter userAdapter;
     private List<User> mUsers;
     private FirebaseUser fuser;
     private DatabaseReference ChatListRef, UsersRef, MessRef, UserStateRef;
@@ -165,12 +164,15 @@ public class ChatsFragment extends Fragment {
                                     chatListViewHolder.last_msg.setText(child.child("message").getValue().toString());
                                     if(child.child("sender").getValue().toString().equals(current_user_id)){
                                         chatListViewHolder.sender.setVisibility(View.VISIBLE);
+                                        setTextLastMess(child.child("message").getValue().toString()
+                                                ,chatListViewHolder.last_msg,true);
                                     }
                                     else {
                                         chatListViewHolder.sender.setVisibility(View.GONE);
                                         setTextLastMess(child.child("message").getValue().toString()
                                                 ,chatListViewHolder.last_msg,child.child("isseen").getValue(Boolean.class));
                                     }
+
                                 }
                             }
                             @Override
