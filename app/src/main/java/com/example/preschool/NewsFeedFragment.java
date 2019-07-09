@@ -3,6 +3,7 @@ package com.example.preschool;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.preschool.Chats.MessageActivity;
+import com.example.preschool.PhotoAlbum.AdapterImageView;
+import com.example.preschool.PhotoAlbum.ViewPhotoActivity;
 import com.example.preschool.TimeLine.Posts;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -43,6 +46,7 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Comment;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +59,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.ViewPager;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -157,7 +163,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             protected void onBindViewHolder(@NonNull final PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
 
                 final String PostKey = getRef(position).getKey();
-                final String urlImage=posts.getPostimage();
+                final ArrayList<String> urlImage=posts.getPostimage();
                 UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -186,7 +192,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 }
 
                 postsViewHolder.setDescription(posts.getDescription());
-                postsViewHolder.setPostImage(urlImage);
+                postsViewHolder.setPostImage(getContext(),urlImage);
 
                 Calendar calFordTime = Calendar.getInstance();
                 int hours = calFordTime.get(Calendar.HOUR_OF_DAY);
@@ -204,25 +210,25 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 postsViewHolder.setCommentPostButtonStatus(PostKey);
 
                 //click piture
-                postsViewHolder.postImages.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-//                        Dialog dialogImage=new Dialog(getContext(),android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                        Dialog dialogImage=new Dialog(getContext(),R.style.DialogViewImage);
-                        dialogImage.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialogImage.setCancelable(true);
-                        dialogImage.setContentView(R.layout.dialog_show_image_post);
-                        ImageView imageView=dialogImage.findViewById(R.id.image_post_view);
-//                        imageView.setImageDrawable(postsViewHolder.postImages.getDrawable());
-
-                        Picasso.get().load(urlImage).networkPolicy(NetworkPolicy.NO_CACHE)
-                                .memoryPolicy(MemoryPolicy.NO_CACHE)
-                                .placeholder(postsViewHolder.postImages.getDrawable())
-                                .into(imageView);
-//                        Picasso.get().load(urlImage).into(imageView);
-                        dialogImage.show();
-                    }
-                });
+//                postsViewHolder.postImages.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+////                        Dialog dialogImage=new Dialog(getContext(),android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+//                        Dialog dialogImage=new Dialog(getContext(),R.style.DialogViewImage);
+//                        dialogImage.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                        dialogImage.setCancelable(true);
+//                        dialogImage.setContentView(R.layout.dialog_show_image_post);
+//                        ImageView imageView=dialogImage.findViewById(R.id.image_post_view);
+////                        imageView.setImageDrawable(postsViewHolder.postImages.getDrawable());
+//
+//                        Picasso.get().load(urlImage).networkPolicy(NetworkPolicy.NO_CACHE)
+//                                .memoryPolicy(MemoryPolicy.NO_CACHE)
+//                                .placeholder(postsViewHolder.postImages.getDrawable())
+//                                .into(imageView);
+////                        Picasso.get().load(urlImage).into(imageView);
+//                        dialogImage.show();
+//                    }
+//                });
 
                 // click option button
                 postsViewHolder.optionButton.setOnClickListener(new View.OnClickListener() {
@@ -361,9 +367,9 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         adapter.stopListening();
     }
 
-    private void deletePost(final String keyPost, final String postUrl){
+    private void deletePost(final String keyPost, final ArrayList<String> postUrl){
 
-        final AlertDialog.Builder dialogDeletePost=new AlertDialog.Builder(getContext(),android.R.style.Theme_Material_Light_Dialog_Alert);
+        final AlertDialog.Builder dialogDeletePost=new AlertDialog.Builder(getContext(),android.R.style.Theme_Light_NoTitleBar);
         dialogDeletePost.setMessage("Xóa bài đăng?");
         dialogDeletePost.setCancelable(false);
         dialogDeletePost.setPositiveButton("Có", new DialogInterface.OnClickListener() {
@@ -371,18 +377,36 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             public void onClick(DialogInterface dialogInterface, int i) {
                 // Delete imagePost on CloudStorage
                 FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference storageRef = storage.getReferenceFromUrl(postUrl);
-                storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        PostsRef.child(keyPost).removeValue();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getContext(),"Không thể xóa được",Toast.LENGTH_SHORT);
-                    }
-                });
+                for(String url:postUrl){
+                    StorageReference storageRef = storage.getReferenceFromUrl(url);
+                    storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            try{
+                                PostsRef.child(keyPost).removeValue();
+                            }catch (Exception e){
+
+                            }
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getContext(),"Không thể xóa được",Toast.LENGTH_SHORT);
+                        }
+                    });
+                }
+//                StorageReference storageRef = storage.getReferenceFromUrl(postUrl);
+//                storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        PostsRef.child(keyPost).removeValue();
+//                    }
+//                }).addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(getContext(),"Không thể xóa được",Toast.LENGTH_SHORT);
+//                    }
+//                });
                 dialogInterface.dismiss();
             }
         }).setNegativeButton("Không", new DialogInterface.OnClickListener() {
@@ -403,7 +427,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         private ImageButton optionButton;
         private int countLikes;
         private int countComments;
-        private ImageView postImages;
+        private ViewPager postImages;
         private String currentUserId;
         private DatabaseReference LikesRef;
         private DatabaseReference CommentsRef;
@@ -499,8 +523,10 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             postDescription.setText(description);
         }
 
-        public void setPostImage(String postImage) {
-            Picasso.get().load(postImage).resize(600, 0).into(postImages);
+        public void setPostImage(Context context, ArrayList<String> postImageList) {
+            AdapterImagePost adapter = new AdapterImagePost(context, postImageList);
+            postImages.setAdapter(adapter);
+//            Picasso.get().load(postImage).resize(600, 0).into(postImages);
         }
 
     }

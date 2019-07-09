@@ -10,6 +10,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -39,23 +40,27 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Random;
 
 public class PostActivity extends AppCompatActivity {
     private ProgressDialog loadingBar;
 
-    private ImageView SelectPostImage;
+    private ImageView SelectPostImage, img1, img2, img3, img4;
     private Bitmap bitmap;
-    private Button UpdatePostButton;
+    private byte[] data;
+    private Button PostButton;
     private EditText PostDescription;
     private Uri ImageUri;
     private String Description;
-    private static final int Gallery_Pick = 1;
+    private ArrayList<String> arrayListImage;
+    private static final int Gallery_Pick = 1, GALLERY = 1;
 
     private StorageReference PostsImagesRefrence;
     private DatabaseReference UsersRef, PostsRef;
-    private ValueEventListener usersListener,postListener;
+    private ValueEventListener usersListener, postListener;
     private FirebaseAuth mAuth;
 
     private String idClass;
@@ -94,7 +99,11 @@ public class PostActivity extends AppCompatActivity {
 
 
         SelectPostImage = findViewById(R.id.select_post_image);
-        UpdatePostButton = findViewById(R.id.update_post_button);
+        img1 = findViewById(R.id.img1);
+        img2 = findViewById(R.id.img2);
+        img3 = findViewById(R.id.img3);
+        img4 = findViewById(R.id.img4);
+        PostButton = findViewById(R.id.post_button);
         PostDescription = findViewById(R.id.post_description);
         loadingBar = new ProgressDialog(this);
 
@@ -104,7 +113,7 @@ public class PostActivity extends AppCompatActivity {
                 OpenGallery();
             }
         });
-        UpdatePostButton.setOnClickListener(new View.OnClickListener() {
+        PostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ValidatePostInfo();
@@ -115,6 +124,11 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void OpenGallery() {
+//        Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//
+//        startActivityForResult(galleryIntent, GALLERY);
+
         Intent galleryIntent = new Intent();
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("image/*");
@@ -125,9 +139,21 @@ public class PostActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == Gallery_Pick && resultCode == RESULT_OK && data != null) {
+        if (requestCode == GALLERY && resultCode == RESULT_OK && data != null) {
             ImageUri = data.getData();
-            Picasso.get().load(ImageUri).resize(1440,0).into(SelectPostImage);
+            Picasso.get().load(ImageUri).resize(1440, 0).into(SelectPostImage);
+            if (img1.getDrawable() == null) {
+                Picasso.get().load(ImageUri).resize(1440, 0).into(img1);
+            } else {
+                if (img2.getDrawable() == null) {
+                    Picasso.get().load(ImageUri).resize(1440, 0).into(img2);
+                } else {
+                    if (img3.getDrawable() == null) {
+                        Picasso.get().load(ImageUri).resize(1440, 0).into(img3);
+                    } else Picasso.get().load(ImageUri).resize(1440, 0).into(img4);
+                }
+            }
+
 //            SelectPostImage.setImageURI(ImageUri);
         }
     }
@@ -145,22 +171,20 @@ public class PostActivity extends AppCompatActivity {
             loadingBar.show();
             loadingBar.setCanceledOnTouchOutside(false);
 
-            uploadImageToFirebase();
+            createPost();
         }
     }
-    private void uploadImageToFirebase(){
 
-        //Image khi load lên ImageButton đã được resize bằng Picasso
-        // nên upload bitmap từ ImageButton giúp giảm dung lượng ảnh
-//        Bitmap bitmap= SelectPostImage.getDrawingCache();
-        bitmap=((BitmapDrawable) SelectPostImage.getDrawable()).getBitmap();
-//        if(bitmap==null){
-//            Toast.makeText(PostActivity.this,"null",Toast.LENGTH_LONG).show();
-//        }
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
-        byte[] data = bao.toByteArray();
+//    private int countImage(){
+//
+//
+//    }
 
+    private void createPost() {
+//        data=new byte[];
+
+        arrayListImage = new ArrayList<>();
+        final ByteArrayOutputStream bao = new ByteArrayOutputStream();
 
         Calendar calFordDate = Calendar.getInstance();
         SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
@@ -168,67 +192,100 @@ public class PostActivity extends AppCompatActivity {
 
         SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
         saveCurrentTime = currentTime.format(calFordDate.getTime());
+
         final String childString = PostsRef.push().getKey();
 
+        bitmap = ((BitmapDrawable) img1.getDrawable()).getBitmap();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+        data = bao.toByteArray();
+        final StorageReference filePath = PostsImagesRefrence.child("Post Images").child(childString);
 
-        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(childString + ".jpg");
-        filePath.putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+        filePath.child(childString + "1" + ".jpg").putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                 if (task.isSuccessful()) {
+                    data.clone();
                     Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
                     result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            final String downloadUrl = uri.toString();
-                            //lưu hình ảnh lên posts
-                            PostsRef.child(childString).child("postimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(PostActivity.this, "Image success", Toast.LENGTH_SHORT).show();
-                                        loadingBar.dismiss();
-                                        SendUserToNewsFeedActivity();
-                                    } else {
-                                        Toast.makeText(PostActivity.this, "Image fail", Toast.LENGTH_SHORT).show();
-                                        loadingBar.dismiss();
-                                    }
-                                }
-                            });
+                            String downloadUrl = uri.toString();
+                            arrayListImage.add(downloadUrl);
+                            try {
+                                bitmap = ((BitmapDrawable) img2.getDrawable()).getBitmap();
+                                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+                                data = bao.toByteArray();
 
-                        }
-                    });
-                    //lưu các mục còn lại lên posts
-                    usersListener = UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
+                                filePath.child(childString + "2" + ".jpg").putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            data.clone();
+                                            Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+                                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                @Override
+                                                public void onSuccess(Uri uri) {
+                                                    String downloadUrl = uri.toString();
+                                                    arrayListImage.add(downloadUrl);
+                                                    try {
+                                                        bitmap = ((BitmapDrawable) img3.getDrawable()).getBitmap();
+                                                        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+                                                        data = bao.toByteArray();
 
-                                HashMap postsMap = new HashMap();
-                                postsMap.put("uid", current_user_id);
-                                postsMap.put("date", saveCurrentDate);
-                                postsMap.put("time", saveCurrentTime);
-                                postsMap.put("description", Description);
+                                                        filePath.child(childString + "3" + ".jpg").putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                                                if (task.isSuccessful()) {
+                                                                    data.clone();
+                                                                    Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+                                                                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                        @Override
+                                                                        public void onSuccess(Uri uri) {
+                                                                            String downloadUrl = uri.toString();
+                                                                            arrayListImage.add(downloadUrl);
+                                                                            try {
+                                                                                bitmap = ((BitmapDrawable) img4.getDrawable()).getBitmap();
+                                                                                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+                                                                                data = bao.toByteArray();
 
-                                PostsRef.child(childString).updateChildren(postsMap)
-                                        .addOnCompleteListener(new OnCompleteListener() {
-                                            @Override
-                                            public void onComplete(@NonNull Task task) {
-                                                if (task.isSuccessful()) {
-                                                    Toast.makeText(PostActivity.this, "New Post is updated successfully.", Toast.LENGTH_SHORT).show();
-                                                    loadingBar.dismiss();
-                                                    SendUserToNewsFeedActivity();
-                                                } else {
-                                                    Toast.makeText(PostActivity.this, "Error Occured while updating your post.", Toast.LENGTH_SHORT).show();
-                                                    loadingBar.dismiss();
+                                                                                filePath.child(childString + "4" + ".jpg").putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                                                                                    @Override
+                                                                                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                                                                        if (task.isSuccessful()) {
+                                                                                            data.clone();
+                                                                                            Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+                                                                                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                                                                                @Override
+                                                                                                public void onSuccess(Uri uri) {
+                                                                                                    String downloadUrl = uri.toString();
+                                                                                                    arrayListImage.add(downloadUrl);
+                                                                                                    putPostToFireBase(childString);
+                                                                                                }
+                                                                                            });
+                                                                                        }
+                                                                                    }
+                                                                                });
+
+                                                                            } catch (Exception e) {
+                                                                                putPostToFireBase(childString);
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                }
+                                                            }
+                                                        });
+
+                                                    } catch (Exception e) {
+                                                        putPostToFireBase(childString);
+                                                    }
                                                 }
-                                            }
-                                        });
+                                            });
+                                        }
+                                    }
+                                });
+                            } catch (Exception e) {
+                                putPostToFireBase(childString);
                             }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
 
                         }
                     });
@@ -240,25 +297,131 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
+//        for(byte[] temp:arrayListData){
+//            StorageReference filePath = PostsImagesRefrence.child("Post Images").child(childString).child(childString + + ".jpg");
+//            filePath.putBytes(temp).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                    if (task.isSuccessful()) {
+//                        Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+//                        result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                            @Override
+//                            public void onSuccess(Uri uri) {
+//                                final String downloadUrl = uri.toString();
+//                                arrayListImage.add(downloadUrl);
+//                                PostsRef.child(childString).child("postimage").setValue(arrayListImage).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<Void> task) {
+//                                        if(task.isSuccessful()){
+//                                            Toast.makeText(PostActivity.this,"Tải ảnh lên thành công",Toast.LENGTH_SHORT).show();
+//                                        }
+//                                        else Toast.makeText(PostActivity.this,"Không thể tải ảnh lên",Toast.LENGTH_SHORT).show();
+//                                    }
+//                                });
+//                            }
+//                        });
+//
+//                    } else {
+//                        String message = task.getException().getMessage();
+//                        Toast.makeText(PostActivity.this, "Error:" + message, Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            });
+//        }
 
+
+        // Upload tối đa 4 ảnh cho 1 Post
+//        for (int i = 0; i < 4; i++) {
+//            if (i == 0) {
+//                bitmap = ((BitmapDrawable) img1.getDrawable()).getBitmap();
+//                bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+//                byte[] data = bao.toByteArray();
+//
+//                uploadImage(data, i, childString);
+//            } else {
+//                if (i == 1) {
+//                    try {
+//                        bitmap = ((BitmapDrawable) img2.getDrawable()).getBitmap();
+//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+//                        byte[] data = bao.toByteArray();
+//
+//                        uploadImage(data, i, childString);
+//                    } catch (Exception e) {
+//                        SendUserToNewsFeedActivity();
+//                        break;
+//                    }
+//                } else {
+//                    if (i == 2) {
+//                        try {
+//                            bitmap = ((BitmapDrawable) img3.getDrawable()).getBitmap();
+//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+//                            byte[] data = bao.toByteArray();
+//
+//                            uploadImage(data, i, childString);
+//                        } catch (Exception e) {
+//                            SendUserToNewsFeedActivity();
+//                            break;
+//                        }
+//
+//                    }else {
+//                        try {
+//                            bitmap = ((BitmapDrawable) img4.getDrawable()).getBitmap();
+//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+//                            byte[] data = bao.toByteArray();
+//
+//                            uploadImage(data, i, childString);
+//                            SendUserToNewsFeedActivity();
+//                        } catch (Exception e) {
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        putPostToFireBase(childString);
     }
 
-//    private void StoringImageToFirebaseStorage() {
-//        Calendar calFordDate = Calendar.getInstance();
-//        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy");
-//        saveCurrentDate = currentDate.format(calFordDate.getTime());
-//
-//        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
-//        saveCurrentTime = currentTime.format(calFordDate.getTime());
-//        final String childString = PostsRef.push().getKey();
-//
-//
-//        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(ImageUri.getLastPathSegment() + ".jpg");
-//        //dem count post
-//
-//        filePath.putFile(ImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-//
-//
+    private void putPostToFireBase(final String childString) {
+        usersListener = UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    HashMap postsMap = new HashMap();
+                    postsMap.put("uid", current_user_id);
+                    postsMap.put("date", saveCurrentDate);
+                    postsMap.put("time", saveCurrentTime);
+                    postsMap.put("description", Description);
+                    postsMap.put("postimage", arrayListImage);
+
+                    PostsRef.child(childString).updateChildren(postsMap)
+                            .addOnCompleteListener(new OnCompleteListener() {
+                                @Override
+                                public void onComplete(@NonNull Task task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(PostActivity.this, "New Post is updated successfully.", Toast.LENGTH_SHORT).show();
+                                        loadingBar.dismiss();
+                                        SendUserToNewsFeedActivity();
+                                    } else {
+                                        Toast.makeText(PostActivity.this, "Error Occured while updating your post.", Toast.LENGTH_SHORT).show();
+                                        loadingBar.dismiss();
+                                        SendUserToNewsFeedActivity();
+                                    }
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+//    private void uploadImage(byte[] data, int i, final String childString) {
+//        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(childString).child(childString + i + ".jpg");
+//        filePath.putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
 //            @Override
 //            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
 //                if (task.isSuccessful()) {
@@ -267,55 +430,16 @@ public class PostActivity extends AppCompatActivity {
 //                        @Override
 //                        public void onSuccess(Uri uri) {
 //                            final String downloadUrl = uri.toString();
-//                            //lưu hình ảnh lên posts
-//                            PostsRef.child(childString).child("postimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                            arrayListImage.add(downloadUrl);
+//                            PostsRef.child(childString).child("postimage").setValue(arrayListImage).addOnCompleteListener(new OnCompleteListener<Void>() {
 //                                @Override
 //                                public void onComplete(@NonNull Task<Void> task) {
-//                                    if (task.isSuccessful()) {
-//                                        Toast.makeText(PostActivity.this, "Image success", Toast.LENGTH_SHORT).show();
-//                                        loadingBar.dismiss();
-//                                        SendUserToNewsFeedActivity();
-//                                    } else {
-//                                        Toast.makeText(PostActivity.this, "Image fail", Toast.LENGTH_SHORT).show();
-//                                        loadingBar.dismiss();
+//                                    if(task.isSuccessful()){
+//                                        Toast.makeText(PostActivity.this,"Tải ảnh lên thành công",Toast.LENGTH_SHORT).show();
 //                                    }
+//                                    else Toast.makeText(PostActivity.this,"Không thể tải ảnh lên",Toast.LENGTH_SHORT).show();
 //                                }
 //                            });
-//
-//                        }
-//                    });
-//                    //lưu các mục còn lại lên posts
-//                    usersListener = UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-//                            if (dataSnapshot.exists()) {
-//
-//                                HashMap postsMap = new HashMap();
-//                                postsMap.put("uid", current_user_id);
-//                                postsMap.put("date", saveCurrentDate);
-//                                postsMap.put("time", saveCurrentTime);
-//                                postsMap.put("description", Description);
-//
-//                                PostsRef.child(childString).updateChildren(postsMap)
-//                                        .addOnCompleteListener(new OnCompleteListener() {
-//                                            @Override
-//                                            public void onComplete(@NonNull Task task) {
-//                                                if (task.isSuccessful()) {
-//                                                    Toast.makeText(PostActivity.this, "New Post is updated successfully.", Toast.LENGTH_SHORT).show();
-//                                                    loadingBar.dismiss();
-//                                                    SendUserToNewsFeedActivity();
-//                                                } else {
-//                                                    Toast.makeText(PostActivity.this, "Error Occured while updating your post.", Toast.LENGTH_SHORT).show();
-//                                                    loadingBar.dismiss();
-//                                                }
-//                                            }
-//                                        });
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(DatabaseError databaseError) {
-//
 //                        }
 //                    });
 //
@@ -325,6 +449,7 @@ public class PostActivity extends AppCompatActivity {
 //                }
 //            }
 //        });
+//
 //    }
 
     private void SendUserToNewsFeedActivity() {
