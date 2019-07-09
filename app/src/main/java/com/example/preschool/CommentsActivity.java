@@ -56,7 +56,7 @@ public class CommentsActivity extends AppCompatActivity {
 
     private String Post_Key, current_user_id, idClass, idTeacher;
     private FirebaseAuth mAuth;
-    private String postimage, profileimage, description, time,date, postname;
+    private String postimage, profileimage, description, time, date, postname;
     Boolean LikeChecker = false;
 
     private TextView DisplayNoOfLikes, DisplayNoOfComments;
@@ -91,11 +91,11 @@ public class CommentsActivity extends AppCompatActivity {
 
 
         PostName = findViewById(R.id.post_user_name);
-        PostImage = findViewById(R.id.post_image);
+//        PostImage = findViewById(R.id.post_image);
         PostDescription = findViewById(R.id.post_description);
         PostProfileImage = findViewById(R.id.post_profile_image);
         PostTime = findViewById(R.id.post_time);
-        PostDate=findViewById(R.id.post_date);
+        PostDate = findViewById(R.id.post_date);
         LikeButton = findViewById(R.id.like_button);
         CommentButton = findViewById(R.id.comment_button);
         DisplayNoOfLikes = findViewById(R.id.display_no_of_likes);
@@ -107,6 +107,22 @@ public class CommentsActivity extends AppCompatActivity {
 
 
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts").child(Post_Key).child("Comments");
+
+//        PostsRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                if(dataSnapshot.exists()){
+////                    long a=dataSnapshot.getChildrenCount();
+////                    int b=(int) a;
+//                    CommentsList.scrollToPosition((int)dataSnapshot.getChildrenCount()+1);
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
 
 
         clickPostRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts").child(Post_Key);
@@ -156,30 +172,30 @@ public class CommentsActivity extends AppCompatActivity {
 
                     description = dataSnapshot.child("description").getValue().toString();
 
-                    postimage = dataSnapshot.child("postimage").getValue().toString();
+//                    postimage = dataSnapshot.child("postimage").getValue().toString();
                     time = dataSnapshot.child("time").getValue().toString();
-                    date=dataSnapshot.child("date").getValue().toString();
+                    date = dataSnapshot.child("date").getValue().toString();
 
 
                     PostDescription.setText(description);
-                    Picasso.get().load(postimage).resize(600, 0).into(PostImage);
+//                    Picasso.get().load(postimage).resize(600, 0).into(PostImage);
 
-                    PostImage.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Dialog dialogImage = new Dialog(CommentsActivity.this, R.style.DialogViewImage);
-                            dialogImage.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            dialogImage.setCancelable(true);
-                            dialogImage.setContentView(R.layout.dialog_show_image_post);
-                            ImageView imageView = dialogImage.findViewById(R.id.image_post_view);
-
-                            Picasso.get().load(postimage).networkPolicy(NetworkPolicy.NO_CACHE)
-                                    .memoryPolicy(MemoryPolicy.NO_CACHE)
-                                    .placeholder(PostImage.getDrawable())
-                                    .into(imageView);
-                            dialogImage.show();
-                        }
-                    });
+//                    PostImage.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View view) {
+//                            Dialog dialogImage = new Dialog(CommentsActivity.this, R.style.DialogViewImage);
+//                            dialogImage.requestWindowFeature(Window.FEATURE_NO_TITLE);
+//                            dialogImage.setCancelable(true);
+//                            dialogImage.setContentView(R.layout.dialog_show_image_post);
+//                            ImageView imageView = dialogImage.findViewById(R.id.image_post_view);
+//
+//                            Picasso.get().load(postimage).networkPolicy(NetworkPolicy.NO_CACHE)
+//                                    .memoryPolicy(MemoryPolicy.NO_CACHE)
+//                                    .placeholder(PostImage.getDrawable())
+//                                    .into(imageView);
+//                            dialogImage.show();
+//                        }
+//                    });
 
                     UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
                         @Override
@@ -248,9 +264,11 @@ public class CommentsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.child(PostKey).child("Comments").hasChild(current_user_id)) {
                     countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                    CommentsList.scrollToPosition(countComments - 1);
                     DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
                 } else {
                     countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                    CommentsList.scrollToPosition(countComments - 1);
                     DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
                 }
             }
@@ -364,7 +382,7 @@ public class CommentsActivity extends AppCompatActivity {
             SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss");
             final String saveCurrentTime = currentTime.format(calFordDate.getTime());
 
-            final String RandomKey = FirebaseDatabase.getInstance().getReference().push().getKey();
+            String RandomKey = FirebaseDatabase.getInstance().getReference().push().getKey();
             HashMap commentsMap = new HashMap();
             commentsMap.put("uid", current_user_id);
             commentsMap.put("comment", commentText);
@@ -391,7 +409,7 @@ public class CommentsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        if(commentListener!=null)
+        if (commentListener != null)
             UsersRef.child(current_user_id).removeEventListener(commentListener);
     }
 }

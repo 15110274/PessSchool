@@ -165,6 +165,7 @@ public class EventsActivity extends AppCompatActivity {
             addEvent.setVisibility(View.VISIBLE);
         }
         calendarView = findViewById(R.id.calendarView);
+
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
