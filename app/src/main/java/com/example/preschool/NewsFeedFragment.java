@@ -59,6 +59,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -75,7 +76,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     private Bundle bundle;
 
     private FirebaseRecyclerAdapter adapter;
-    private Boolean isTeacher=false;
+    private Boolean isTeacher = false;
 
 
     @SuppressLint("RestrictedApi")
@@ -88,7 +89,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         bundle = getArguments();
         if (bundle != null) {
             idClass = bundle.getString("ID_CLASS");
-            idTeacher=bundle.getString("ID_TEACHER");
+            idTeacher = bundle.getString("ID_TEACHER");
         }
 
         addPost = view.findViewById(R.id.floating_add_post);
@@ -106,11 +107,10 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         //
 
         //nếu là giáo viên mới cho phép đăng bài
-        if(currentUserID.equals(idTeacher)){
+        if (currentUserID.equals(idTeacher)) {
             addPost.show();
-            isTeacher=true;
-        }
-        else addPost.hide();
+            isTeacher = true;
+        } else addPost.hide();
 
 
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -127,7 +127,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if(isTeacher){
+                if (isTeacher) {
                     if (dy > 0) {
                         // Scrolling up
                         addPost.setVisibility(View.GONE);
@@ -151,11 +151,10 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
 
 
-
     //hiển thị bảng tin
     private void DisplayAllUsersPosts() {
         Query SortPostsInDecendingOrder = PostsRef;
-        FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>().setQuery(SortPostsInDecendingOrder, Posts.class).build();
+        final FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>().setQuery(SortPostsInDecendingOrder, Posts.class).build();
         adapter = new FirebaseRecyclerAdapter<Posts, PostsViewHolder>(options) {
 
 
@@ -163,21 +162,19 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             protected void onBindViewHolder(@NonNull final PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
 
                 final String PostKey = getRef(position).getKey();
-                final ArrayList<String> urlImage=posts.getPostimage();
+                final ArrayList<String> urlImage = posts.getPostimage();
                 UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists()){
-                            try{
-                                final String image=dataSnapshot.child("profileimage").getValue().toString();
-                                final String name=dataSnapshot.child("fullname").getValue().toString();
+                        if (dataSnapshot.exists()) {
+                            try {
+                                final String image = dataSnapshot.child("profileimage").getValue().toString();
+                                final String name = dataSnapshot.child("fullname").getValue().toString();
                                 postsViewHolder.setFullname(name);
                                 postsViewHolder.setProfileImage(image);
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 postsViewHolder.setFullname("TK Đã xóa");
                             }
-
-
                         }
 
                     }
@@ -187,45 +184,54 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
                     }
                 });
-                if(isTeacher){
+                if (isTeacher) {
                     postsViewHolder.optionButton.setVisibility(View.VISIBLE);
                 }
 
                 postsViewHolder.setDescription(posts.getDescription());
-                postsViewHolder.setPostImage(getContext(),urlImage);
+                postsViewHolder.setPostImage(getContext(), urlImage);
 
-                Calendar calFordTime = Calendar.getInstance();
-                int hours = calFordTime.get(Calendar.HOUR_OF_DAY);
-                int minutes = calFordTime.get(Calendar.MINUTE);
-                int seconds = calFordTime.get(Calendar.SECOND);
+//                Calendar calFordTime = Calendar.getInstance();
+//                int hours = calFordTime.get(Calendar.HOUR_OF_DAY);
+//                int minutes = calFordTime.get(Calendar.MINUTE);
+//                int seconds = calFordTime.get(Calendar.SECOND);
 
-                SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
-                String saveCurrentTime = currentTime.format(calFordTime.getTime());
+//                SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm");
+//                String saveCurrentTime = currentTime.format(calFordTime.getTime());
 
-                postsViewHolder.setTime(posts.getTime());
+                postsViewHolder.setTime(posts.getDate() + " " + posts.getTime());
                 postsViewHolder.setDate(posts.getDate());
 //                postsViewHolder.SetTime(posts.getTime());
 
                 postsViewHolder.setLikeButtonStatus(PostKey);
                 postsViewHolder.setCommentPostButtonStatus(PostKey);
 
+//                postsViewHolder.postImages.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View view) {
+//                        Toast.makeText(getContext(),"Click",Toast.LENGTH_SHORT).show();
+//                    }
+//                });
                 //click piture
 //                postsViewHolder.postImages.setOnClickListener(new View.OnClickListener() {
 //                    @Override
 //                    public void onClick(View view) {
+//                        Toast.makeText(getContext(),"Click",Toast.LENGTH_SHORT).show();
 ////                        Dialog dialogImage=new Dialog(getContext(),android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-//                        Dialog dialogImage=new Dialog(getContext(),R.style.DialogViewImage);
+//                        Dialog dialogImage = new Dialog(getContext(), R.style.DialogViewImage);
 //                        dialogImage.requestWindowFeature(Window.FEATURE_NO_TITLE);
 //                        dialogImage.setCancelable(true);
 //                        dialogImage.setContentView(R.layout.dialog_show_image_post);
-//                        ImageView imageView=dialogImage.findViewById(R.id.image_post_view);
+//                        ViewPager viewPager = dialogImage.findViewById(R.id.image_post_view);
+//                        AdapterImagePostView adapterImagePostView=new AdapterImagePostView(getContext(),urlImage);
+//                        viewPager.setAdapter(adapterImagePostView);
 ////                        imageView.setImageDrawable(postsViewHolder.postImages.getDrawable());
 //
-//                        Picasso.get().load(urlImage).networkPolicy(NetworkPolicy.NO_CACHE)
-//                                .memoryPolicy(MemoryPolicy.NO_CACHE)
-//                                .placeholder(postsViewHolder.postImages.getDrawable())
-//                                .into(imageView);
-////                        Picasso.get().load(urlImage).into(imageView);
+////                        Picasso.get().load(urlImage).networkPolicy(NetworkPolicy.NO_CACHE)
+////                                .memoryPolicy(MemoryPolicy.NO_CACHE)
+////                                .placeholder(postsViewHolder.postImages.getDrawable())
+////                                .into(imageView);
+//////                        Picasso.get().load(urlImage).into(imageView);
 //                        dialogImage.show();
 //                    }
 //                });
@@ -244,14 +250,14 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                                 switch (item.getItemId()) {
                                     case R.id.action_edit_post:
                                         // Edit Post
-                                        Intent intent=new Intent(getContext(),EditPostActivity.class);
-                                        intent.putExtra("POST_KEY",PostKey);
-                                        intent.putExtra("ID_CLASS",idClass);
+                                        Intent intent = new Intent(getContext(), EditPostActivity.class);
+                                        intent.putExtra("POST_KEY", PostKey);
+                                        intent.putExtra("ID_CLASS", idClass);
                                         startActivity(intent);
                                         return true;
                                     case R.id.action_delete_post:
                                         // Delete post
-                                        deletePost(PostKey,urlImage);
+                                        deletePost(PostKey, urlImage);
                                         return true;
                                     default:
                                         return false;
@@ -293,7 +299,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     @Override
                     public void onClick(View v) {
                         Intent commentsIntent = new Intent(getActivity(), CommentsActivity.class);
-                        bundle.putString("KEY_POST",PostKey);
+                        bundle.putString("KEY_POST", PostKey);
                         commentsIntent.putExtras(bundle);
                         startActivity(commentsIntent);
                     }
@@ -367,9 +373,9 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         adapter.stopListening();
     }
 
-    private void deletePost(final String keyPost, final ArrayList<String> postUrl){
+    private void deletePost(final String keyPost, final ArrayList<String> postUrl) {
 
-        final AlertDialog.Builder dialogDeletePost=new AlertDialog.Builder(getContext(),android.R.style.Theme_Light_NoTitleBar);
+        final AlertDialog.Builder dialogDeletePost = new AlertDialog.Builder(getContext(), android.R.style.Theme_Light_NoTitleBar);
         dialogDeletePost.setMessage("Xóa bài đăng?");
         dialogDeletePost.setCancelable(false);
         dialogDeletePost.setPositiveButton("Có", new DialogInterface.OnClickListener() {
@@ -377,21 +383,21 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             public void onClick(DialogInterface dialogInterface, int i) {
                 // Delete imagePost on CloudStorage
                 FirebaseStorage storage = FirebaseStorage.getInstance();
-                for(String url:postUrl){
+                for (String url : postUrl) {
                     StorageReference storageRef = storage.getReferenceFromUrl(url);
                     storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
-                            try{
+                            try {
                                 PostsRef.child(keyPost).removeValue();
-                            }catch (Exception e){
+                            } catch (Exception e) {
 
                             }
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(getContext(),"Không thể xóa được",Toast.LENGTH_SHORT);
+                            Toast.makeText(getContext(), "Không thể xóa được", Toast.LENGTH_SHORT);
                         }
                     });
                 }
@@ -431,13 +437,14 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         private String currentUserId;
         private DatabaseReference LikesRef;
         private DatabaseReference CommentsRef;
+
         public PostsViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
             LikePostButton = itemView.findViewById(R.id.like_button);
             CommentPostButton = itemView.findViewById(R.id.comment_button);
             DisplayNoOfLikes = itemView.findViewById(R.id.display_no_of_likes);
             DisplayNoOfComments = itemView.findViewById(R.id.display_no_of_comments);
-            optionButton=itemView.findViewById(R.id.post_option_button);
+            optionButton = itemView.findViewById(R.id.post_option_button);
             postImages = itemView.findViewById(R.id.post_image);
             optionButton.setVisibility(View.GONE);
 
@@ -511,9 +518,20 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         public void setTime(String minute) {
             TextView postTime = itemView.findViewById(R.id.post_time);
-            postTime.setText(minute);
+            Calendar calFordTime = Calendar.getInstance();
+            SimpleDateFormat currentTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            String nowTime = currentTime.format(calFordTime.getTime());
+            ReturnMinute returnMinute = new ReturnMinute();
+            long a = returnMinute.getMinute(minute, nowTime);
+            if (a <= 60) {
+                postTime.setText((String.valueOf(a) + " phút trước"));
+            } else {
+                if (a > 1440) postTime.setText((String.valueOf(a / 1440) + " ngày trước"));
+                else postTime.setText((String.valueOf(a / 60) + " giờ trước"));
+            }
         }
-        private void setDate(String date){
+
+        private void setDate(String date) {
             TextView postDate = itemView.findViewById(R.id.post_date);
             postDate.setText(date);
         }
@@ -523,7 +541,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             postDescription.setText(description);
         }
 
-        public void setPostImage(Context context, ArrayList<String> postImageList) {
+        public void setPostImage(final Context context, ArrayList<String> postImageList) {
             AdapterImagePost adapter = new AdapterImagePost(context, postImageList);
             postImages.setAdapter(adapter);
 //            Picasso.get().load(postImage).resize(600, 0).into(postImages);
