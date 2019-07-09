@@ -1,6 +1,5 @@
 package com.example.preschool;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import com.example.preschool.Chats.MessageActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,7 +34,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class FriendsFragment extends Fragment {
     private RecyclerView myFriendList;
@@ -142,9 +138,10 @@ public class FriendsFragment extends Fragment {
                 try {
                     if(user.getUserid().equals(idTeacher)){
                         friendsViewHolder.isTeacher.setVisibility(View.VISIBLE);
-                    }
-                    friendsViewHolder.user_name.setText(user.getUsername());
-                    friendsViewHolder.kid_name.setText("Bé " + user.getParentof());
+                        friendsViewHolder.kid_name.setVisibility(View.GONE);
+                    }else friendsViewHolder.kid_name.setText("Bé " + user.getParentof());
+                    friendsViewHolder.user_name.setText(user.getFullname());
+
                     friendsViewHolder.setProfileImage(user.getProfileimage());
                     // Online/Offline
                     UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
