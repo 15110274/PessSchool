@@ -69,6 +69,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -113,7 +114,6 @@ public class AddEventActivity extends AppCompatActivity {
         if (bundle != null) {
             idClass = bundle.getString("ID_CLASS");
         }
-
         addControlls();
         addEvents();
 
@@ -284,20 +284,18 @@ public class AddEventActivity extends AppCompatActivity {
                     d2.setTime(date2);
                     if (!TextUtils.isEmpty(nameevent) && !TextUtils.isEmpty(description) && !TextUtils.isEmpty(position)) {
                         while (!d1.getTime().after(d2.getTime())) {
-
                             String x = sdf.format(d1.getTime());
-                            EventRef.child(x).setValue(event);
+//                            EventRef.child(x).setValue(event);
+                            final String childString = EventRef.child(x).push().getKey();
+                            EventRef.child(x).child(childString).setValue(event);
                             d1.add(Calendar.DATE, 1);
                             Toast.makeText(AddEventActivity.this, "Them thanh cong", Toast.LENGTH_SHORT).show();
-
                         }
                     } else {
                         Toast.makeText(AddEventActivity.this, "Ban phai dien du noi dung", Toast.LENGTH_SHORT).show();
 
                     }
-
                     finish();
-
 
                 } catch (ParseException e) {
                     e.printStackTrace();
