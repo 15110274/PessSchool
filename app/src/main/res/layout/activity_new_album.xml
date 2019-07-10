@@ -20,7 +20,7 @@
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:inputType="textCapSentences"
-        android:hint="Add a title"
+        android:hint="@string/add_title_album"
         android:paddingStart="10dp"
         android:textSize="26sp"
         android:textColor="@color/textcolor"
@@ -34,7 +34,7 @@
         android:id="@+id/add_photos"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ADD PHOTOS"/>
+        android:text="@string/add_photo"/>
 
     <Button
         android:id="@+id/select_photos"
@@ -43,7 +43,7 @@
         android:padding="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:text="Select photos"
+        android:text="@string/select_photos"
         android:textAlignment="textStart"
         android:drawablePadding="15dp"
         android:textSize="20sp"
@@ -67,6 +67,6 @@
         android:textColor="@color/background"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Upload"/>
+        android:text="@string/upload"/>
 
 </LinearLayout>

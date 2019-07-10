@@ -375,7 +375,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private void deletePost(final String keyPost, final ArrayList<String> postUrl) {
 
-        final AlertDialog.Builder dialogDeletePost = new AlertDialog.Builder(getContext(), android.R.style.Theme_Light_NoTitleBar);
+        final AlertDialog.Builder dialogDeletePost = new AlertDialog.Builder(getContext(), android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);
         dialogDeletePost.setMessage("Xóa bài đăng?");
         dialogDeletePost.setCancelable(false);
         dialogDeletePost.setPositiveButton("Có", new DialogInterface.OnClickListener() {
@@ -421,6 +421,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 dialogInterface.dismiss();
             }
         });
+
 
         dialogDeletePost.show();
 

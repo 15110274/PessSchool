@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity
     private DrawerLayout drawer;
     private Bundle bundle;
     private int countExit=0;
+    private Boolean isTeacher=false;
 
     private String idClass, idTeacher, className;
     @Override
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity
         mAuth=FirebaseAuth.getInstance();
 
         currentUserID = mAuth.getCurrentUser().getUid();
+        if(currentUserID.equals(idTeacher)){
+            isTeacher=true;
+        }
         // Update token
         updateToken(FirebaseInstanceId.getInstance().getToken());
 
@@ -242,7 +246,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.permissonform:
-                if(idTeacher.equals(currentUserID)){
+                if(isTeacher){
                     intent=new Intent(MainActivity.this, DonNghiPhepFullViewActivity.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
@@ -265,7 +269,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.menu:
-                if(idTeacher.equals(currentUserID)){
+                if(isTeacher){
                     intent=new Intent(MainActivity.this, MenuActivity.class);
                     intent.putExtras(bundle);
                     startActivity(intent);
@@ -288,9 +292,13 @@ public class MainActivity extends AppCompatActivity
 //            case R.id.knowledge:
 //                break;
             case R.id.changeclass:
-                intent= new Intent(MainActivity.this, ChangeClassActivity.class);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                if(!isTeacher){
+                    intent= new Intent(MainActivity.this, ChangeClassActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(MainActivity.this,"Giáo viên không thể đổi lớp",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.help:
                 intent=new Intent(MainActivity.this, HelpActivity.class);
