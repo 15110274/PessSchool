@@ -119,7 +119,7 @@ import java.util.Calendar;
 public class EventsActivity extends AppCompatActivity {
 
     private CalendarView calendarView;
-    private TextView showEvent;
+    private TextView txtEvent,txtPlace,txtTime,txtDetail;
     private FloatingActionButton addEvent;
     private DatabaseReference UsersRef, EventsRef;
     private FirebaseAuth mAuth;
@@ -159,7 +159,10 @@ public class EventsActivity extends AppCompatActivity {
 
         EventsRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("Events");
 
-        showEvent = findViewById(R.id.show_event);
+        txtEvent = findViewById(R.id.txtEvent);
+        txtTime = findViewById(R.id.txtTime);
+        txtPlace = findViewById(R.id.txtPlace);
+        txtDetail = findViewById(R.id.txtDetail);
         addEvent=findViewById(R.id.add_event);
         addEvent.setVisibility(View.GONE);
         if(current_user_id.equals(idTeacher)){
@@ -191,17 +194,29 @@ public class EventsActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             Event event = dataSnapshot.getValue(Event.class);
                             if(event!=null){
+                                txtTime.setVisibility(View.VISIBLE);
+                                txtPlace.setVisibility(View.VISIBLE);
+                                txtDetail.setVisibility(View.VISIBLE);
                                 if(event.getTimeStart().equals("Cả ngày")==false){
-                                    showEvent.setText("Sự kiện:"+event.getNameEvent() +"\n" +"Thời gian từ: " +event.getTimeStart()+
-                                            " đên "+ event.getTimeEnd()+"\n"+"Mô tả: "+event.getDescription()+"\n"+"Địa điểm: " +event.getPosition());
+                                    txtEvent.setText("Sự kiện: "+event.getNameEvent());
+                                    txtTime.setText("Thời gian từ: " +event.getTimeStart()+
+                                            " đên "+ event.getTimeEnd());
+                                    txtPlace.setText("Địa điểm: " +event.getPosition());
+                                    txtDetail.setText("Mô tả: "+event.getDescription());
                                 }else {
-                                    showEvent.setText("Sự kiện:"+event.getNameEvent() +"\n" +"Thời gian: " +event.getTimeStart()+
-                                            "\n"+"Mô tả: "+event.getDescription()+"\n"+"Địa điểm: " +event.getPosition());
+                                    txtEvent.setText("Sự kiện: "+event.getNameEvent());
+                                    txtTime.setText("Thời gian: " +event.getTimeStart());
+                                    txtPlace.setText("Địa điểm: " +event.getPosition());
+                                    txtDetail.setText("Mô tả: "+event.getDescription());
                                 }
 
                             }
                             else {
-                                showEvent.setText("Không có sự kiện");
+                                txtEvent.setText("Không có sự kiện");
+                                txtTime.setVisibility(View.GONE);
+                                txtPlace.setVisibility(View.GONE);
+                                txtDetail.setVisibility(View.GONE);
+
                             }
 
                         }
@@ -255,18 +270,31 @@ public class EventsActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     Event event = dataSnapshot.getValue(Event.class);
                     if(event!=null){
+                        txtTime.setVisibility(View.VISIBLE);
+                        txtPlace.setVisibility(View.VISIBLE);
+                        txtDetail.setVisibility(View.VISIBLE);
                         if(event.getTimeStart().equals("Cả ngày")==false){
-                            showEvent.setText("Sự kiện:"+event.getNameEvent() +"\n" +"Thời gian từ: " +event.getTimeStart()+
-                                    " đên "+ event.getTimeEnd()+"\n"+"Mô tả: "+event.getDescription()+"\n"+"Địa điểm: " +event.getPosition());
+                            txtEvent.setText("Sự kiện: "+event.getNameEvent());
+                            txtTime.setText("Thời gian từ: " +event.getTimeStart()+
+                                    " đên "+ event.getTimeEnd());
+                            txtPlace.setText("Địa điểm: " +event.getPosition());
+                            txtDetail.setText("Mô tả: "+event.getDescription());
                         }else {
-                            showEvent.setText("Sự kiện:"+event.getNameEvent() +"\n" +"Thời gian: " +event.getTimeStart()+
-                                    "\n"+"Mô tả: "+event.getDescription()+"\n"+"Địa điểm: " +event.getPosition());
+                            txtEvent.setText("Sự kiện: "+event.getNameEvent());
+                            txtTime.setText("Thời gian: " +event.getTimeStart());
+                            txtPlace.setText("Địa điểm: " +event.getPosition());
+                            txtDetail.setText("Mô tả: "+event.getDescription());
                         }
 
                     }
                     else {
-                        showEvent.setText("Không có sự kiện");
+                        txtEvent.setText("Không có sự kiện");
+                        txtTime.setVisibility(View.GONE);
+                        txtPlace.setVisibility(View.GONE);
+                        txtDetail.setVisibility(View.GONE);
+
                     }
+
 
                 }
 
@@ -276,7 +304,7 @@ public class EventsActivity extends AppCompatActivity {
                 }
             });
         } catch (Exception e) {
-            showEvent.setText("hehe");
+
         }
     }
 

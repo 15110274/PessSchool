@@ -30,16 +30,71 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
     </CalendarView>
-
     <TextView
-        android:id="@+id/show_event"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:drawablePadding="20dp"
+        android:id="@+id/txtEvent"
         android:layout_marginTop="60dp"
+        android:layout_marginLeft="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
         android:padding="10dp"
         android:text="Không có sự kiện"
         app:layout_constraintTop_toBottomOf="@+id/calendarView"
-        tools:layout_editor_absoluteX="0dp" />
+        tools:layout_editor_absoluteX="0dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/textcolor"
+        android:drawableLeft="@drawable/ic_dob"
+        android:paddingLeft="50dp"
+
+        android:textStyle="bold"/>
+    <TextView
+        android:drawablePadding="20dp"
+        android:id="@+id/txtTime"
+        android:layout_marginLeft="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:text="Thời gian"
+        app:layout_constraintTop_toBottomOf="@+id/txtEvent"
+        tools:layout_editor_absoluteX="0dp"
+        android:textColor="@color/textcolor"
+        android:drawableLeft="@drawable/ic_timer"
+        android:layout_marginHorizontal="10dp"
+        android:paddingLeft="50dp"
+
+        android:textStyle="bold"/>
+    <TextView
+        android:drawablePadding="20dp"
+        android:id="@+id/txtPlace"
+        android:layout_marginLeft="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:text="Địa điểm"
+        app:layout_constraintTop_toBottomOf="@+id/txtTime"
+        tools:layout_editor_absoluteX="0dp"
+        android:textColor="@color/textcolor"
+        android:drawableLeft="@drawable/ic_place"
+        android:layout_marginHorizontal="10dp"
+        android:paddingLeft="50dp"
+
+        android:textStyle="bold"/>
+    <TextView
+        android:drawablePadding="20dp"
+        android:id="@+id/txtDetail"
+        android:layout_marginLeft="10dp"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:padding="10dp"
+        android:text="Mô tả"
+        app:layout_constraintTop_toBottomOf="@+id/txtPlace"
+        tools:layout_editor_absoluteX="0dp"
+        android:textColor="@color/textcolor"
+        android:drawableLeft="@drawable/ic_description"
+        android:layout_marginHorizontal="10dp"
+        android:paddingLeft="50dp"
+
+        android:textStyle="bold"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_event"
