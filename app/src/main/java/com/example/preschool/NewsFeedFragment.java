@@ -422,6 +422,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             }
         });
 
+
         dialogDeletePost.show();
 
     }
