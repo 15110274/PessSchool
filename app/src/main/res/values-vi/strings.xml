@@ -62,5 +62,7 @@
     <string name="create_new_album">Tạo album mới</string>
     <string name="what_on_your_mind">Bạn đang nghĩ gì?</string>
     <string name="post">Đăng bài</string>
+    <string name="my_profile">Thông tin tài khoản</string>
+    <string name="change_class">Đổi lớp</string>
 
 </resources>

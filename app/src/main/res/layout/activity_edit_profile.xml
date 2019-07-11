@@ -1,88 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="8dp"
     tools:context=".EditProfileActivity">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/edit_profile_image"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                />
 
-            <EditText
-                android:id="@+id/edit_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/edit_profile_image"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="40dp"
-                android:hint="user name"
-                android:textAlignment="center"
-                android:padding="15dp"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-            <EditText
-                android:id="@+id/edit_fullname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/edit_username"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="30dp"
-                android:padding="12dp"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:hint="full name"/>
-            <EditText
-                android:id="@+id/edit_birthday"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/edit_fullname"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:padding="12dp"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:hint="birthday"/>
-            <EditText
-                android:id="@+id/edit_parentof"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/edit_birthday"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:padding="12dp"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:hint="parentof"/>
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/edit_profile_image"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"
+        android:text="Tên người dùng"/>
+    <EditText
+        android:id="@+id/edit_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_profile_image"
+        android:hint="Tên người dùng"
+        android:textColor="@android:color/background_dark"
+        android:textSize="18sp"
+        />
 
-            <Button
-                android:id="@+id/update_account_settings_button"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_below="@+id/edit_parentof"
-                android:text="Update Account Button"
-                android:layout_margin="20dp"
-                android:textColor="@color/background"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textAllCaps="false"
-                />
-        </RelativeLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@android:color/darker_gray"
+        android:text="Họ và tên"/>
 
-</RelativeLayout>
+    <EditText
+        android:id="@+id/edit_fullname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_username"
+        android:hint="Họ và tên"
+        android:textColor="@android:color/background_dark" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="18sp"
+        android:text="Sinh nhật"/>
+
+    <EditText
+        android:id="@+id/edit_birthday"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Sinh nhật"
+        android:textColor="@android:color/black"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@android:color/darker_gray"
+        android:text="Phụ huy của bé"/>
+
+
+    <EditText
+        android:id="@+id/edit_parentof"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_birthday"
+        android:hint="Phụ huynh của bé"
+        android:textColor="@android:color/background_dark"
+        />
+
+    <Button
+        android:id="@+id/update_account_settings_button"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_below="@+id/edit_parentof"
+        android:layout_margin="20dp"
+        android:background="@drawable/large_button"
+        android:text="Cập nhật"
+        android:textAllCaps="false"
+        android:textColor="@color/background"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        />
+</LinearLayout>

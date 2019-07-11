@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,54 +32,77 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 public class StudentActivity extends AppCompatActivity {
-    private String idClass,idTeacher;
+    private String idClass, idTeacher;
     private ProgressDialog loadingBar;
     private Bundle bundle;
     private ImageView imageView;
-    private FloatingActionButton btnAdd,btnEdit,btnSave,btnCancel;
-    private static final int Gallery_Pick = 1,GALLERY = 1;
+    private FloatingActionButton btnAdd, btnEdit, btnSave, btnCancel;
+    private static final int Gallery_Pick = 1, GALLERY = 1;
     private Uri ImageUri;
     private StorageReference ImageRef;
     private DatabaseReference ClassRef;
+    private Boolean isTeacher = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student);
 
-        imageView=findViewById(R.id.btn_select_image);
-        btnAdd=findViewById(R.id.floating_add_image);
-        btnEdit=findViewById(R.id.floating_edit_image);
-        btnSave=findViewById(R.id.floating_save_image);
-        btnCancel=findViewById(R.id.floating_cancel_image);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Danh sách trẻ");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
-        bundle=getIntent().getExtras();
-        idClass=bundle.getString("ID_CLASS");
-        idTeacher=bundle.getString("ID_TEACHER");
+        imageView = findViewById(R.id.btn_select_image);
+        btnAdd = findViewById(R.id.floating_add_image);
+        btnEdit = findViewById(R.id.floating_edit_image);
+        btnSave = findViewById(R.id.floating_save_image);
+        btnCancel = findViewById(R.id.floating_cancel_image);
+
+        bundle = getIntent().getExtras();
+        idClass = bundle.getString("ID_CLASS");
+        idTeacher = bundle.getString("ID_TEACHER");
         loadingBar = new ProgressDialog(this);
         ImageRef = FirebaseStorage.getInstance().getReference().child(idClass);
-        ClassRef= FirebaseDatabase.getInstance().getReference().child("Class");
-        btnAdd.hide();
-        btnEdit.hide();
-        btnSave.hide();
-        btnCancel.hide();
+        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
+
+        if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(idTeacher)) {
+            isTeacher=true;
+            btnAdd.hide();
+            btnEdit.show();
+            btnSave.hide();
+            btnCancel.hide();
+        }else {
+            btnAdd.hide();
+            btnEdit.hide();
+            btnSave.hide();
+            btnCancel.hide();
+        }
+
         ClassRef.child(idClass).child("Children").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    String image=dataSnapshot.child("image").getValue().toString();
+                if (dataSnapshot.exists()) {
+                    String image = dataSnapshot.child("image").getValue().toString();
                     Picasso.get().load(image).into(imageView);
-                    btnEdit.show();
-                    btnSave.hide();
-                    btnAdd.hide();
-                    imageView.setEnabled(false);
+//                    btnEdit.show();
+//                    btnSave.hide();
+//                    btnAdd.hide();
+//                    imageView.setEnabled(false);
 
-                }
-                else
-                {
-                    btnAdd.show();
-                    btnEdit.hide();
-                    btnSave.hide();
-                    imageView.setEnabled(true);
+                } else {
+                    if(isTeacher){
+                        btnAdd.show();
+                        btnEdit.hide();
+                        btnSave.hide();
+                    }
+//                    imageView.setEnabled(true);
                 }
             }
 
@@ -87,12 +111,12 @@ public class StudentActivity extends AppCompatActivity {
 
             }
         });
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OpenGallery();
-            }
-        });
+//        imageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                OpenGallery();
+//            }
+//        });
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,19 +152,19 @@ public class StudentActivity extends AppCompatActivity {
         });
 
     }
+
     private void ValidatePostInfo() {
         if (ImageUri == null) {
             Toast.makeText(StudentActivity.this, "Please select post image...", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        } else {
             loadingBar.setTitle("Add Image");
             loadingBar.setMessage("Please wait, while we are updating your new image...");
             loadingBar.show();
             loadingBar.setCanceledOnTouchOutside(false);
 
-            StorageReference filePath = ImageRef.child(idClass+ ".jpg");
+            StorageReference filePath = ImageRef.child(idClass + ".jpg");
 
-            if(ImageUri!=null){
+            if (ImageUri != null) {
                 filePath.putFile(ImageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
@@ -188,6 +212,7 @@ public class StudentActivity extends AppCompatActivity {
             Picasso.get().load(ImageUri).resize(2000, 0).into(imageView);
         }
     }
+
     private void OpenGallery() {
         Intent galleryIntent = new Intent();
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);

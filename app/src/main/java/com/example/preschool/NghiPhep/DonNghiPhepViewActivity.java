@@ -1,7 +1,6 @@
 package com.example.preschool.NghiPhep;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,11 +8,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.preschool.R;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,7 +25,7 @@ public class DonNghiPhepViewActivity extends AppCompatActivity {
     private ValueEventListener donNghiPhepListener;
     private RecyclerView recyclerView;
     private ArrayList<DonNghiPhep> donNghiPhepArrayList = new ArrayList<DonNghiPhep>();
-    private DonNghiPhepAdapter adapter;
+    private DonNghiPhepViewAdapter adapter;
     private String userId;
     private String idClass;
     private  Bundle bundle;
@@ -39,7 +36,7 @@ public class DonNghiPhepViewActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Don xin phep");
+        getSupportActionBar().setTitle("Đơn xin phép");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +65,7 @@ public class DonNghiPhepViewActivity extends AppCompatActivity {
                         donNghiPhepArrayList.add(ds.getValue(DonNghiPhep.class));
                     }
                 }
-                adapter = new DonNghiPhepAdapter(donNghiPhepArrayList);
+                adapter = new DonNghiPhepViewAdapter(donNghiPhepArrayList);
                 recyclerView.setAdapter(adapter);
             }
 

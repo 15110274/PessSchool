@@ -5,22 +5,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundDark"
+    android:background="@color/background"
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context=".StudentActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorAccent"
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
     <ImageView
         android:id="@+id/btn_select_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="56dp"
         android:layout_marginBottom="100dp"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/add_image_button_shape"
         android:scaleType="fitCenter"
         android:src="@drawable/add_image"
-        app:layout_constraintStart_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/toolbar"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_add_image"

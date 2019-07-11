@@ -12,17 +12,17 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class DonNghiPhepAdapter extends RecyclerView.Adapter<DonNghiPhepAdapter.ViewHolder>{
+public class DonNghiPhepViewAdapter extends RecyclerView.Adapter<DonNghiPhepViewAdapter.ViewHolder>{
 
     private ArrayList<DonNghiPhep> list;
 
-    public DonNghiPhepAdapter(ArrayList<DonNghiPhep> list) {
+    public DonNghiPhepViewAdapter(ArrayList<DonNghiPhep> list) {
         this.list = list;
     }
 
     @NonNull
     @Override
-    public DonNghiPhepAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public DonNghiPhepViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.don_nghi_phep_item, parent, false);
         return new ViewHolder(v);
     }

@@ -143,6 +143,7 @@ public class EventsActivity extends AppCompatActivity {
     private String idClass, idTeacher;
     private Bundle bundle;
     private RecyclerView myEventsList;
+    private Boolean isTeacher;
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +152,7 @@ public class EventsActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Events");
+        getSupportActionBar().setTitle("Sự kiện");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,6 +184,7 @@ public class EventsActivity extends AppCompatActivity {
         addEvent=findViewById(R.id.add_event);
         addEvent.setVisibility(View.GONE);
         if(current_user_id.equals(idTeacher)){
+            isTeacher=true;
             addEvent.setVisibility(View.VISIBLE);
         }
         calendarView = findViewById(R.id.calendarView);
@@ -227,30 +229,34 @@ public class EventsActivity extends AppCompatActivity {
             @Override
             protected void onBindViewHolder(@NonNull EventsViewHolder eventsViewHolder, int i, @NonNull Event event) {
                 eventsViewHolder.txtEvent.setText("Sự kiện: "+event.getNameEvent());
-                eventsViewHolder.txtTime.setText("Thời gian từ: " +event.getTimeStart()+
+                if(event.getTimeStart().equals("Cả ngày")){
+                    eventsViewHolder.txtTime.setText("Thời gian: Cả ngày");
+                }else eventsViewHolder.txtTime.setText("Thời gian từ: " +event.getTimeStart()+
                         " đến "+ event.getTimeEnd());
                 eventsViewHolder.txtPlace.setText("Địa điểm: " +event.getPosition());
                 eventsViewHolder.txtDetail.setText("Mô tả: "+event.getDescription());
                 final String visit_event_id = getRef(i).getKey();
-                eventsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        CharSequence options[] = new CharSequence[]{
-                                "Delete Event ",
-                        };
-                        AlertDialog.Builder builder = new AlertDialog.Builder(EventsActivity.this);
+                if(isTeacher){
+                    eventsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            CharSequence options[] = new CharSequence[]{
+                                    "Delete Event ",
+                            };
+                            AlertDialog.Builder builder = new AlertDialog.Builder(EventsActivity.this);
 //
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (which == 0) {
-                                    EventsRef.child(x).child(visit_event_id).removeValue();
+                            builder.setItems(options, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (which == 0) {
+                                        EventsRef.child(x).child(visit_event_id).removeValue();
+                                    }
                                 }
-                            }
-                        });
-                        builder.show();
-                    }
-                });
+                            });
+                            builder.show();
+                        }
+                    });
+                }
             }
 
             @NonNull

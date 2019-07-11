@@ -65,6 +65,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
     private HorizontalPicker picker;
     private LinearLayout linearLayout;
     private FirebaseRecyclerAdapter adapter;
+    private Boolean isTeacher=false;
 
     private Bundle bundle;
 
@@ -74,7 +75,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Thoi khoa bieu");
+        getSupportActionBar().setTitle("Thời khóa biểu");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +95,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
         BtnEdit.setVisibility(View.GONE);
 
         if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(idTeacher)) {
+            isTeacher=true;
             linearLayout.setVisibility(View.VISIBLE);
         } else linearLayout.setVisibility(View.GONE);
 
@@ -246,65 +248,68 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
                     String id= getRef(position).getKey();
                     @Override
                     public void onClick(View v) {
-                        CharSequence options[] = new CharSequence[]{
-                                "Edit TimeTable",
-                                "Delete TimeTable"
-                        };
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(TimeTableActivity.this);
-                        builder.setTitle("Select Option");
+                        if(isTeacher){
+                            CharSequence options[] = new CharSequence[]{
+                                    "Sửa",
+                                    "Xóa"
+                            };
+                            final AlertDialog.Builder builder = new AlertDialog.Builder(TimeTableActivity.this);
+                            builder.setTitle("Select Option");
 
-                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if(which==1){
-                                    TimeTableRef.child(dateSelect).child(id).removeValue();
-                                }
-                                if(which==0){
-                                    TimeTableRef.child(dateSelect).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
-                                            if(dataSnapshot.exists()){
-                                                TxtStart.setText(dataSnapshot.child("timeStart").getValue().toString());
-                                                TxtEnd.setText(dataSnapshot.child("timeEnd").getValue().toString());
-                                                EdtDiscription.setText(dataSnapshot.child("description").getValue().toString());
-                                            }
-                                            BtnSave.setVisibility(View.GONE);
-                                            BtnEdit.setVisibility(View.VISIBLE);
-                                            BtnEdit.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                    String timestart = TxtStart.getText().toString();
-                                                    String timeend = TxtEnd.getText().toString();
-                                                    String description = EdtDiscription.getText().toString();
-                                                    final TimeTable off = new TimeTable(timestart, timeend, description);
-                                                    final HashMap timetable=new HashMap();
-                                                    timetable.put("timeStart",timestart);
-                                                    timetable.put("timeEnd",timeend);
-                                                    timetable.put("description",description);
-                                                    TimeTableRef.child(dateSelect).child(id).updateChildren(timetable).addOnCompleteListener(new OnCompleteListener() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task task) {
-                                                            EdtDiscription.setText("");
-                                                            TxtStart.setText("00:00");
-                                                            TxtEnd.setText("00:00");
-                                                            BtnEdit.setVisibility(View.GONE);
-                                                            BtnSave.setVisibility(View.VISIBLE);
-                                                        }
-                                                    });
-
+                            builder.setItems(options, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if(which==1){
+                                        TimeTableRef.child(dateSelect).child(id).removeValue();
+                                    }
+                                    if(which==0){
+                                        TimeTableRef.child(dateSelect).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+                                                if(dataSnapshot.exists()){
+                                                    TxtStart.setText(dataSnapshot.child("timeStart").getValue().toString());
+                                                    TxtEnd.setText(dataSnapshot.child("timeEnd").getValue().toString());
+                                                    EdtDiscription.setText(dataSnapshot.child("description").getValue().toString());
                                                 }
-                                            });
-                                        }
+                                                BtnSave.setVisibility(View.GONE);
+                                                BtnEdit.setVisibility(View.VISIBLE);
+                                                BtnEdit.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                        String timestart = TxtStart.getText().toString();
+                                                        String timeend = TxtEnd.getText().toString();
+                                                        String description = EdtDiscription.getText().toString();
+                                                        final TimeTable off = new TimeTable(timestart, timeend, description);
+                                                        final HashMap timetable=new HashMap();
+                                                        timetable.put("timeStart",timestart);
+                                                        timetable.put("timeEnd",timeend);
+                                                        timetable.put("description",description);
+                                                        TimeTableRef.child(dateSelect).child(id).updateChildren(timetable).addOnCompleteListener(new OnCompleteListener() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task task) {
+                                                                EdtDiscription.setText("");
+                                                                TxtStart.setText("00:00");
+                                                                TxtEnd.setText("00:00");
+                                                                BtnEdit.setVisibility(View.GONE);
+                                                                BtnSave.setVisibility(View.VISIBLE);
+                                                            }
+                                                        });
 
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                    }
+                                                });
+                                            }
 
-                                        }
-                                    });
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        });
-                        builder.show();
+                            });
+                            builder.show();
+                        }
+
                     }
                 });
             }

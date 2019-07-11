@@ -3,6 +3,7 @@ package com.example.preschool.Setting;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,14 +15,18 @@ import android.widget.Switch;
 import com.example.preschool.ChangeClassActivity;
 import com.example.preschool.MainActivity;
 import com.example.preschool.R;
+import com.example.preschool.StartActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class SettingActivity extends AppCompatActivity {
 
 
     private Switch myswitch;
     private String idClass,idTeacher;
+    private CardView cardViewLogout;
     SharedPref sharedPref;
     private Bundle bundle;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +35,7 @@ public class SettingActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Setting");
+        getSupportActionBar().setTitle(R.string.action_settings);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,13 +44,22 @@ public class SettingActivity extends AppCompatActivity {
             }
         });
 
+        mAuth=FirebaseAuth.getInstance();
+
+        cardViewLogout=findViewById(R.id.btn_logout);
+        cardViewLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(SettingActivity.this, StartActivity.class);
+                mAuth.signOut();
+                startActivity(intent);
+            }
+        });
+
         // Get Bundle
         bundle=getIntent().getExtras();
         idClass=bundle.getString("ID_CLASS");
         idTeacher=bundle.getString("ID_TEACHER");
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.action_settings);
 
         // Change dark mode for app
         sharedPref = new SharedPref(this);

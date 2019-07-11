@@ -51,7 +51,8 @@ public class ViewPhotoActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("");
 
         title=findViewById(R.id.position_photo);
-        title.setText(String.valueOf(uriList.size()));
+        title.setText("1/4");
+//        title.setText(String.valueOf(uriList.size()));
 
         viewPager=findViewById(R.id.view_pager);
         AdapterImageView adapter = new AdapterImageView(ViewPhotoActivity.this, uriList);

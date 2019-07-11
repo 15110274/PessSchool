@@ -61,4 +61,6 @@
     <string name="create_new_album">Create a new album</string>
     <string name="what_on_your_mind">What\'s on your mind ?</string>
     <string name="post">POST</string>
+    <string name="my_profile">Profile</string>
+    <string name="change_class">Change Class</string>
 </resources>

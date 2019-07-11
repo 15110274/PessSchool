@@ -310,11 +310,6 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
-            case R.id.logout:
-                intent=new Intent(MainActivity.this, StartActivity.class);
-                mAuth.signOut();
-                startActivity(intent);
-                break;
         }
         return true;
     }
