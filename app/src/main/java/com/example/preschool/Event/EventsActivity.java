@@ -143,7 +143,7 @@ public class EventsActivity extends AppCompatActivity {
     private String idClass, idTeacher;
     private Bundle bundle;
     private RecyclerView myEventsList;
-    private Boolean isTeacher;
+    private Boolean isTeacher=false;
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
