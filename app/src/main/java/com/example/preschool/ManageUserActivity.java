@@ -35,6 +35,7 @@ import com.example.preschool.Chats.MessageActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
@@ -47,6 +48,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -545,25 +548,57 @@ public class ManageUserActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 if(which==2){
                                     final String userID= getRef(position).getKey();
-                                    UsersRef.child(userID).removeValue();
-                                    UsersRef.child(userID).child("email").setValue(model.getEmail());
-                                    //xóa user
-                                    ClassRef.addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if(dataSnapshot.exists()){
-                                                for (DataSnapshot children: dataSnapshot.getChildren()) {
-                                                    if(children.hasChild("teacher")&&children.child("teacher").getValue().toString().equals(userID)){
-                                                        ClassRef.child(children.getKey()).child("teacher").setValue("");
-                                                    }
-                                                }
+                                    String currentUser=mAuth.getCurrentUser().getUid();
+                                    if(userID.equals(currentUser)){
+                                        final AlertDialog.Builder dialogDelete=new AlertDialog.Builder(ManageUserActivity.this,android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);
+                                        dialogDelete.setMessage("Không thể xóa tài khoản của bạn");
+                                        dialogDelete.setCancelable(false);
+                                        dialogDelete.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.dismiss();
                                             }
-                                        }
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                        });
+                                        dialogDelete.show();
+                                    }
+                                    else{
+                                        final AlertDialog.Builder dialogDelete=new AlertDialog.Builder(ManageUserActivity.this,android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);
+                                        dialogDelete.setMessage("Bạn có chắc muốn xóa user này?");
+                                        dialogDelete.setCancelable(false);
+                                        dialogDelete.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
 
-                                        }
-                                    });
+                                                UsersRef.child(userID).removeValue();
+                                                UsersRef.child(userID).child("email").setValue(model.getEmail());
+                                                //xóa user
+                                                ClassRef.addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                        if(dataSnapshot.exists()){
+                                                            for (DataSnapshot children: dataSnapshot.getChildren()) {
+                                                                if(children.hasChild("teacher")&&children.child("teacher").getValue().toString().equals(userID)){
+                                                                    ClassRef.child(children.getKey()).child("teacher").setValue("");
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                    }
+                                                });
+                                                dialogInterface.dismiss();
+                                            }
+                                        }).setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                dialogInterface.dismiss();
+                                            }
+                                        });
+                                        dialogDelete.show();
+                                    }
+
                                 }
                                 if(which==1){
                                     Intent intent=new Intent(ManageUserActivity.this,EditAccountActivity.class);
