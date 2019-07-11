@@ -197,6 +197,10 @@ public class ManageUserActivity extends AppCompatActivity {
                     if(position==1){
                         classCheckBox.setVisibility(View.VISIBLE);
                     }
+                    else{
+                        classCheckBox.setVisibility(View.GONE);
+
+                    }
                     classNameSpinner.setVisibility(View.VISIBLE);
                     if(classChoose!=0)
                         LoadAccountClass(role.get(position),classId.get(classChoose));
@@ -205,6 +209,7 @@ public class ManageUserActivity extends AppCompatActivity {
                 else if(position==3){
                     classNameSpinner.setVisibility(View.GONE);
                     LoadAccountClass(role.get(position),classId.get(0));
+                    classCheckBox.setVisibility(View.GONE);
                 }
                 else  LoadAccountClass(role.get(position),classId.get(0));
                 roleChoose=position;
@@ -406,22 +411,22 @@ public class ManageUserActivity extends AppCompatActivity {
                                                     if(dataSnapshot.exists()){
                                                         for (final DataSnapshot children: dataSnapshot.getChildren()) {
                                                             //xác định nếu ko có role thì đã xóa
-                                                            if(!children.hasChild("role")){
-                                                                //nếu email tạo trùng với email đã xóa thì chỉ cần thêm dữ liệu, ko cần tạo lại user
                                                                 if(children.child("email").getValue().toString().equals(UserEmail.getText().toString())){
-                                                                    UserEmail.setText("");
-                                                                    final HashMap userMap = new HashMap();
-                                                                    userMap.put("role",role.get(roleChoose));
-                                                                    if(roleChoose==1||roleChoose==2){
-                                                                        userMap.put("idclass", classId.get(classChoose));
-                                                                        userMap.put("classname",className.get(classChoose));
-                                                                    }
-                                                                    ref.child(children.getKey()).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task task) {
-                                                                            if (task.isSuccessful()) {
-                                                                                final String key=children.getKey();
-                                                                                if(roleChoose==2){
+                                                                    //nếu email tạo trùng với email đã xóa thì chỉ cần thêm dữ liệu, ko cần tạo lại user
+                                                                    if(!children.hasChild("role")){
+                                                                        UserEmail.setText("");
+                                                                        final HashMap userMap = new HashMap();
+                                                                        userMap.put("role",role.get(roleChoose));
+                                                                        if(roleChoose==1||roleChoose==2){
+                                                                            userMap.put("idclass", classId.get(classChoose));
+                                                                            userMap.put("classname",className.get(classChoose));
+                                                                        }
+                                                                        ref.child(children.getKey()).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    final String key=children.getKey();
+                                                                                    if(roleChoose==2){
 //                                                                                    updateClass=ClassRef.child(classId.get(classChoose)).addValueEventListener(new ValueEventListener() {
 //                                                                                        @Override
 //                                                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -442,21 +447,25 @@ public class ManageUserActivity extends AppCompatActivity {
 //
 //                                                                                        }
 //                                                                                    });
-                                                                                    ClassRef.child(classId.get(classChoose)).child("teacher").setValue(key);
+                                                                                        ClassRef.child(classId.get(classChoose)).child("teacher").setValue(key);
+                                                                                    }
+                                                                                    //recreate();
+                                                                                    Toast.makeText(ManageUserActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
+                                                                                    loadingBar.dismiss();
+                                                                                } else {
+                                                                                    String message = task.getException().getMessage();
+                                                                                    Toast.makeText(ManageUserActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+                                                                                    loadingBar.dismiss();
                                                                                 }
-                                                                                //recreate();
-                                                                                Toast.makeText(ManageUserActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
-                                                                                loadingBar.dismiss();
-                                                                            } else {
-                                                                                String message = task.getException().getMessage();
-                                                                                Toast.makeText(ManageUserActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
-                                                                                loadingBar.dismiss();
                                                                             }
-                                                                        }
-                                                                    });
-
-                                                                }
+                                                                        });
+                                                                    }
+                                                                    else{
+                                                                        Toast.makeText(ManageUserActivity.this, "Email đã tồn tại", Toast.LENGTH_SHORT).show();
+                                                                        UserEmail.setText("");
+                                                                    }
                                                             }
+
                                                         }
                                                     }
                                                 }
