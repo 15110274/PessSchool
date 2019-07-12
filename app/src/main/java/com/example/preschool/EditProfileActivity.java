@@ -33,17 +33,18 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.util.HashMap;
 
 public class EditProfileActivity extends AppCompatActivity {
-    private EditText userName,userFullName,userDOB,userParentOf;
+    private EditText userName,userFullName,userDOB,userParentOf, userPhoneNumber;
     private Button UpdateAccountSettingButton;
     private CircleImageView userProfImage;
     private ProgressDialog loadingBar;
 
-    private DatabaseReference EditUserRef;
+    private DatabaseReference EditUserRef,ClassRef;
     private FirebaseAuth mAuth;
     private String currentUserId;
     final static int Gallery_Pick = 1;
     private StorageReference UserProfileImageRef;
     private Uri resultUri;
+    String myClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,12 +55,14 @@ public class EditProfileActivity extends AppCompatActivity {
         currentUserId=mAuth.getCurrentUser().getUid();
         EditUserRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
         UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
+        ClassRef= FirebaseDatabase.getInstance().getReference().child("Class");
 
         userProfImage=findViewById(R.id.edit_profile_image);
         userName=findViewById(R.id.edit_username);
         userFullName=findViewById(R.id.edit_fullname);
         userDOB=findViewById(R.id.edit_birthday);
         userParentOf=findViewById(R.id.edit_parentof);
+        userPhoneNumber=findViewById(R.id.edit_phonenumber);
         UpdateAccountSettingButton=findViewById(R.id.update_account_settings_button);
         loadingBar=new ProgressDialog(this);
 
@@ -67,6 +70,9 @@ public class EditProfileActivity extends AppCompatActivity {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild("idclass")){
+                    myClass = dataSnapshot.child("idclass").getValue().toString();
+                }
                 if(dataSnapshot.hasChild("profileimage")){
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                     Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfImage);
@@ -86,6 +92,10 @@ public class EditProfileActivity extends AppCompatActivity {
                 if(dataSnapshot.hasChild("parentof")){
                     String myParentOf = dataSnapshot.child("parentof").getValue().toString();
                     userParentOf.setText(myParentOf);
+                }
+                if(dataSnapshot.hasChild("phonenumber")){
+                    String myphone = dataSnapshot.child("phonenumber").getValue().toString();
+                    userPhoneNumber.setText(myphone);
                 }
             }
 
@@ -141,14 +151,16 @@ public class EditProfileActivity extends AppCompatActivity {
         String userfullname=userFullName.getText().toString();
         String userdob=userDOB.getText().toString();
         String userparentof=userParentOf.getText().toString();
+        String userphonenumber=userPhoneNumber.getText().toString();
         loadingBar.setTitle("Profile Update");
         loadingBar.setMessage("Please wait, while we updating your profile...");
         loadingBar.setCanceledOnTouchOutside(true);
         loadingBar.show();
-        UpdateAccountInfo(username,userfullname,userdob,userparentof);
+        UpdateAccountInfo(username,userfullname,userdob,userparentof,userphonenumber);
+        loadingBar.dismiss();
     }
 
-    private void UpdateAccountInfo(final String username, final String userfullname, final String userdob, final String userparentof) {
+    private void UpdateAccountInfo(final String username, final String userfullname, final String userdob, final String userparentof,final String userphonenumber) {
         StorageReference filePath = UserProfileImageRef.child(currentUserId + ".jpg");
         if(resultUri!=null){
             filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -186,10 +198,16 @@ public class EditProfileActivity extends AppCompatActivity {
         userMap.put("fullname",userfullname);
         userMap.put("birthday",userdob);
         userMap.put("parentof",userparentof);
+        userMap.put("phonenumber",userphonenumber);
+
+        final HashMap childrenMap=new HashMap();
+        childrenMap.put("birthday",userdob);
+        childrenMap.put("parentof",userparentof);
         EditUserRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()){
+                    ClassRef.child(myClass).child("Children").child(currentUserId).updateChildren(childrenMap);
                     Toast.makeText(EditProfileActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
                     finish();
                 }

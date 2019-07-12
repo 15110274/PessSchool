@@ -36,7 +36,7 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.util.HashMap;
 
 public class SetupActivity extends AppCompatActivity {
-    private EditText UserName, FullName, ParentOf, BirthDay;
+    private EditText UserName, FullName, ParentOf, BirthDay, PhoneNumber;
     private Button SaveInformationbuttion;
     private CircleImageView ProfileImage;
     private ProgressDialog loadingBar;
@@ -50,6 +50,7 @@ public class SetupActivity extends AppCompatActivity {
     final static int Gallery_Pick = 1;
 
     String currentUserID;
+    String myClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +60,14 @@ public class SetupActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUserID = mAuth.getCurrentUser().getUid();
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
-//        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
+        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
         UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
         UserName = findViewById(R.id.setup_username);
         FullName = findViewById(R.id.setup_fullname);
         ParentOf = findViewById(R.id.setup_parentofchild);
         BirthDay = findViewById(R.id.setup_dayofbirth);
+        PhoneNumber=findViewById(R.id.setup_phonenumber);
         SaveInformationbuttion = findViewById(R.id.setup_information_button);
         ProfileImage = findViewById(R.id.setup_profile_image);
         loadingBar = new ProgressDialog(this);
@@ -92,8 +94,13 @@ public class SetupActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    if(dataSnapshot.hasChild("idclass")){
+                        myClass=dataSnapshot.child("idclass").getValue().toString();
+                        //Toast.makeText(SetupActivity.this, "id la"+myClass, Toast.LENGTH_SHORT).show();
+                    }
                     if (dataSnapshot.hasChild("profileimage")) {
                         String image = dataSnapshot.child("profileimage").getValue().toString();
+
                         Picasso.get()
                                 .load(image)
                                 .placeholder(R.drawable.ic_person_black_50dp)
@@ -150,6 +157,7 @@ public class SetupActivity extends AppCompatActivity {
         final String fullname = FullName.getText().toString();
         final String parentof = ParentOf.getText().toString();
         final String birthday = BirthDay.getText().toString();
+        final String phonenumber=PhoneNumber.getText().toString();
         final String[] classname = new String[1];
 
         if (TextUtils.isEmpty(username)) {
@@ -157,6 +165,9 @@ public class SetupActivity extends AppCompatActivity {
         }
         if (TextUtils.isEmpty(fullname)) {
             Toast.makeText(this, "Please write your full name...", Toast.LENGTH_SHORT).show();
+        }
+        if (TextUtils.isEmpty(phonenumber)) {
+            Toast.makeText(this, "Please write your phone number...", Toast.LENGTH_SHORT).show();
         }
         if (TextUtils.isEmpty(parentof)) {
             Toast.makeText(this, "Please write children name...", Toast.LENGTH_SHORT).show();
@@ -208,15 +219,21 @@ public class SetupActivity extends AppCompatActivity {
             final HashMap userMap = new HashMap();
             userMap.put("username", username);
             userMap.put("fullname", fullname);
+            userMap.put("phonenumber", phonenumber);
+            userMap.put("userid", currentUserID);
             userMap.put("parentof", parentof);
             userMap.put("birthday", birthday);
 
-            userMap.put("userid", currentUserID);
+            final HashMap childrenMap=new HashMap();
+            childrenMap.put("parentof", parentof);
+            childrenMap.put("birthday", birthday);
+
 
             UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                         public void onComplete(@NonNull Task task) {
                             if (task.isSuccessful()) {
                                 SendUserToMainActivity();
+                                ClassRef.child(myClass).child("Children").child(currentUserID).updateChildren(childrenMap);
                                 Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
                                 loadingBar.dismiss();
                             } else {

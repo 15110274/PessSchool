@@ -32,7 +32,7 @@ import java.util.MissingFormatArgumentException;
 
 public class PersonProfileActivity extends AppCompatActivity {
 
-    private TextView userName, userProfName, userClass, userParentof, userBirthDay;
+    private TextView userName, userProfName, userClass, userParentof, userBirthDay, userPhoneNumber;
     private CircleImageView userProfileImage;
 
     private DatabaseReference UsersRef;
@@ -79,9 +79,11 @@ public class PersonProfileActivity extends AppCompatActivity {
                         String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                         String myUserName = dataSnapshot.child("username").getValue().toString();
                         String myProfileName = dataSnapshot.child("fullname").getValue().toString();
-                        String myBirthday = dataSnapshot.child("birthday").getValue().toString();
+
                         String myClass = dataSnapshot.child("classname").getValue().toString();
                         String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+                        String myBirthday = dataSnapshot.child("birthday").getValue().toString();
+                        String myphoneNumber=dataSnapshot.child("phonenumber").getValue().toString();
 
                         Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
 
@@ -90,6 +92,7 @@ public class PersonProfileActivity extends AppCompatActivity {
                         userBirthDay.setText("Sinh nhật: " + myBirthday);
                         userClass.setText("Lớp: " + myClass);
                         userParentof.setText("Phụ huynh của bé: " + myParentOf);
+                        userPhoneNumber.setText("Sdt: "+myphoneNumber);
                     }catch (Exception e){
 
                     }
@@ -113,6 +116,7 @@ public class PersonProfileActivity extends AppCompatActivity {
         userParentof = findViewById(R.id.relationship_with_children);
         userBirthDay = findViewById(R.id.person_birthday);
         userClass = findViewById(R.id.person_class);
+        userPhoneNumber=findViewById(R.id.person_phone);
     }
 
     @Override

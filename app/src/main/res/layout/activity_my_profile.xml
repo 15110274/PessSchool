@@ -34,7 +34,9 @@
                 android:layout_height="150dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
-                android:background="@android:color/transparent" />
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_person_black_50dp"
+                />
 
             <TextView
                 android:id="@+id/person_full_name"
@@ -42,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
-                android:text="Wiliam Snoe"
+                android:text="Họ và tên"
                 android:textColor="#fff"
                 android:textSize="21sp"
                 android:textStyle="bold" />
@@ -53,7 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/person_full_name"
-                android:text="User Name"
+                android:text="Tên"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@android:color/background_light"
@@ -73,23 +75,6 @@
                 android:textSize="16sp" />
 
         </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/person_birthday"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:drawableLeft="@drawable/ic_dob"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:paddingStart="50dp"
-            android:paddingLeft="20dp"
-            android:text="02/02/1997"
-            android:textColor="@color/textcolor"
-            android:textStyle="bold" />
-
-
         <TextView
             android:id="@+id/person_class"
             android:layout_width="wrap_content"
@@ -103,6 +88,36 @@
             android:text="Tên lớp học"
             android:textColor="@color/textcolor"
             android:textStyle="bold" />
+        <TextView
+            android:id="@+id/person_phone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawableLeft="@drawable/ic_phone"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingStart="50dp"
+            android:paddingLeft="20dp"
+            android:text="Số điện thoại"
+            android:textColor="@color/textcolor"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/person_birthday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawableLeft="@drawable/ic_dob"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingStart="50dp"
+            android:paddingLeft="20dp"
+            android:text="Ngày sinh của bé"
+            android:textColor="@color/textcolor"
+            android:textStyle="bold" />
+
+
+
 
 
         <TextView
@@ -115,7 +130,7 @@
             android:gravity="left"
             android:paddingStart="50dp"
             android:paddingLeft="20dp"
-            android:text="Mother of Robin"
+            android:text="Phụ huynh của bé"
             android:textColor="@color/textcolor"
             android:textStyle="bold" />
 

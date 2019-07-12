@@ -25,7 +25,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:background="@android:color/transparent"
-                android:src="@drawable/ic_person_black_50dp"/>/>
+                android:src="@drawable/ic_person_black_50dp"/>
 
             <TextView
                 android:id="@+id/person_full_name"
