@@ -3,6 +3,7 @@ package com.example.preschool;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.viewpager.widget.ViewPager;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.preschool.Event.AddEventActivity;
+import com.example.preschool.TimeLine.Posts;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -37,6 +39,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
@@ -44,7 +47,8 @@ public class EditPostActivity extends AppCompatActivity {
 
     private TextView userName;
     private EditText description;
-    private ImageView postImages,avatar;
+    private ImageView avatar;
+    private ViewPager postImages;
     private String currentUserId;
     private DatabaseReference PostRef,UserRef;
     private StorageReference PostsImagesRefrence;
@@ -92,7 +96,7 @@ public class EditPostActivity extends AppCompatActivity {
         postImages.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                OpenGallery();
+//                OpenGallery();
             }
         });
 
@@ -115,57 +119,57 @@ public class EditPostActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == Gallery_Pick && resultCode == RESULT_OK && data != null) {
-            ImageUri = data.getData();
-            Picasso.get().load(ImageUri).resize(1440,0).into(postImages);
-            hasChangeImage=true;
-//            SelectPostImage.setImageURI(ImageUri);
-        }
+//        if (requestCode == Gallery_Pick && resultCode == RESULT_OK && data != null) {
+//            ImageUri = data.getData();
+//            Picasso.get().load(ImageUri).resize(1440,0).into(postImages);
+//            hasChangeImage=true;
+////            SelectPostImage.setImageURI(ImageUri);
+//        }
     }
     private void uploadImageToFirebase(){
 
         //Image khi load lên ImageButton đã được resize bằng Picasso
         // nên upload bitmap từ ImageButton giúp giảm dung lượng ảnh
-        bitmap=((BitmapDrawable) postImages.getDrawable()).getBitmap();
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
-        byte[] data = bao.toByteArray();
-
-
-        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(postKey + ".jpg");
-        filePath.putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
-                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            final String downloadUrl = uri.toString();
-                            //lưu hình ảnh lên posts
-                            PostRef.child("postimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        loadingBar.dismiss();
-                                        finish();
-                                    } else {
-                                        loadingBar.dismiss();
-                                        Toast.makeText(EditPostActivity.this, "Không thể đổi ảnh", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                        }
-                    });
-
-
-                } else {
-                    String message = task.getException().getMessage();
-                    Toast.makeText(EditPostActivity.this, "Không tải ảnh lên được:" + message, Toast.LENGTH_SHORT).show();
-                    loadingBar.cancel();
-                }
-            }
-        });
+//        bitmap=((BitmapDrawable) postImages.getDrawable()).getBitmap();
+//        ByteArrayOutputStream bao = new ByteArrayOutputStream();
+//        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, bao);
+//        byte[] data = bao.toByteArray();
+//
+//
+//        StorageReference filePath = PostsImagesRefrence.child("Post Images").child(postKey + ".jpg");
+//        filePath.putBytes(data).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+//                if (task.isSuccessful()) {
+//                    Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+//                    result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                        @Override
+//                        public void onSuccess(Uri uri) {
+//                            final String downloadUrl = uri.toString();
+//                            //lưu hình ảnh lên posts
+//                            PostRef.child("postimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//                                    if (task.isSuccessful()) {
+//                                        loadingBar.dismiss();
+//                                        finish();
+//                                    } else {
+//                                        loadingBar.dismiss();
+//                                        Toast.makeText(EditPostActivity.this, "Không thể đổi ảnh", Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            });
+//                        }
+//                    });
+//
+//
+//                } else {
+//                    String message = task.getException().getMessage();
+//                    Toast.makeText(EditPostActivity.this, "Không tải ảnh lên được:" + message, Toast.LENGTH_SHORT).show();
+//                    loadingBar.cancel();
+//                }
+//            }
+//        });
 
 
     }
@@ -178,7 +182,7 @@ public class EditPostActivity extends AppCompatActivity {
                     loadingBar.setMessage("Đang tải ảnh lên");
                     loadingBar.show();
                     loadingBar.setCanceledOnTouchOutside(false);
-                    uploadImageToFirebase();
+//                    uploadImageToFirebase();
 
                 }else finish();
             }
@@ -209,13 +213,20 @@ public class EditPostActivity extends AppCompatActivity {
         postEventListener=PostRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                description.setText(dataSnapshot.child("description").getValue().toString());
-                Picasso.get()
-                        .load(dataSnapshot.child("postimage").getValue().toString())
-                        .networkPolicy(NetworkPolicy.NO_CACHE)
-                        .memoryPolicy(MemoryPolicy.NO_CACHE)
-                        .resize(600,0)
-                        .into(postImages);
+                Posts posts=dataSnapshot.getValue(Posts.class);
+                description.setText(posts.getDescription());
+                AdapterImagePost adapter = new AdapterImagePost(EditPostActivity.this, posts.getPostimage());
+                postImages.setAdapter(adapter);
+//                description.setText(dataSnapshot.child("description").getValue().toString());
+//                // Show images
+//                AdapterImagePost adapter = new AdapterImagePost(this, dataSnapshot.child("postimage").getValue(ArrayList.class));
+//                postImages.setAdapter(adapter);
+//                Picasso.get()
+//                        .load(dataSnapshot.child("postimage").getValue().toString())
+//                        .networkPolicy(NetworkPolicy.NO_CACHE)
+//                        .memoryPolicy(MemoryPolicy.NO_CACHE)
+//                        .resize(600,0)
+//                        .into(postImages);
             }
 
             @Override
