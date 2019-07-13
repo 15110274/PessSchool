@@ -302,6 +302,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+//        moveTaskToBack(true);
+//        finish();
+        boolean sentAppToBackground = moveTaskToBack(true);
+
+        if(!sentAppToBackground){
+            Intent i = new Intent();
+            i.setAction(Intent.ACTION_MAIN);
+            i.addCategory(Intent.CATEGORY_HOME);
+            this.startActivity(i);
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         if(ClasEventListener!=null){
