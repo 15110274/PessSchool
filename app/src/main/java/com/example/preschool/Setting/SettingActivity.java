@@ -47,14 +47,14 @@ public class SettingActivity extends AppCompatActivity {
         mAuth=FirebaseAuth.getInstance();
 
         cardViewLogout=findViewById(R.id.btn_logout);
-        cardViewLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent=new Intent(SettingActivity.this, StartActivity.class);
-                mAuth.signOut();
-                startActivity(intent);
-            }
-        });
+//        cardViewLogout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent=new Intent(SettingActivity.this, StartActivity.class);
+//                mAuth.signOut();
+//                startActivity(intent);
+//            }
+//        });
 
         // Get Bundle
         bundle=getIntent().getExtras();

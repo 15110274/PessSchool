@@ -27,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_profile_image"
+        android:inputType="textCapSentences"
         android:hint="Tên người dùng"
         android:textColor="@android:color/background_dark"
         android:textSize="18sp"
@@ -44,6 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_username"
+        android:inputType="textCapSentences"
         android:hint="Họ và tên"
         android:textColor="@android:color/background_dark" />
 
@@ -59,6 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Sinh nhật"
+        android:inputType="date"
         android:textColor="@android:color/black"
         />
 
@@ -76,6 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_birthday"
         android:hint="Phụ huynh của bé"
+        android:inputType="textCapSentences"
         android:textColor="@android:color/background_dark"
         />
     <TextView
@@ -92,6 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/edit_birthday"
         android:hint="Số điện thoại"
+        android:inputType="phone"
         android:textColor="@android:color/background_dark"
         />
 

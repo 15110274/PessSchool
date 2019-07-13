@@ -72,6 +72,7 @@ public class ChangeClassActivity extends AppCompatActivity {
 
         spinner = findViewById(R.id.spinner);
         btnChangeClass = findViewById(R.id.btn_change_class);
+        btnChangeClass.setEnabled(false);
         classRef = FirebaseDatabase.getInstance().getReference("Class");
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(current_user_id);
         // get list idclass
@@ -79,10 +80,11 @@ public class ChangeClassActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    btnChangeClass.setEnabled(true);
                     for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()) {
                         listIdClass.add(suggestionSnapshot.getValue(String.class));
                         //get Class Name
-                         classRef.child(suggestionSnapshot.getValue(String.class)).child("classname").addValueEventListener(new ValueEventListener() {
+                        classRef.child(suggestionSnapshot.getValue(String.class)).child("classname").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 listNameClass.add(dataSnapshot.getValue(String.class));
@@ -98,6 +100,7 @@ public class ChangeClassActivity extends AppCompatActivity {
                         });
                     }
                 }
+//                else btnChangeClass.setEnabled(false);
             }
 
             @Override
@@ -132,3 +135,4 @@ public class ChangeClassActivity extends AppCompatActivity {
             usersRef.child("myclass").removeEventListener(userGetMyClassListener);
     }
 }
+

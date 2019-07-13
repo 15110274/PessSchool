@@ -1,5 +1,6 @@
 package com.example.preschool;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -22,6 +23,7 @@ import com.example.preschool.Notifications.Token;
 import com.example.preschool.PhotoAlbum.ViewAllAlbumActivity;
 import com.example.preschool.Setting.SettingActivity;
 import com.example.preschool.TimeTable.TimeTableActivity;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.FirebaseApp;
@@ -29,6 +31,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
@@ -39,6 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -309,6 +314,28 @@ public class MainActivity extends AppCompatActivity
                 intent=new Intent(MainActivity.this, SettingActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                break;
+            case R.id.logout:
+                AlertDialog.Builder dialogLogout=new AlertDialog.Builder(this,android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);
+                dialogLogout.setMessage("Bạn có chắc muốn đăng xuất");
+                dialogLogout.setCancelable(false);
+                dialogLogout.setPositiveButton("Có", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Intent intent=new Intent(MainActivity.this, StartActivity.class);
+                        mAuth.signOut();
+                        startActivity(intent);
+                        dialogInterface.dismiss();
+                    }
+                }).setNegativeButton("Không", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+
+                dialogLogout.show();
+
                 break;
         }
         return true;
