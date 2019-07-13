@@ -21,7 +21,7 @@ import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ViewAccountActivity extends AppCompatActivity {
-    private TextView userName, userProfName,userClass,userParentof,userBirthDay,userRole,userEmail;
+    private TextView userPhone,userName, userProfName,userClass,userParentof,userBirthDay,userRole,userEmail;
     private CircleImageView userProfileImage;
 
     private Button EditButton;
@@ -44,6 +44,7 @@ public class ViewAccountActivity extends AppCompatActivity {
         userBirthDay=findViewById(R.id.person_birthday);
         userClass=findViewById(R.id.person_class);
         userRole=findViewById(R.id.role);
+        userPhone=findViewById(R.id.phonenumber);
         EditButton=findViewById(R.id.edit_account);
         UsersRef.child(getIntent().getStringExtra("USER_ID")).addValueEventListener(new ValueEventListener() {
             @Override
@@ -53,10 +54,21 @@ public class ViewAccountActivity extends AppCompatActivity {
                     if(myRole.equals("Admin")){
                         userClass.setVisibility(View.GONE);
                         userParentof.setVisibility(View.GONE);
+                        userBirthDay.setVisibility(View.GONE);
                     }
                     else{
                         String myClass = dataSnapshot.child("classname").getValue().toString();
                         userClass.setText("Lớp: " + myClass);
+                    }
+                    if(myRole.equals("Teacher")){
+                        userClass.setVisibility(View.VISIBLE);
+                        userParentof.setVisibility(View.GONE);
+                        userBirthDay.setVisibility(View.GONE);
+                    }
+                    if(myRole.equals("Parent")){
+                        userClass.setVisibility(View.VISIBLE);
+                        userParentof.setVisibility(View.VISIBLE);
+                        userBirthDay.setVisibility(View.VISIBLE);
                     }
                     userRole.setText("Role: "+myRole);
                 }
@@ -65,6 +77,10 @@ public class ViewAccountActivity extends AppCompatActivity {
                 if(dataSnapshot.hasChild("profileimage")){
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                     Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
+                }
+                if(dataSnapshot.hasChild("phonenumber")){
+                    String phone = dataSnapshot.child("phonenumber").getValue().toString();
+                    userPhone.setText("Sdt: "+phone);
                 }
                 if(dataSnapshot.hasChild("fullname")){
                     String myProfileName = dataSnapshot.child("fullname").getValue().toString();
@@ -76,11 +92,11 @@ public class ViewAccountActivity extends AppCompatActivity {
                 }
                 if(dataSnapshot.hasChild("birthday")){
                     String myDOB = dataSnapshot.child("birthday").getValue().toString();
-                    userBirthDay.setText(myDOB);
+                    userBirthDay.setText("Ngày sinh của bé: "+myDOB);
                 }
                 if(dataSnapshot.hasChild("parentof")){
                     String myParentOf = dataSnapshot.child("parentof").getValue().toString();
-                    userParentof.setText(myParentOf);
+                    userParentof.setText("Phụ huynh của: "+myParentOf);
                 }
             }
 

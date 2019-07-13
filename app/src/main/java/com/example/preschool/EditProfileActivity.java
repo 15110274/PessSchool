@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,6 +46,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private StorageReference UserProfileImageRef;
     private Uri resultUri;
     String myClass,role;
+    private TextView txtChildren,txtBirthday;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,8 @@ public class EditProfileActivity extends AppCompatActivity {
         userParentOf=findViewById(R.id.edit_parentof);
         userPhoneNumber=findViewById(R.id.edit_phonenumber);
         UpdateAccountSettingButton=findViewById(R.id.update_account_settings_button);
+        txtBirthday=findViewById(R.id.textviewBirthday);
+        txtChildren=findViewById(R.id.textviewChildren);
         loadingBar=new ProgressDialog(this);
 
         EditUserRef.addValueEventListener(new ValueEventListener() {
@@ -78,10 +82,14 @@ public class EditProfileActivity extends AppCompatActivity {
                     if(role.equals("Parent")){
                         userParentOf.setVisibility(View.VISIBLE);
                         userDOB.setVisibility(View.VISIBLE);
+                        txtBirthday.setVisibility(View.VISIBLE);
+                        txtChildren.setVisibility(View.VISIBLE);
                     }
                     else {
                         userParentOf.setVisibility(View.GONE);
                         userDOB.setVisibility(View.GONE);
+                        txtBirthday.setVisibility(View.GONE);
+                        txtChildren.setVisibility(View.GONE);
                     }
                 }
                 if(dataSnapshot.hasChild("profileimage")){

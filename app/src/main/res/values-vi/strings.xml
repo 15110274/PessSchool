@@ -23,7 +23,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="nenableDarkMode">Kích hoạt nền tối</string>
     <string name="darkMode">Chế độ nền tối</string>
-    <string name="testMail">tanphatngcd1@gmail.com</string>
+    <string name="testMail">1@gmail.com</string>
     <string name="testPass">123456</string>
     <string name="createNewAccount">Tạo tài khoản mới</string>
     <string name="dontHaveAccount">Không có tài khoản?</string>

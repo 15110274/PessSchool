@@ -22,7 +22,7 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="nenableDarkMode">Enable Dark Mode</string>
     <string name="darkMode">Dark mode</string>
-    <string name="testMail">tanphatngcd1@gmail.com</string>
+    <string name="testMail">1@gmail.com</string>
     <string name="testPass">123456</string>
     <string name="createNewAccount">Create new account</string>
     <string name="dontHaveAccount">Don\'t have an account?</string>
