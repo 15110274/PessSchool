@@ -1,6 +1,7 @@
 package com.example.preschool;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -14,7 +15,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -62,6 +65,7 @@ public class EditAccountActivity extends AppCompatActivity {
     private final ArrayList<String> classId=new ArrayList<>();
     private int classOld=0;
     private RelativeLayout childrenLayout;
+    final ArrayList<String> checkList=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +137,9 @@ public class EditAccountActivity extends AppCompatActivity {
                     String classid = suggestionSnapshot.getKey();
                     className.add(classname);
                     classId.add(classid);
+
                 }
+
                 EditUserRef.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -260,6 +266,7 @@ public class EditAccountActivity extends AppCompatActivity {
 
             }
         });
+
         final int[] temp = {0};
         classNameSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
