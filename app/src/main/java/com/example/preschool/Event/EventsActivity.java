@@ -1,85 +1,3 @@
-//package com.example.preschool.Event;
-//
-//import androidx.annotation.NonNull;
-//import androidx.appcompat.app.ActionBar;
-//import androidx.appcompat.app.AppCompatActivity;
-//import sun.bob.mcalendarview.MCalendarView;
-//import sun.bob.mcalendarview.vo.DateData;
-//
-//import android.content.Intent;
-//import android.os.Bundle;
-//import android.renderscript.Sampler;
-//import android.view.View;
-//import android.widget.CalendarView;
-//import android.widget.DatePicker;
-//import android.widget.QuickContactBadge;
-//import android.widget.TextView;
-//import android.widget.Toast;
-//
-//import com.example.preschool.R;
-//import com.google.android.material.floatingactionbutton.FloatingActionButton;
-//import com.google.firebase.auth.FirebaseAuth;
-//import com.google.firebase.database.DatabaseReference;
-//import com.google.firebase.database.FirebaseDatabase;
-//import com.google.firebase.storage.StorageReference;
-//
-//import java.util.ArrayList;
-//import java.util.Calendar;
-//
-//public class EventsActivity extends AppCompatActivity {
-//
-//    private CalendarView calendarView;
-//    private TextView showEvent;
-//    private FloatingActionButton addEvent;
-//
-//    private DatabaseReference UsersRef, EventsRef;
-//    private FirebaseAuth mAuth;
-//    private String current_user_id;
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_events);
-//
-//        mAuth = FirebaseAuth.getInstance();
-//        current_user_id = mAuth.getCurrentUser().getUid();
-//        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-//        EventsRef = FirebaseDatabase.getInstance().getReference().child("Events");
-//
-//        showEvent = findViewById(R.id.show_event);
-//        addEvent=findViewById(R.id.add_event);
-//        calendarView = findViewById(R.id.calendarView);
-//        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-//            @Override
-//            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-//                Toast.makeText(EventsActivity.this, dayOfMonth + "-" + month + "-" + year, Toast.LENGTH_LONG).show();
-//            }
-//        });
-//
-//        addEvent.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Intent intent=new Intent(EventsActivity.this,AddEventActivity.class);
-//                startActivity(intent);
-//            }
-//        });
-//
-////        ArrayList<DateData> dates=new ArrayList<>();
-////        dates.add(new DateData(2019,05,26));
-////        dates.add(new DateData(2018,06,2));
-////
-////        for(int i=0;i<dates.size();i++) {
-////            mCalendarView.markDate(dates.get(i).getYear(),dates.get(i).getMonth(),dates.get(i).getDay());//mark multiple dates with this code.
-////        }
-////        mCalendarView.markDate(2019,05,30);//mark multiple dates with this code.
-////        addEvent.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View v) {
-////                Toast.makeText(EventsActivity.this,"test",Toast.LENGTH_LONG).show();
-////            }
-////        });
-//    }
-//}
 package com.example.preschool.Event;
 
 import androidx.annotation.NonNull;
@@ -143,7 +61,8 @@ public class EventsActivity extends AppCompatActivity {
     private String idClass, idTeacher;
     private Bundle bundle;
     private RecyclerView myEventsList;
-    private Boolean isTeacher=false;
+    private Boolean isTeacher = false;
+
     @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,16 +82,16 @@ public class EventsActivity extends AppCompatActivity {
             }
         });
         // Get Bundle
-        bundle=getIntent().getExtras();
-        if(bundle!=null){
-            idClass=bundle.getString("ID_CLASS");
-            idTeacher=bundle.getString("ID_TEACHER");
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            idClass = bundle.getString("ID_CLASS");
+            idTeacher = bundle.getString("ID_TEACHER");
         }
         // Set name ActionBar
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.event);
         mAuth = FirebaseAuth.getInstance();
-        myEventsList=findViewById(R.id.recycleEvent);
+        myEventsList = findViewById(R.id.recycleEvent);
         myEventsList.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(EventsActivity.this);
         linearLayoutManager.setReverseLayout(true);
@@ -181,10 +100,10 @@ public class EventsActivity extends AppCompatActivity {
         current_user_id = mAuth.getCurrentUser().getUid();
         EventsRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("Events");
 
-        addEvent=findViewById(R.id.add_event);
+        addEvent = findViewById(R.id.add_event);
         addEvent.setVisibility(View.GONE);
-        if(current_user_id.equals(idTeacher)){
-            isTeacher=true;
+        if (current_user_id.equals(idTeacher)) {
+            isTeacher = true;
             addEvent.setVisibility(View.VISIBLE);
         }
         calendarView = findViewById(R.id.calendarView);
@@ -193,18 +112,17 @@ public class EventsActivity extends AppCompatActivity {
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 String x;
 
-                if(dayOfMonth<10){
-                    if((month+1)<10){
-                        x= "0"+dayOfMonth + "-0" + (month +1) + "-" + year;}
-                    else {
-                        x= "0"+dayOfMonth + "-" + (month +1) + "-" + year;
+                if (dayOfMonth < 10) {
+                    if ((month + 1) < 10) {
+                        x = "0" + dayOfMonth + "-0" + (month + 1) + "-" + year;
+                    } else {
+                        x = "0" + dayOfMonth + "-" + (month + 1) + "-" + year;
                     }
-                }
-                else{
-                    if((month+1)<10){
-                        x= dayOfMonth + "-0" + (month +1) + "-" + year;}
-                    else {
-                        x= dayOfMonth + "-" + (month +1) + "-" + year;
+                } else {
+                    if ((month + 1) < 10) {
+                        x = dayOfMonth + "-0" + (month + 1) + "-" + year;
+                    } else {
+                        x = dayOfMonth + "-" + (month + 1) + "-" + year;
                     }
                 }
                 showAllEvent(x);
@@ -214,29 +132,30 @@ public class EventsActivity extends AppCompatActivity {
         addEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent=new Intent(EventsActivity.this,AddEventActivity.class);
+                Intent intent = new Intent(EventsActivity.this, AddEventActivity.class);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 recreate();
             }
         });
     }
-    private void showAllEvent(final String x){
+
+    private void showAllEvent(final String x) {
         Query showAllEventQuery = EventsRef.child(x);
         FirebaseRecyclerOptions<Event> options = new FirebaseRecyclerOptions.Builder<Event>().
                 setQuery(showAllEventQuery, Event.class).build();
-        FirebaseRecyclerAdapter<Event, EventsViewHolder>adapter =new FirebaseRecyclerAdapter<Event, EventsViewHolder>(options) {
+        FirebaseRecyclerAdapter<Event, EventsViewHolder> adapter = new FirebaseRecyclerAdapter<Event, EventsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull EventsViewHolder eventsViewHolder, int i, @NonNull Event event) {
-                eventsViewHolder.txtEvent.setText("Sự kiện: "+event.getNameEvent());
-                if(event.getTimeStart().equals("Cả ngày")){
+                eventsViewHolder.txtEvent.setText("Sự kiện: " + event.getNameEvent());
+                if (event.getTimeStart().equals("Cả ngày")) {
                     eventsViewHolder.txtTime.setText("Thời gian: Cả ngày");
-                }else eventsViewHolder.txtTime.setText("Thời gian từ: " +event.getTimeStart()+
-                        " đến "+ event.getTimeEnd());
-                eventsViewHolder.txtPlace.setText("Địa điểm: " +event.getPosition());
-                eventsViewHolder.txtDetail.setText("Mô tả: "+event.getDescription());
+                } else eventsViewHolder.txtTime.setText("Thời gian từ: " + event.getTimeStart() +
+                        " đến " + event.getTimeEnd());
+                eventsViewHolder.txtPlace.setText("Địa điểm: " + event.getPosition());
+                eventsViewHolder.txtDetail.setText("Mô tả: " + event.getDescription());
                 final String visit_event_id = getRef(i).getKey();
-                if(isTeacher){
+                if (isTeacher) {
                     eventsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -279,22 +198,21 @@ public class EventsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Calendar cal = Calendar.getInstance();
-        int dayOfMonth=cal.get(Calendar.DAY_OF_MONTH);
-        int month=cal.get(Calendar.MONTH);
-        int year=cal.get(Calendar.YEAR);
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH);
+        int year = cal.get(Calendar.YEAR);
         String x;
-        if(dayOfMonth<10){
-            if((month+1)<10){
-                x= "0"+dayOfMonth + "-0" + (month +1) + "-" + year;}
-            else {
-                x= "0"+dayOfMonth + "-" + (month +1) + "-" + year;
+        if (dayOfMonth < 10) {
+            if ((month + 1) < 10) {
+                x = "0" + dayOfMonth + "-0" + (month + 1) + "-" + year;
+            } else {
+                x = "0" + dayOfMonth + "-" + (month + 1) + "-" + year;
             }
-        }
-        else{
-            if((month+1)<10){
-                x= dayOfMonth + "-0" + (month +1) + "-" + year;}
-            else {
-                x= dayOfMonth + "-" + (month +1) + "-" + year;
+        } else {
+            if ((month + 1) < 10) {
+                x = dayOfMonth + "-0" + (month + 1) + "-" + year;
+            } else {
+                x = dayOfMonth + "-" + (month + 1) + "-" + year;
             }
         }
         showAllEvent(x);
@@ -305,6 +223,7 @@ public class EventsActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
     }
+
     public static class EventsViewHolder extends RecyclerView.ViewHolder {
         private TextView txtEvent;
         private TextView txtTime;

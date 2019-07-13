@@ -68,7 +68,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/person_username"
                 android:layout_marginTop="5dp"
-                android:text="Hey there, i'm using..."
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@android:color/background_light"

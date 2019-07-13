@@ -4,12 +4,12 @@
     <item
         android:id="@+id/action_edit_profile"
         android:orderInCategory="100"
-        android:title="Edit"
+        android:title="Sử thông tin"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_change_pass"
         android:orderInCategory="100"
-        android:title="Change password"
+        android:title="Đổi mật khẩu"
         app:showAsAction="never"/>
 
 </menu>

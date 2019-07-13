@@ -84,7 +84,7 @@
         app:layout_constraintTop_toBottomOf="@+id/post_profile_image" />
 
 
-    <ImageView
+    <androidx.viewpager.widget.ViewPager
         android:id="@+id/post_image"
         android:layout_width="match_parent"
         android:layout_height="250dp"
@@ -96,6 +96,6 @@
         app:layout_constraintTop_toBottomOf="@+id/post_description">
 
 
-    </ImageView>
+    </androidx.viewpager.widget.ViewPager>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
