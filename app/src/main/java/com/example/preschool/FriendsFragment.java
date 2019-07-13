@@ -147,11 +147,16 @@ public class FriendsFragment extends Fragment {
                     UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.child("type").getValue().toString().equals("online")) {
-                                friendsViewHolder.online.setVisibility(View.VISIBLE);
-                            } else {
-                                friendsViewHolder.online.setVisibility(View.GONE);
+                            try{
+                                if (dataSnapshot.child("type").getValue().toString().equals("online")) {
+                                    friendsViewHolder.online.setVisibility(View.VISIBLE);
+                                } else {
+                                    friendsViewHolder.online.setVisibility(View.GONE);
+                                }
+                            }catch (Exception e){
+
                             }
+
                         }
 
                         @Override

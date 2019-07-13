@@ -44,7 +44,7 @@ public class EditProfileActivity extends AppCompatActivity {
     final static int Gallery_Pick = 1;
     private StorageReference UserProfileImageRef;
     private Uri resultUri;
-    String myClass;
+    String myClass,role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +72,17 @@ public class EditProfileActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild("idclass")){
                     myClass = dataSnapshot.child("idclass").getValue().toString();
+                }
+                if(dataSnapshot.hasChild("role")){
+                    role = dataSnapshot.child("role").getValue().toString();
+                    if(role.equals("Parent")){
+                        userParentOf.setVisibility(View.VISIBLE);
+                        userDOB.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        userParentOf.setVisibility(View.GONE);
+                        userDOB.setVisibility(View.GONE);
+                    }
                 }
                 if(dataSnapshot.hasChild("profileimage")){
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
@@ -149,8 +160,13 @@ public class EditProfileActivity extends AppCompatActivity {
     private void ValidateAccountInfo() {
         String username=userName.getText().toString();
         String userfullname=userFullName.getText().toString();
-        String userdob=userDOB.getText().toString();
-        String userparentof=userParentOf.getText().toString();
+        String userdob="";
+        String userparentof="";
+        if(role.equals("Parent")){
+           userdob=userDOB.getText().toString();
+            userparentof=userParentOf.getText().toString();
+        }
+
         String userphonenumber=userPhoneNumber.getText().toString();
         loadingBar.setTitle("Profile Update");
         loadingBar.setMessage("Please wait, while we updating your profile...");
@@ -196,18 +212,21 @@ public class EditProfileActivity extends AppCompatActivity {
         HashMap userMap=new HashMap();
         userMap.put("username",username);
         userMap.put("fullname",userfullname);
-        userMap.put("birthday",userdob);
-        userMap.put("parentof",userparentof);
+        if(role.equals("Parent")){
+            userMap.put("birthday",userdob);
+            userMap.put("parentof",userparentof);
+        }
         userMap.put("phonenumber",userphonenumber);
-
-        final HashMap childrenMap=new HashMap();
-        childrenMap.put("birthday",userdob);
-        childrenMap.put("parentof",userparentof);
         EditUserRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()){
-                    ClassRef.child(myClass).child("Children").child(currentUserId).updateChildren(childrenMap);
+                    if(role.equals("Parent")){
+                        final HashMap childrenMap=new HashMap();
+                        childrenMap.put("birthday",userdob);
+                        childrenMap.put("parentof",userparentof);
+                        ClassRef.child(myClass).child("Children").child(currentUserId).updateChildren(childrenMap);
+                    }
                     Toast.makeText(EditProfileActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
                     finish();
                 }

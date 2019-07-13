@@ -49,7 +49,7 @@ public class SetupActivity extends AppCompatActivity {
 
     final static int Gallery_Pick = 1;
 
-    String currentUserID;
+    String currentUserID,role;
     String myClass;
 
     @Override
@@ -71,6 +71,8 @@ public class SetupActivity extends AppCompatActivity {
         SaveInformationbuttion = findViewById(R.id.setup_information_button);
         ProfileImage = findViewById(R.id.setup_profile_image);
         loadingBar = new ProgressDialog(this);
+        ParentOf.setVisibility(View.GONE);
+        BirthDay.setVisibility(View.GONE);
 
         SaveInformationbuttion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,6 +96,17 @@ public class SetupActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    if(dataSnapshot.hasChild("role")){
+                        role=dataSnapshot.child("role").getValue().toString();
+                        if(role.equals("Parent")){
+                            ParentOf.setVisibility(View.VISIBLE);
+                            BirthDay.setVisibility(View.VISIBLE);
+                        }
+                        else{
+                            ParentOf.setVisibility(View.GONE);
+                            BirthDay.setVisibility(View.GONE);
+                        }
+                    }
                     if(dataSnapshot.hasChild("idclass")){
                         myClass=dataSnapshot.child("idclass").getValue().toString();
                         //Toast.makeText(SetupActivity.this, "id la"+myClass, Toast.LENGTH_SHORT).show();
@@ -159,7 +172,14 @@ public class SetupActivity extends AppCompatActivity {
         final String birthday = BirthDay.getText().toString();
         final String phonenumber=PhoneNumber.getText().toString();
         final String[] classname = new String[1];
-
+        if(role.equals("Parent")){
+            if (TextUtils.isEmpty(parentof)) {
+                Toast.makeText(this, "Please write children name...", Toast.LENGTH_SHORT).show();
+            }
+            if (TextUtils.isEmpty(birthday)) {
+                Toast.makeText(this, "Please write birthday of your child...", Toast.LENGTH_SHORT).show();
+            }
+        }
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(this, "Please write your username...", Toast.LENGTH_SHORT).show();
         }
@@ -168,12 +188,6 @@ public class SetupActivity extends AppCompatActivity {
         }
         if (TextUtils.isEmpty(phonenumber)) {
             Toast.makeText(this, "Please write your phone number...", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(parentof)) {
-            Toast.makeText(this, "Please write children name...", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(birthday)) {
-            Toast.makeText(this, "Please write birthday of your child...", Toast.LENGTH_SHORT).show();
         }
         else {
             loadingBar.setTitle("Saving Information");
@@ -220,22 +234,26 @@ public class SetupActivity extends AppCompatActivity {
             userMap.put("username", username);
             userMap.put("fullname", fullname);
             userMap.put("phonenumber", phonenumber);
+
             userMap.put("userid", currentUserID);
-            userMap.put("parentof", parentof);
-            userMap.put("birthday", birthday);
-
-            final HashMap childrenMap=new HashMap();
-            childrenMap.put("parentof", parentof);
-            childrenMap.put("birthday", birthday);
-
+            if(role.equals("Parent")){
+                userMap.put("parentof", parentof);
+                userMap.put("birthday", birthday);
+            }
 
             UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                         public void onComplete(@NonNull Task task) {
                             if (task.isSuccessful()) {
-                                SendUserToMainActivity();
-                                ClassRef.child(myClass).child("Children").child(currentUserID).updateChildren(childrenMap);
+                                if(role.equals("Parent")){
+                                    final HashMap childrenMap=new HashMap();
+                                    childrenMap.put("parentof", parentof);
+                                    childrenMap.put("birthday", birthday);
+                                    ClassRef.child(myClass).child("Children").child(currentUserID).updateChildren(childrenMap);
+                                }
+
                                 Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
                                 loadingBar.dismiss();
+                                SendUserToMainActivity();
                             } else {
                                 String message = task.getException().getMessage();
                                 Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();

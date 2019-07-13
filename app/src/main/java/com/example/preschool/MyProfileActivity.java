@@ -82,18 +82,27 @@ public class MyProfileActivity extends AppCompatActivity {
                         String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                         String myUserName = dataSnapshot.child("username").getValue().toString();
                         String myProfileName = dataSnapshot.child("fullname").getValue().toString();
-                        String myBirthday = dataSnapshot.child("birthday").getValue().toString();
                         String myClass = dataSnapshot.child("classname").getValue().toString();
-                        String myParentOf = dataSnapshot.child("parentof").getValue().toString();
                         String myphoneNumber=dataSnapshot.child("phonenumber").getValue().toString();
 
+                        String role=dataSnapshot.child("role").getValue().toString();
+                        if(role.equals("Parent")){
+                            userParentof.setVisibility(View.VISIBLE);
+                            userBirthDay.setVisibility(View.VISIBLE);
+                            String myBirthday = dataSnapshot.child("birthday").getValue().toString();
+                            String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+                            userParentof.setText("Phụ huynh của bé: " + myParentOf);
+                            userBirthDay.setText("Sinh nhật: " + myBirthday);
+                        }
+                        else{
+                            userParentof.setVisibility(View.GONE);
+                            userBirthDay.setVisibility(View.GONE);
+                        }
                         Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
 
                         userName.setText(myUserName);
                         userProfName.setText(myProfileName);
-                        userBirthDay.setText("Sinh nhật: " + myBirthday);
                         userClass.setText("Lớp: " + myClass);
-                        userParentof.setText("Phụ huynh của bé: " + myParentOf);
                         userPhoneNumber.setText("Sdt: "+myphoneNumber);
 
                     }

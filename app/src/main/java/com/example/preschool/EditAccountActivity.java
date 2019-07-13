@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -129,6 +130,57 @@ public class EditAccountActivity extends AppCompatActivity {
                     className.add(classname);
                     classId.add(classid);
                 }
+                EditUserRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.hasChild("profileimage")){
+                            String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
+                            Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfImage);
+                        }
+                        if(dataSnapshot.hasChild("fullname")){
+                            String myProfileName = dataSnapshot.child("fullname").getValue().toString();
+                            userFullName.setText(myProfileName);
+                        }
+                        if(dataSnapshot.hasChild("username")){
+                            String myUserName = dataSnapshot.child("username").getValue().toString();
+                            userName.setText(myUserName);
+                        }
+                        if(dataSnapshot.hasChild("birthday")){
+                            String myDOB = dataSnapshot.child("birthday").getValue().toString();
+                            userDOB.setText(myDOB);
+                        }
+                        if(dataSnapshot.hasChild("parentof")){
+                            String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+                            userParentOf.setText(myParentOf);
+                        }
+                        editRole=dataSnapshot.child("role").getValue().toString();
+                        int vitri=0;
+                        for(int i=1;i<role.size();i++){
+                            if(role.get(i).equals(editRole)){
+                                vitri=i;
+                            }
+                        }
+                        roleSpinner.setSelection(vitri);
+                        if(dataSnapshot.hasChild("idclass")){
+                            editClass=dataSnapshot.child("idclass").getValue().toString();
+                            if(editClass.equals("")){
+                                vitri=0;
+                            }
+                            else{
+                                for(int i=1;i<classId.size();i++){
+                                    if(classId.get(i).equals(editClass)){
+                                        vitri=i;
+                                    }
+                                }
+                            }
+                            classNameSpinner.setSelection(vitri);
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -199,57 +251,7 @@ public class EditAccountActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        EditUserRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("profileimage")){
-                    String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
-                    Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfImage);
-                }
-                if(dataSnapshot.hasChild("fullname")){
-                    String myProfileName = dataSnapshot.child("fullname").getValue().toString();
-                    userFullName.setText(myProfileName);
-                }
-                if(dataSnapshot.hasChild("username")){
-                    String myUserName = dataSnapshot.child("username").getValue().toString();
-                    userName.setText(myUserName);
-                }
-                if(dataSnapshot.hasChild("birthday")){
-                    String myDOB = dataSnapshot.child("birthday").getValue().toString();
-                    userDOB.setText(myDOB);
-                }
-                if(dataSnapshot.hasChild("parentof")){
-                    String myParentOf = dataSnapshot.child("parentof").getValue().toString();
-                    userParentOf.setText(myParentOf);
-                }
-                editRole=dataSnapshot.child("role").getValue().toString();
-                int vitri=0;
-                for(int i=1;i<role.size();i++){
-                    if(role.get(i).equals(editRole)){
-                        vitri=i;
-                    }
-                }
-                roleSpinner.setSelection(vitri);
-                if(dataSnapshot.hasChild("idclass")){
-                    editClass=dataSnapshot.child("idclass").getValue().toString();
-                    if(editClass.equals("")){
-                        vitri=0;
-                    }
-                    else{
-                        for(int i=1;i<classId.size();i++){
-                            if(classId.get(i).equals(editClass)){
-                                vitri=i;
-                            }
-                        }
-                    }
-                    classNameSpinner.setSelection(vitri);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-            }
-        });
 
 
         userProfImage.setOnClickListener(new View.OnClickListener() {
@@ -390,6 +392,19 @@ public class EditAccountActivity extends AppCompatActivity {
         });
         Intent intent=new Intent(EditAccountActivity.this, ViewAccountActivity.class);
         intent.putExtra("USER_ID",getIntent().getStringExtra("USER_ID"));
+        startActivity(intent);
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onBackPressed() {
+        Intent intent=new Intent(EditAccountActivity.this, ManageUserActivity.class);
         startActivity(intent);
     }
 }
