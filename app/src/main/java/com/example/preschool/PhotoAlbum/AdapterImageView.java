@@ -21,6 +21,7 @@ public class AdapterImageView extends PagerAdapter {
     private Context context;
     private ArrayList<String> imageUrls;
 
+
     AdapterImageView(Context context, ArrayList<String> imageUrls) {
         this.context = context;
         this.imageUrls = imageUrls;

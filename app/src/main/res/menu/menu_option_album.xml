@@ -5,18 +5,18 @@
     <item
         android:id="@+id/action_rename_album"
         android:orderInCategory="100"
-        android:title="Rename album"
+        android:title="@string/reamneAlbum"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_save_on_device"
         android:orderInCategory="100"
-        android:title="Save on device"
+        android:title="@string/saveAlbum"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_delete_album"
         android:orderInCategory="100"
-        android:title="Delete album"
+        android:title="@string/deleteAlbum"
         app:showAsAction="never" />
 
 </menu>

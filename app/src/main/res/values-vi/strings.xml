@@ -64,5 +64,8 @@
     <string name="post">Đăng bài</string>
     <string name="my_profile">Thông tin tài khoản</string>
     <string name="change_class">Đổi lớp</string>
+    <string name="reamneAlbum">Đổi tên album</string>
+    <string name="saveAlbum">Lưu về máy</string>
+    <string name="deleteAlbum">Xóa album</string>
 
 </resources>

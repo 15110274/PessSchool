@@ -63,4 +63,7 @@
     <string name="post">POST</string>
     <string name="my_profile">Profile</string>
     <string name="change_class">Change Class</string>
+    <string name="reamneAlbum">Rename album</string>
+    <string name="saveAlbum">Save on device</string>
+    <string name="deleteAlbum">Delete album</string>
 </resources>
