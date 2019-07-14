@@ -188,7 +188,6 @@ public class ManageUserActivity extends AppCompatActivity {
         autoComplete.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         autoComplete.notifyDataSetChanged();
         classNameSpinner.setAdapter(autoComplete);
-
         classNameSpinner.setVisibility(View.GONE);
         classCheckBox.setVisibility(View.GONE);
         listClass.setVisibility(View.GONE);
@@ -202,7 +201,6 @@ public class ManageUserActivity extends AppCompatActivity {
                     }
                     else{
                         classCheckBox.setVisibility(View.GONE);
-
                     }
                     classNameSpinner.setVisibility(View.VISIBLE);
                     if(classChoose!=0)

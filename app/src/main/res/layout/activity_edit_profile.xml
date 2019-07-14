@@ -50,6 +50,7 @@
         android:textColor="@android:color/background_dark" />
 
     <TextView
+        android:id="@+id/textviewBirthday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@android:color/darker_gray"
@@ -66,11 +67,12 @@
         />
 
     <TextView
+        android:id="@+id/textviewChildren"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:textColor="@android:color/darker_gray"
-        android:text="Phụ huy của bé"/>
+        android:text="Phụ huynh của bé"/>
 
 
     <EditText

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,7 +45,8 @@ public class EditProfileActivity extends AppCompatActivity {
     final static int Gallery_Pick = 1;
     private StorageReference UserProfileImageRef;
     private Uri resultUri;
-    String myClass;
+    String myClass,role;
+    private TextView txtChildren,txtBirthday;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,8 @@ public class EditProfileActivity extends AppCompatActivity {
         userParentOf=findViewById(R.id.edit_parentof);
         userPhoneNumber=findViewById(R.id.edit_phonenumber);
         UpdateAccountSettingButton=findViewById(R.id.update_account_settings_button);
+        txtBirthday=findViewById(R.id.textviewBirthday);
+        txtChildren=findViewById(R.id.textviewChildren);
         loadingBar=new ProgressDialog(this);
 
         EditUserRef.addValueEventListener(new ValueEventListener() {
@@ -72,6 +76,21 @@ public class EditProfileActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.hasChild("idclass")){
                     myClass = dataSnapshot.child("idclass").getValue().toString();
+                }
+                if(dataSnapshot.hasChild("role")){
+                    role = dataSnapshot.child("role").getValue().toString();
+                    if(role.equals("Parent")){
+                        userParentOf.setVisibility(View.VISIBLE);
+                        userDOB.setVisibility(View.VISIBLE);
+                        txtBirthday.setVisibility(View.VISIBLE);
+                        txtChildren.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        userParentOf.setVisibility(View.GONE);
+                        userDOB.setVisibility(View.GONE);
+                        txtBirthday.setVisibility(View.GONE);
+                        txtChildren.setVisibility(View.GONE);
+                    }
                 }
                 if(dataSnapshot.hasChild("profileimage")){
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
@@ -149,8 +168,13 @@ public class EditProfileActivity extends AppCompatActivity {
     private void ValidateAccountInfo() {
         String username=userName.getText().toString();
         String userfullname=userFullName.getText().toString();
-        String userdob=userDOB.getText().toString();
-        String userparentof=userParentOf.getText().toString();
+        String userdob="";
+        String userparentof="";
+        if(role.equals("Parent")){
+           userdob=userDOB.getText().toString();
+            userparentof=userParentOf.getText().toString();
+        }
+
         String userphonenumber=userPhoneNumber.getText().toString();
         loadingBar.setTitle("Profile Update");
         loadingBar.setMessage("Please wait, while we updating your profile...");
@@ -196,18 +220,21 @@ public class EditProfileActivity extends AppCompatActivity {
         HashMap userMap=new HashMap();
         userMap.put("username",username);
         userMap.put("fullname",userfullname);
-        userMap.put("birthday",userdob);
-        userMap.put("parentof",userparentof);
+        if(role.equals("Parent")){
+            userMap.put("birthday",userdob);
+            userMap.put("parentof",userparentof);
+        }
         userMap.put("phonenumber",userphonenumber);
-
-        final HashMap childrenMap=new HashMap();
-        childrenMap.put("birthday",userdob);
-        childrenMap.put("parentof",userparentof);
         EditUserRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
                 if(task.isSuccessful()){
-                    ClassRef.child(myClass).child("Children").child(currentUserId).updateChildren(childrenMap);
+                    if(role.equals("Parent")){
+                        final HashMap childrenMap=new HashMap();
+                        childrenMap.put("birthday",userdob);
+                        childrenMap.put("parentof",userparentof);
+                        ClassRef.child(myClass).child("Children").child(currentUserId).updateChildren(childrenMap);
+                    }
                     Toast.makeText(EditProfileActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
                     finish();
                 }

@@ -136,8 +136,6 @@ public class MessageActivity extends AppCompatActivity {
                     sendMessage(current_user_id, idReciver, msg);
                     setChatList(current_user_id, idReciver);
 
-                } else {
-                    Toast.makeText(MessageActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
                 }
                 text_send.setText("");
             }

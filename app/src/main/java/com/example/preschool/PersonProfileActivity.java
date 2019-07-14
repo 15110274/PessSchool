@@ -76,23 +76,35 @@ public class PersonProfileActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     try {
+                        String role=dataSnapshot.child("role").getValue().toString();
                         String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                         String myUserName = dataSnapshot.child("username").getValue().toString();
                         String myProfileName = dataSnapshot.child("fullname").getValue().toString();
 
                         String myClass = dataSnapshot.child("classname").getValue().toString();
-                        String myParentOf = dataSnapshot.child("parentof").getValue().toString();
-                        String myBirthday = dataSnapshot.child("birthday").getValue().toString();
                         String myphoneNumber=dataSnapshot.child("phonenumber").getValue().toString();
+
 
                         Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
 
                         userName.setText(myUserName);
                         userProfName.setText(myProfileName);
-                        userBirthDay.setText("Sinh nhật: " + myBirthday);
+                        if(role.equals("Parent")){
+                            userParentof.setVisibility(View.VISIBLE);
+                            userBirthDay.setVisibility(View.VISIBLE);
+                            String myBirthday = dataSnapshot.child("birthday").getValue().toString();
+                            userBirthDay.setText("Sinh nhật: " + myBirthday);
+                            String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+                            userParentof.setText("Phụ huynh của bé: " + myParentOf);
+                        }
+                        else{
+                            userParentof.setVisibility(View.GONE);
+                            userBirthDay.setVisibility(View.GONE);
+                        }
                         userClass.setText("Lớp: " + myClass);
-                        userParentof.setText("Phụ huynh của bé: " + myParentOf);
                         userPhoneNumber.setText("Sdt: "+myphoneNumber);
+
+
                     }catch (Exception e){
 
                     }
