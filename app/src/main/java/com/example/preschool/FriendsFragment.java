@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,113 +131,120 @@ public class FriendsFragment extends Fragment {
     }
 
     private void showAllFriend() {
-        Query showAllFriendsQuery = UsersRef.orderByChild("idclass").equalTo(idClass);
+        Query showAllFriendsQuery = UsersRef;
         FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>().
                 setQuery(showAllFriendsQuery, User.class).build();
         adapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @Override
-            protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, final int i, @NonNull final User user) {
+            protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, int i, @NonNull final User user) {
                 try {
-                    if (user.getUserid().equals(idTeacher)) {
-                        friendsViewHolder.isTeacher.setVisibility(View.VISIBLE);
-                        friendsViewHolder.kid_name.setVisibility(View.GONE);
-                    } else {
-                        UsersRef.child(user.getUserid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    boolean view=false;
+                    if (user.getRole().equals("Teacher")) {
+                        if (user.getUserid().equals(idTeacher) && user.getIdclass().equals(idClass)) {
+                            friendsViewHolder.isTeacher.setVisibility(View.VISIBLE);
+                            friendsViewHolder.kid_name.setVisibility(View.GONE);
+                            view =true;
+                        }
+                    }
+                    if (user.getRole().equals("Parent")) {
+                        ArrayList<String> temp = user.getMyclass();
+                        for (String node : temp) {
+                            if (node.equals(idClass)) {
+                                UsersRef.child(user.getUserid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        try {
+                                            friendsViewHolder.kid_name
+                                                    .setText("Bé " + dataSnapshot.child("mychildren")
+                                                            .child(idClass)
+                                                            .child("name")
+                                                            .getValue(String.class));
+                                        } catch (Exception e) {
+                                            friendsViewHolder.kid_name
+                                                    .setText("");
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                                view=true;
+                                break;
+                            }
+                        }
+
+                    }
+                    if(view==true){
+                        if(user.getProfileimage()!=null){
+                            friendsViewHolder.setProfileImage(user.getProfileimage());
+                        }
+                        if(user.getFullname()!=null){
+                            friendsViewHolder.user_name.setText(user.getFullname());
+                        }
+                        UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 try {
-                                    friendsViewHolder.kid_name
-                                            .setText("Bé " + dataSnapshot.child("mychildren")
-                                                    .child(idClass)
-                                                    .child("name")
-                                                    .getValue(String.class));
+                                    if (dataSnapshot.child("type").getValue().toString().equals("online")) {
+                                        friendsViewHolder.online.setVisibility(View.VISIBLE);
+                                    } else {
+                                        friendsViewHolder.online.setVisibility(View.GONE);
+                                    }
                                 } catch (Exception e) {
-                                    friendsViewHolder.kid_name
-                                            .setText("");
 
                                 }
-                            }
 
+                            }
                             @Override
                             public void onCancelled(@NonNull DatabaseError databaseError) {
 
                             }
                         });
-//                        friendsViewHolder.kid_name.setText("Bé " + user.getParentof());
-                    }
-                    friendsViewHolder.user_name.setText(user.getFullname());
-
-                    friendsViewHolder.setProfileImage(user.getProfileimage());
-                    // Online/Offline
-                    UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            try {
-                                if (dataSnapshot.child("type").getValue().toString().equals("online")) {
-                                    friendsViewHolder.online.setVisibility(View.VISIBLE);
-                                } else {
-                                    friendsViewHolder.online.setVisibility(View.GONE);
-                                }
-                            } catch (Exception e) {
-
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-//                    if (user.getUserState().getType().equals("online")) {
-//                        friendsViewHolder.online.setVisibility(View.VISIBLE);
-//                    } else {
-//                        friendsViewHolder.online.setVisibility(View.GONE);
-//                    }
-                    final String visit_user_id = getRef(i).getKey();
-                    friendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-
-                            CharSequence options[] = new CharSequence[]{
-                                    "Thông tin của " + user.getUsername(),
-                                    "Gửi tin nhắn"
-                            };
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                            builder.setTitle("Select Option");
-
-                            builder.setItems(options, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (which == 0) {
-                                        Intent profileIntent = new Intent(getContext(), PersonProfileActivity.class);
-                                        bundle.putString("VISIT_USER_ID", visit_user_id);
-                                        profileIntent.putExtras(bundle);
-                                        startActivity(profileIntent);
-                                    }
-                                    if (which == 1) {
-                                        if (visit_user_id.equals(current_user_id)) {
-                                            Toast.makeText(getContext(), "Không thể nhắn tin cho chính bạn", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Intent chatintent = new Intent(getActivity(), MessageActivity.class);
+                        final String visit_user_id = getRef(i).getKey();
+                        friendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                CharSequence options[] = new CharSequence[]{
+                                        "Thông tin của " + user.getUsername(),
+                                        "Gửi tin nhắn"
+                                };
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setItems(options, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (which == 0) {
+                                            Intent profileIntent = new Intent(getContext(), PersonProfileActivity.class);
                                             bundle.putString("VISIT_USER_ID", visit_user_id);
-                                            chatintent.putExtras(bundle);
-                                            startActivity(chatintent);
+                                            profileIntent.putExtras(bundle);
+                                            startActivity(profileIntent);
+                                        }
+                                        if (which == 1) {
+                                            if (visit_user_id.equals(current_user_id)) {
+                                                Toast.makeText(getContext(), "Không thể nhắn tin cho chính bạn", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Intent chatintent = new Intent(getActivity(), MessageActivity.class);
+                                                bundle.putString("VISIT_USER_ID", visit_user_id);
+                                                chatintent.putExtras(bundle);
+                                                startActivity(chatintent);
+                                            }
                                         }
                                     }
-                                }
-                            });
-                            builder.show();
-                        }
-                    });
-                } catch (Exception e) {
-                    friendsViewHolder.user_name.setText("Phụ huynh chưa đăng nhập");
+                                });
+                                builder.show();
+                            }
+                        });
+                    }
+                    else{
+                        friendsViewHolder.Layout_hide();
+                    }
+
+            } catch (Exception e) {
+                    friendsViewHolder.user_name.setText("Phụ huynh chưa đăng nhập");
                     friendsViewHolder.online.setVisibility(View.GONE);
                 }
-
             }
-
             @NonNull
             @Override
             public FriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -250,89 +259,11 @@ public class FriendsFragment extends Fragment {
     }
 
 
-//    private void DisplayAllFriends() {
-//        FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>().
-//                setQuery(FriendsRef, User.class).build();
-//        FirebaseRecyclerAdapter<User, FriendsViewHolder> adapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
-//            @Override
-//            protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, int position, @NonNull User model) {
-//                idFriend = getRef(position).getKey();
-//                UsersListener =UsersRef.child(idFriend).addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot.exists()) {
-//                            final String userName = dataSnapshot.child("fullname").getValue().toString();
-//                            final String profileImage = dataSnapshot.child("profileimage").getValue().toString();
-//                            final String type;
-//
-//                            if (dataSnapshot.hasChild("userState")) {
-//                                type = dataSnapshot.child("userState").child("type").getValue().toString();
-//
-//                                if (type.equals("online")) {
-//                                    friendsViewHolder.online.setVisibility(View.VISIBLE);
-//                                } else {
-//                                    friendsViewHolder.online.setVisibility(View.GONE);
-//                                }
-//                            }
-//
-//                            friendsViewHolder.setFullname(userName);
-//                            friendsViewHolder.setProfileImage(profileImage);
-//                            friendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    CharSequence options[] = new CharSequence[]{
-//                                            userName + "'s Profile",
-//                                            "Send Message"
-//                                    };
-//                                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                                    builder.setTitle("Select Option");
-//
-//                                    builder.setItems(options, new DialogInterface.OnClickListener() {
-//                                        @Override
-//                                        public void onClick(DialogInterface dialog, int which) {
-//                                            if (which == 0) {
-////                                                Intent profileintent=new Intent(getActivity(),PersonProfileActivity.class);
-////                                                profileintent.putExtra("visit_user_id",usersIDs);
-////                                                profileintent.putExtra("idTeacher",idTeacher);
-////                                                profileintent.putExtra("idClass",idClass);
-////                                                startActivity(profileintent);
-//                                            }
-//                                            if (which == 1) {
-//                                                Intent chatintent = new Intent(getActivity(), MessageActivity.class);
-//                                                bundle.putString("ID_RECIVER",idFriend);
-//                                                chatintent.putExtras(bundle);
-//                                                startActivity(chatintent);
-//                                            }
-//                                        }
-//                                    });
-//                                    builder.show();
-//                                }
-//                            });
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                    }
-//                });
-////
-//            }
-//
-//            @NonNull
-//            @Override
-//            public FriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-//                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_friend_display_layout, parent, false);
-//
-//                FriendsViewHolder viewHolder = new FriendsViewHolder(view);
-//                return viewHolder;
-//            }
-//        };
-//        myFriendList.setAdapter(adapter);
-//        adapter.startListening();
-//    }
-
     public static class FriendsViewHolder extends RecyclerView.ViewHolder {
+
+        private final androidx.constraintlayout.widget.ConstraintLayout friendlayout;
+        final androidx.constraintlayout.widget.ConstraintLayout.LayoutParams params;
+
         private TextView isTeacher;
         private ImageView user_image;
         private TextView user_name;
@@ -341,15 +272,27 @@ public class FriendsFragment extends Fragment {
 
         public FriendsViewHolder(View itemView) {
             super(itemView);
-            user_image = itemView.findViewById(R.id.all_users_profile_image);
-            user_name = itemView.findViewById(R.id.all_users_profile_full_name);
-            online = itemView.findViewById(R.id.online);
-            kid_name = itemView.findViewById(R.id.all_users_profile_kid_name);
-            isTeacher = itemView.findViewById(R.id.isTeacher);
+            friendlayout = itemView.findViewById(R.id.all_user_find_friend);
+            params = new androidx.constraintlayout.widget.ConstraintLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+
+
+            user_image = friendlayout.findViewById(R.id.all_users_profile_image);
+            user_name = friendlayout.findViewById(R.id.all_users_profile_full_name);
+            online = friendlayout.findViewById(R.id.online);
+            kid_name = friendlayout.findViewById(R.id.all_users_profile_kid_name);
+            isTeacher = friendlayout.findViewById(R.id.isTeacher);
         }
 
         public void setProfileImage(String profileimage) {
             Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).resize(100, 0).into(user_image);
+
+        }
+
+        private void Layout_hide() {
+            params.height = 0;
+            //itemView.setLayoutParams(params); //This One.
+            friendlayout.setLayoutParams(params);   //Or This one.
 
         }
 

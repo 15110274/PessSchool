@@ -295,6 +295,7 @@ public class ManageUserActivity extends AppCompatActivity {
                     loadingBar.setCanceledOnTouchOutside(true);
                     loadingBar.dismiss();
                     final String mail = mAuth.getCurrentUser().getEmail();
+                    final int finalTemp = temp;
                     mAuth.createUserWithEmailAndPassword(email, password)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
@@ -307,22 +308,30 @@ public class ManageUserActivity extends AppCompatActivity {
                                         userMap.put("email", email);
                                         userMap.put("role", role.get(roleChoose));
                                         if (roleChoose == 1 || roleChoose == 2) {
-                                            if (roleChoose == 1 && classCheckBox.isChecked() == true) {
-                                                for (int i = 0; i < checkList.size(); i++) {
-                                                    if (checkList.get(i).equals("1")) {
-                                                        userMap.put("classname", className.get(i));
-                                                        userMap.put("idclass", classId.get(i));
-                                                        break;
+                                            if (roleChoose == 1) {
+                                                if( classCheckBox.isChecked() == true){
+                                                    for (int i = 0; i < checkList.size(); i++) {
+                                                        if (checkList.get(i).equals("1")) {
+                                                            userMap.put("classname", className.get(i));
+                                                            userMap.put("idclass", classId.get(i));
+                                                            break;
+                                                        }
                                                     }
-                                                }
-                                                ArrayList<String> temp = new ArrayList<>();
-                                                for (int i = 0; i < checkList.size(); i++) {
-                                                    if (checkList.get(i).equals("1")) {
-                                                        temp.add(classId.get(i));
+                                                    ArrayList<String> temp = new ArrayList<>();
+                                                    for (int i = 0; i < checkList.size(); i++) {
+                                                        if (checkList.get(i).equals("1")) {
+                                                            temp.add(classId.get(i));
+                                                        }
                                                     }
+                                                    userMap.put("myclass", temp);
                                                 }
-                                                userMap.put("myclass", temp);
-
+                                                else{
+                                                    userMap.put("classname", className.get(classChoose));
+                                                    userMap.put("idclass", classId.get(classChoose));
+                                                    ArrayList<String> temp = new ArrayList<>();
+                                                    temp.add(classId.get(classChoose));
+                                                    userMap.put("myclass", temp);
+                                                }
                                             } else {
                                                 userMap.put("classname", className.get(classChoose));
                                                 userMap.put("idclass", classId.get(classChoose));
@@ -333,21 +342,6 @@ public class ManageUserActivity extends AppCompatActivity {
                                             public void onComplete(@NonNull Task task) {
                                                 if (task.isSuccessful()) {
                                                     if (roleChoose == 2) {
-//                                                        ClassRef.child(classId.get(classChoose)).addValueEventListener(new ValueEventListener() {
-//                                                            @Override
-//                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                                                if(dataSnapshot.child("teacher").getValue().toString()!=""){
-//                                                                    String teacher=dataSnapshot.child("teacher").getValue().toString();
-//                                                                    UsersRef.child(teacher).child("idclass").setValue("");
-//                                                                    UsersRef.child(teacher).child("classname").setValue("");
-//                                                                }
-//                                                            }
-//
-//                                                            @Override
-//                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                                            }
-//                                                        });
                                                         ClassRef.child(classId.get(classChoose)).child("teacher").setValue(userIdJustAdd);
                                                     }
                                                     Toast.makeText(ManageUserActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
@@ -395,26 +389,6 @@ public class ManageUserActivity extends AppCompatActivity {
                                                                             if (task.isSuccessful()) {
                                                                                 final String key = children.getKey();
                                                                                 if (roleChoose == 2) {
-//                                                                                    updateClass=ClassRef.child(classId.get(classChoose)).addValueEventListener(new ValueEventListener() {
-//                                                                                        @Override
-//                                                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                                                                            if(dataSnapshot.exists()){
-//                                                                                                if(dataSnapshot.child("teacher").getValue().toString()!=""){
-//                                                                                                    String teacher=dataSnapshot.child("teacher").getValue().toString();
-//                                                                                                    if(teacher!=null){
-//                                                                                                        UsersRef.child(teacher).child("idclass").setValue("");
-//                                                                                                        UsersRef.child(teacher).child("classname").setValue("");
-//                                                                                                    }
-//                                                                                                }
-//                                                                                            }
-//
-//                                                                                        }
-//
-//                                                                                        @Override
-//                                                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                                                                        }
-//                                                                                    });
                                                                                     ClassRef.child(classId.get(classChoose)).child("teacher").setValue(key);
                                                                                 }
                                                                                 //recreate();

@@ -1,9 +1,19 @@
 package com.example.preschool;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class User implements Serializable {
     public String fullname,username,idclass,classname,birthday,parentof,profileimage,userid,email,role,deleted;
+    public ArrayList<String> myclass;
+
+    public ArrayList<String> getMyclass() {
+        return myclass;
+    }
+
+    public void setMyclass(ArrayList<String> myclass) {
+        this.myclass = myclass;
+    }
 
     public String getDeleted() {
         return deleted;
