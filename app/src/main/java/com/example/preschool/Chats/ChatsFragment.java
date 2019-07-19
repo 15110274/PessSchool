@@ -2,6 +2,7 @@ package com.example.preschool.Chats;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import com.example.preschool.Chats.Model.Chat;
 import com.example.preschool.Chats.Model.ChatList;
 import com.example.preschool.Notifications.Token;
 import com.example.preschool.R;
+import com.example.preschool.ReturnMinute;
 import com.example.preschool.User;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -161,6 +163,13 @@ public class ChatsFragment extends Fragment {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 for(DataSnapshot child: dataSnapshot.getChildren()){
+
+                                    //set thoi gian lan cuoi nhan tin
+                                    try{
+                                        setLastTimeChat(child.child("time").getValue(String.class),chatListViewHolder.time);
+                                    }catch (Exception e){
+
+                                    }
                                     chatListViewHolder.last_msg.setText(child.child("message").getValue().toString());
                                     if(child.child("sender").getValue().toString().equals(current_user_id)){
                                         chatListViewHolder.sender.setVisibility(View.VISIBLE);
@@ -203,12 +212,31 @@ public class ChatsFragment extends Fragment {
 
     }
 
+    private void setLastTimeChat(String lastTimeChat,TextView time){
+        Calendar calFordTime = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        String nowTime = currentTime.format(calFordTime.getTime());
+        ReturnMinute returnMinute = new ReturnMinute();
+        long a = returnMinute.getMinute(lastTimeChat, nowTime);
+        if (a <= 60) {
+            time.setText((String.valueOf(a) + " phút"));
+        } else {
+            if (a > 1440) time.setText((String.valueOf(a / 1440) + " ngày"));
+            else time.setText((String.valueOf(a / 60) + " giờ"));
+        }
+
+    }
 
     private void setTextLastMess(String theLastMessage, TextView last_msg, Boolean seen) {
 
         if (seen) {
             last_msg.setTextColor(Color.parseColor("#A9A9A9"));
-        } else last_msg.setTextColor(Color.parseColor("#ffa000"));
+            last_msg.setTypeface(Typeface.create(last_msg.getTypeface(), Typeface.NORMAL));
+
+        } else {
+            last_msg.setTextColor(getResources().getColor(android.R.color.black));
+            last_msg.setTypeface(null, Typeface.BOLD);
+        }
         try {// Có  dấu Enter
             if (theLastMessage.indexOf("\n") < 20)
                 last_msg.setText(theLastMessage.substring(0, theLastMessage.indexOf("\n")) + "...");

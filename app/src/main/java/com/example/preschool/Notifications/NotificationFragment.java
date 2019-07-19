@@ -1,4 +1,4 @@
-package com.example.preschool.Notification;
+package com.example.preschool.Notifications;
 
 import android.content.Intent;
 import android.os.Bundle;

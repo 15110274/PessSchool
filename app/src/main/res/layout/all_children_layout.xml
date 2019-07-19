@@ -11,10 +11,11 @@
             android:id="@+id/txtChildrenFullname"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:paddingStart="20dp"
             android:layout_weight="2.5"
             android:text="Null"
             android:textSize="18dp"
-            android:textAlignment="center"/>
+            android:textAlignment="textStart"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

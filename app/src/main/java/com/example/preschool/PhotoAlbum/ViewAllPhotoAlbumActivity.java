@@ -1,5 +1,6 @@
 package com.example.preschool.PhotoAlbum;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -48,6 +49,7 @@ public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
     private boolean isTeacher;
 
     private String idClass, current_user_id, idTeacher, positionAlbum;
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +100,12 @@ public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
             }
         });
 
+        // button add photo
         fab = findViewById(R.id.fab);
+        fab.setVisibility(View.INVISIBLE);
+        if(isTeacher){
+            fab.setVisibility(View.VISIBLE);
+        }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,6 +139,7 @@ public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
                 }else Toast.makeText(ViewAllPhotoAlbumActivity.this,"Bạn không phải là giảo viên",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_save_on_device:
+                Toast.makeText(ViewAllPhotoAlbumActivity.this,"Tính năng chưa hoàn thiện",Toast.LENGTH_SHORT).show();
 //                saveOnDevice();
                 break;
             case R.id.action_delete_album:

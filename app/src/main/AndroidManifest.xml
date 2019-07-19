@@ -18,16 +18,16 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".EditPostActivity"
             android:theme="@style/AppTheme"/>
-        <activity android:name=".EditClassActivity" />
-        <activity android:name=".ViewClassActivity" />
+        <activity android:name=".Admin.EditClassActivity" />
+        <activity android:name=".Admin.ViewClassActivity" />
         <activity
             android:name=".MyProfileActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".EditAccountActivity"
+            android:name=".Admin.EditAccountActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ViewAccountActivity"
+            android:name=".Admin.ViewAccountActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".PhotoAlbum.ViewAllPhotoAlbumActivity"
@@ -39,16 +39,16 @@
             android:name=".Menu.MenuActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ManageUserActivity"
+            android:name=".Admin.ManageUserActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".ManageClassActivity"
+            android:name=".Admin.ManageClassActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Chats.MessageActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".AdminActivity"
+            android:name=".Admin.AdminActivity"
             android:theme="@style/AppTheme" />
         <activity
             android:name=".StartActivity"
@@ -94,10 +94,6 @@
             android:name=".PersonProfileActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".FindFriendsActivity"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".ChatActivity" />
-        <activity
             android:name=".CommentsActivity"
             android:theme="@style/AppTheme" />
         <activity
@@ -110,29 +106,20 @@
             android:name=".ChangeClassActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".StudentActivity"
+            android:name=".Children.StudentActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".HelpActivity"
+            android:name=".Help.HelpActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".Parent.AlbumActivity" />
         <activity
             android:name=".Setting.SettingActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name=".Parent.HocPhiActivity"
-            android:theme="@style/AppThemeActionbar" />
-        <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme" />
-        <activity android:name=".RegisterDemoActivity" />
         <activity
             android:name=".LoginActivity"
             android:theme="@style/AppTheme" />
-        <activity
-            android:name=".Parent.ProfileParentActivity"
-            android:theme="@style/AppTheme" />
-        <activity android:name=".Teacher.ProfileTeacherActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" /> <!-- Nhận thông báo -->

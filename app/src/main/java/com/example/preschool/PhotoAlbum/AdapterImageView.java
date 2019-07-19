@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 
 import com.example.preschool.R;
 import com.squareup.picasso.Picasso;
@@ -26,6 +27,7 @@ public class AdapterImageView extends PagerAdapter {
         this.context = context;
         this.imageUrls = imageUrls;
     }
+
     @Override
     public int getCount() {
         return imageUrls.size();
@@ -39,16 +41,30 @@ public class AdapterImageView extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        ImageView imageView = new ImageView(context);
+        View view = LayoutInflater.from(context).inflate(R.layout.view_image_progress_bar, container, false);
+        ImageView imageView = view.findViewById(R.id.imageView);
+        final ProgressBar progressBar=view.findViewById(R.id.progress_bar);
         Picasso.get()
                 .load(imageUrls.get(position))
-                .resize(2000,0)
+                .resize(2000, 0)
                 .onlyScaleDown()
                 .centerCrop()
-                .into(imageView);
-        container.addView(imageView);
+                .into(imageView,new com.squareup.picasso.Callback() {
+                    @Override
+                    public void onSuccess() {
+                        //Success image already loaded into the view
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
 
-        return imageView;
+                    @Override
+                    public void onError(Exception e) {
+
+                    }
+
+                });
+        container.addView(view);
+
+        return view;
     }
 
     @Override

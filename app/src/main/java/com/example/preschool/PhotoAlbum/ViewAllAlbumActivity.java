@@ -104,6 +104,7 @@ public class ViewAllAlbumActivity extends AppCompatActivity {
             protected void onBindViewHolder(ViewAllAlbumActivity.ItemViewHolder holder, final int position, final Album album) {
                 holder.setTitle(album.getName());
                 holder.setImage(album.getImageUrlList().get(0));
+                holder.setDateAlbum(album.getDate());
                 holder.setSoLuongAnh(String.valueOf(album.getImageUrlList().size()));
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -162,6 +163,10 @@ public class ViewAllAlbumActivity extends AppCompatActivity {
         public void setSoLuongAnh(String soLuongAnh){
             TextView soAnh = mView.findViewById(R.id.so_anh);
             soAnh.setText(soLuongAnh+" ảnh");
+        }
+        public void setDateAlbum(String dateAlbum){
+            TextView date = mView.findViewById(R.id.date_album);
+            date.setText(dateAlbum);
         }
     }
 }

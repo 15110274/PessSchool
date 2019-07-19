@@ -1,7 +1,6 @@
 package com.example.preschool.TimeTable;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -10,11 +9,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -28,10 +24,7 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.preschool.EditAccountActivity;
-import com.example.preschool.ManageUserActivity;
 import com.example.preschool.R;
-import com.example.preschool.ViewAccountActivity;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.github.jhonnyx2012.horizontalpicker.DatePickerListener;
@@ -49,8 +42,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.joda.time.DateTime;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 

@@ -37,7 +37,7 @@ public class DonNghiPhepActivity extends AppCompatActivity {
     private EditText soNgayNghi;
     private EditText lyDo;
     private Button btnGui;
-    private DatabaseReference DonXinPhepRef, UserRef;
+    private DatabaseReference DonXinPhepRef, UserRef, ChildrenRef;
     private DatePickerDialog.OnDateSetListener mDatePickerDialog;
     private String userId;
     private String mParentName, idClass;
@@ -65,12 +65,12 @@ public class DonNghiPhepActivity extends AppCompatActivity {
         DonXinPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("DonNghiPhep");
 
 
+        // get parent name
         UserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         UserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 mParentName = dataSnapshot.child("fullname").getValue(String.class);
-                mKidName = dataSnapshot.child("parentof").getValue(String.class);
             }
 
             @Override
@@ -78,6 +78,20 @@ public class DonNghiPhepActivity extends AppCompatActivity {
 
             }
         });
+        // get children name
+        ChildrenRef=FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("mychildren").child(idClass);
+        ChildrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                mKidName=dataSnapshot.child("name").getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
 
         mDatePickerDialog = new DatePickerDialog.OnDateSetListener() {

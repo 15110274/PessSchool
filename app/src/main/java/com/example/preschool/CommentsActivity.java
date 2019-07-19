@@ -44,7 +44,7 @@ public class CommentsActivity extends AppCompatActivity {
     private RecyclerView CommentsList;
     private ImageButton PostCommentButton;
     private EditText CommentInputText;
-    private DatabaseReference UsersRef, PostsRef, LikesRef;
+    private DatabaseReference UsersRef, PostsRef,LikesRef;
     private ValueEventListener commentListener;
     private ImageView PostImage;
     private TextView PostDescription, PostName;
@@ -126,7 +126,7 @@ public class CommentsActivity extends AppCompatActivity {
 
 
         clickPostRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts").child(Post_Key);
-        LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
+        LikesRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts").child(Post_Key).child("Likes");
 
         CommentsList = findViewById(R.id.comments_list);
         CommentsList.setHasFixedSize(false);
@@ -230,11 +230,11 @@ public class CommentsActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     if (LikeChecker.equals(true)) {
-                                        if (dataSnapshot.child(Post_Key).hasChild(current_user_id)) {
-                                            LikesRef.child(Post_Key).child(current_user_id).removeValue();
+                                        if (dataSnapshot.hasChild(current_user_id)) {
+                                            LikesRef.child(current_user_id).removeValue();
                                             LikeChecker = false;
                                         } else {
-                                            LikesRef.child(Post_Key).child(current_user_id).setValue(true);
+                                            LikesRef.child(current_user_id).setValue(true);
                                             LikeChecker = false;
                                         }
                                     }
@@ -286,13 +286,13 @@ public class CommentsActivity extends AppCompatActivity {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.child(PostKey).hasChild(current_user_id)) {
-                    countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+                if (dataSnapshot.hasChild(current_user_id)) {
+                    countLikes = (int) dataSnapshot.getChildrenCount();
                     LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp, 0, 0, 0);
                     DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                     LikeButton.setTextColor(Color.parseColor("#FF5722"));
                 } else {
-                    countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+                    countLikes = (int) dataSnapshot.getChildrenCount();
                     LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp, 0, 0, 0);
                     DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                     LikeButton.setTextColor(Color.parseColor("#959292"));

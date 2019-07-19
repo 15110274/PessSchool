@@ -1,15 +1,15 @@
-package com.example.preschool;
+package com.example.preschool.Help;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
+
+import com.example.preschool.R;
 
 public class HelpActivity extends AppCompatActivity {
 
@@ -24,7 +24,7 @@ public class HelpActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Tạo album mới");
+        getSupportActionBar().setTitle(R.string.help);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,9 +37,6 @@ public class HelpActivity extends AppCompatActivity {
         bundle=getIntent().getExtras();
         idClass=bundle.getString("ID_CLASS");
         idTeacher=bundle.getString("ID_TEACHER");
-
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.help);
 
         expandableTextView = findViewById(R.id.eTv);
         FragHelp adapter = new FragHelp(HelpActivity.this);

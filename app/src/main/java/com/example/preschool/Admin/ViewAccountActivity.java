@@ -1,4 +1,4 @@
-package com.example.preschool;
+package com.example.preschool.Admin;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.preschool.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,7 +22,7 @@ import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ViewAccountActivity extends AppCompatActivity {
-    private TextView userPhone,userName, userProfName,userClass,userParentof,userBirthDay,userRole,userEmail;
+    private TextView userPhone, userName, userProfName, userClass, userParentof, userBirthDay, userRole, userEmail;
     private CircleImageView userProfileImage;
 
     private Button EditButton;
@@ -34,69 +35,60 @@ public class ViewAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_account);
-        mAuth=FirebaseAuth.getInstance();
-        UsersRef= FirebaseDatabase.getInstance().getReference().child("Users");
-        userProfileImage=findViewById(R.id.person_profile_pic);
-        userName=findViewById(R.id.person_username);
-        userEmail=findViewById(R.id.email);
-        userProfName=findViewById(R.id.person_full_name);
-        userParentof=findViewById(R.id.relationship_with_children);
-        userBirthDay=findViewById(R.id.person_birthday);
-        userClass=findViewById(R.id.person_class);
-        userRole=findViewById(R.id.role);
-        userPhone=findViewById(R.id.phonenumber);
-        EditButton=findViewById(R.id.edit_account);
+        mAuth = FirebaseAuth.getInstance();
+        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        userProfileImage = findViewById(R.id.person_profile_pic);
+        userName = findViewById(R.id.person_username);
+        userEmail = findViewById(R.id.email);
+        userProfName = findViewById(R.id.person_full_name);
+        userParentof = findViewById(R.id.relationship_with_children);
+        userBirthDay = findViewById(R.id.person_birthday);
+        userClass = findViewById(R.id.person_class);
+        userRole = findViewById(R.id.role);
+        userPhone = findViewById(R.id.phonenumber);
+        EditButton = findViewById(R.id.edit_account);
         UsersRef.child(getIntent().getStringExtra("USER_ID")).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("role")){
-                    String myRole=dataSnapshot.child("role").getValue().toString();
-                    if(myRole.equals("Admin")){
+                if (dataSnapshot.hasChild("role")) {
+                    String myRole = dataSnapshot.child("role").getValue().toString();
+                    if (myRole.equals("Admin")) {
                         userClass.setVisibility(View.GONE);
                         userParentof.setVisibility(View.GONE);
                         userBirthDay.setVisibility(View.GONE);
-                    }
-                    else{
+                    } else {
                         String myClass = dataSnapshot.child("classname").getValue().toString();
                         userClass.setText("Lớp: " + myClass);
                     }
-                    if(myRole.equals("Teacher")){
+                    if (myRole.equals("Teacher")) {
                         userClass.setVisibility(View.VISIBLE);
                         userParentof.setVisibility(View.GONE);
                         userBirthDay.setVisibility(View.GONE);
                     }
-                    if(myRole.equals("Parent")){
+                    if (myRole.equals("Parent")) {
                         userClass.setVisibility(View.VISIBLE);
                         userParentof.setVisibility(View.VISIBLE);
                         userBirthDay.setVisibility(View.VISIBLE);
                     }
-                    userRole.setText("Role: "+myRole);
+                    userRole.setText("Role: " + myRole);
                 }
-                String myEmail=dataSnapshot.child("email").getValue().toString();
-                userEmail.setText("Email: "+myEmail);
-                if(dataSnapshot.hasChild("profileimage")){
+                String myEmail = dataSnapshot.child("email").getValue().toString();
+                userEmail.setText("Email: " + myEmail);
+                if (dataSnapshot.hasChild("profileimage")) {
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                     Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
                 }
-                if(dataSnapshot.hasChild("phonenumber")){
+                if (dataSnapshot.hasChild("phonenumber")) {
                     String phone = dataSnapshot.child("phonenumber").getValue().toString();
-                    userPhone.setText("Sdt: "+phone);
+                    userPhone.setText("Sdt: " + phone);
                 }
-                if(dataSnapshot.hasChild("fullname")){
+                if (dataSnapshot.hasChild("fullname")) {
                     String myProfileName = dataSnapshot.child("fullname").getValue().toString();
                     userProfName.setText(myProfileName);
                 }
-                if(dataSnapshot.hasChild("username")){
+                if (dataSnapshot.hasChild("username")) {
                     String myUserName = dataSnapshot.child("username").getValue().toString();
                     userName.setText(myUserName);
-                }
-                if(dataSnapshot.hasChild("birthday")){
-                    String myDOB = dataSnapshot.child("birthday").getValue().toString();
-                    userBirthDay.setText("Ngày sinh của bé: "+myDOB);
-                }
-                if(dataSnapshot.hasChild("parentof")){
-                    String myParentOf = dataSnapshot.child("parentof").getValue().toString();
-                    userParentof.setText("Phụ huynh của: "+myParentOf);
                 }
             }
 
@@ -108,12 +100,13 @@ public class ViewAccountActivity extends AppCompatActivity {
         EditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(ViewAccountActivity.this, EditAccountActivity.class);
-                intent.putExtra("USER_ID",getIntent().getStringExtra("USER_ID"));
+                Intent intent = new Intent(ViewAccountActivity.this, EditAccountActivity.class);
+                intent.putExtra("USER_ID", getIntent().getStringExtra("USER_ID"));
                 startActivity(intent);
             }
         });
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -122,9 +115,10 @@ public class ViewAccountActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
-        Intent intent=new Intent(ViewAccountActivity.this, ManageUserActivity.class);
+        Intent intent = new Intent(ViewAccountActivity.this, ManageUserActivity.class);
         startActivity(intent);
     }
 }

@@ -65,7 +65,7 @@ import androidx.viewpager.widget.ViewPager;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    private DatabaseReference UsersRef, PostsRef, LikesRef;
+    private DatabaseReference UsersRef, PostsRef;
     private RecyclerView postList;
     private String currentUserID;
     private FirebaseAuth mAuth;
@@ -142,7 +142,6 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         });
 
         PostsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
-        LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
 //        DisplayAllUsersPosts();
 
 
@@ -203,8 +202,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                 postsViewHolder.setDate(posts.getDate());
 //                postsViewHolder.SetTime(posts.getTime());
 
-                postsViewHolder.setLikeButtonStatus(PostKey);
-                postsViewHolder.setCommentPostButtonStatus(PostKey);
+                postsViewHolder.setCommentAndLikePostButtonStatus(PostKey);
 
 //                postsViewHolder.postImages.setOnClickListener(new View.OnClickListener() {
 //                    @Override
@@ -309,15 +307,15 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     @Override
                     public void onClick(View v) {
                         LikeChecker = true;
-                        LikesRef.addValueEventListener(new ValueEventListener() {
+                        PostsRef.child(PostKey).child("Likes").addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (LikeChecker.equals(true)) {
-                                    if (dataSnapshot.child(PostKey).hasChild(currentUserID)) {
-                                        LikesRef.child(PostKey).child(currentUserID).removeValue();
+                                    if (dataSnapshot.hasChild(currentUserID)) {
+                                        PostsRef.child(PostKey).child("Likes").child(currentUserID).removeValue();
                                         LikeChecker = false;
                                     } else {
-                                        LikesRef.child(PostKey).child(currentUserID).setValue(true);
+                                        PostsRef.child(PostKey).child("Likes").child(currentUserID).setValue(true);
                                         LikeChecker = false;
                                     }
                                 }
@@ -436,8 +434,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         private int countComments;
         private ViewPager postImages;
         private String currentUserId;
-        private DatabaseReference LikesRef;
-        private DatabaseReference CommentsRef;
+//        private DatabaseReference LikesRef;
+        private DatabaseReference PostRef;
 
         public PostsViewHolder(@NonNull View itemView, int viewType) {
             super(itemView);
@@ -453,50 +451,37 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
              * quăng id class vô chổ này classtest1
              *
              */
-            LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
+//            LikesRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Likes");
             /////////////////////////////////////////////
-            CommentsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
+            PostRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Posts");
             currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
         }
 
-        public void setCommentPostButtonStatus(final String PostKey) {
-            CommentsRef.addValueEventListener(new ValueEventListener() {
+        public void setCommentAndLikePostButtonStatus(final String PostKey) {
+            PostRef.child(PostKey).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child(PostKey).child("Comments").hasChild(currentUserId)) {
-                        countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                    if (dataSnapshot.child("Comments").hasChild(currentUserId)) {
+                        countComments = (int) dataSnapshot.child("Comments").getChildrenCount();
                         DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
                     } else {
-                        countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+                        countComments = (int) dataSnapshot.child("Comments").getChildrenCount();
                         DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
                     }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-        //set like button status
-        public void setLikeButtonStatus(final String PostKey) {
-            LikesRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.child(PostKey).hasChild(currentUserId)) {
-                        countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+                    if (dataSnapshot.child("Likes").hasChild(currentUserId)) {
+                        countLikes = (int) dataSnapshot.child("Likes").getChildrenCount();
                         LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp, 0, 0, 0);
                         DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                         LikePostButton.setTextColor(Color.parseColor("#FF5722"));
                     } else {
-                        countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+                        countLikes = (int) dataSnapshot.child("Likes").getChildrenCount();
                         LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp, 0, 0, 0);
                         DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                         LikePostButton.setTextColor(Color.parseColor("#959292"));
                     }
+
                 }
 
                 @Override
@@ -504,7 +489,49 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
                 }
             });
+//            PostRef.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    if (dataSnapshot.child(PostKey).child("Comments").hasChild(currentUserId)) {
+//                        countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+//                        DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
+//                    } else {
+//                        countComments = (int) dataSnapshot.child(PostKey).child("Comments").getChildrenCount();
+//                        DisplayNoOfComments.setText((Integer.toString(countComments) + " Comments"));
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
         }
+
+        //set like button status
+//        public void setLikeButtonStatus(final String PostKey) {
+//            LikesRef.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                    if (dataSnapshot.child(PostKey).hasChild(currentUserId)) {
+//                        countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+//                        LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp, 0, 0, 0);
+//                        DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
+//                        LikePostButton.setTextColor(Color.parseColor("#FF5722"));
+//                    } else {
+//                        countLikes = (int) dataSnapshot.child(PostKey).getChildrenCount();
+//                        LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp, 0, 0, 0);
+//                        DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
+//                        LikePostButton.setTextColor(Color.parseColor("#959292"));
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
+//        }
 
 
         public void setFullname(String fullname) {

@@ -40,14 +40,13 @@ public class MyProfileActivity extends AppCompatActivity {
 
     private TextView userName, userProfName, userClass, userParentof, userBirthDay, userPhoneNumber;
     private CircleImageView userProfileImage;
-
     private DatabaseReference UsersRef;
     private FirebaseUser firebaseUser;
     private FirebaseAuth mAuth;
-
-    private String current_user_id, visitUserId, idClass, idTeacher, className;
-
+    private String current_user_id, idClass, idTeacher;
     private ProgressDialog loadingBar;
+
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +63,11 @@ public class MyProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            idClass=bundle.getString("ID_CLASS");
+        }
 
         addControlls();
 
@@ -89,8 +93,8 @@ public class MyProfileActivity extends AppCompatActivity {
                         if(role.equals("Parent")){
                             userParentof.setVisibility(View.VISIBLE);
                             userBirthDay.setVisibility(View.VISIBLE);
-                            String myBirthday = dataSnapshot.child("birthday").getValue().toString();
-                            String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+                            String myBirthday = dataSnapshot.child("mychildren").child(idClass).child("birthday").getValue().toString();
+                            String myParentOf = dataSnapshot.child("mychildren").child(idClass).child("name").getValue().toString();
                             userParentof.setText("Phụ huynh của bé: " + myParentOf);
                             userBirthDay.setText("Sinh nhật: " + myBirthday);
                         }
@@ -135,6 +139,7 @@ public class MyProfileActivity extends AppCompatActivity {
         switch (id) {
             case R.id.action_edit_profile: {
                 Intent intent = new Intent(MyProfileActivity.this, EditProfileActivity.class);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             }

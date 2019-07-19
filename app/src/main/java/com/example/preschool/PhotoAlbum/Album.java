@@ -4,10 +4,9 @@ package com.example.preschool.PhotoAlbum;
 import java.util.ArrayList;
 
 public class Album {
-
-
     private String name;
     private ArrayList<String> imageUrlList;
+    private String date;
 
     public String getName() {
         return name;
@@ -25,12 +24,21 @@ public class Album {
         this.imageUrlList = imageUrlList;
     }
 
-    public Album() {
+    public String getDate() {
+        return date;
     }
 
-    public Album(String name, ArrayList<String> imageUrlList) {
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public Album(String name, ArrayList<String> imageUrlList, String date) {
         this.name = name;
         this.imageUrlList = imageUrlList;
+        this.date = date;
+    }
+
+    public Album() {
     }
 }
 

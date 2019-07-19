@@ -1,48 +1,24 @@
-package com.example.preschool;
+package com.example.preschool.Children;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.preschool.Event.Event;
-import com.example.preschool.Event.EventsActivity;
+import com.example.preschool.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 public class StudentActivity extends AppCompatActivity {
     private String idClass, idTeacher;
@@ -96,7 +72,7 @@ public class StudentActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<Children,ChildrensViewHolder> adapter =new FirebaseRecyclerAdapter<Children, ChildrensViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull ChildrensViewHolder childrensViewHolder, int i, @NonNull Children children) {
-                childrensViewHolder.txtFullName.setText(children.getParentof());
+                childrensViewHolder.txtFullName.setText(children.getName());
                 childrensViewHolder.txtBirthday.setText(children.getBirthday());
                 final String visit_children_id = getRef(i).getKey();
 

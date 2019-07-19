@@ -41,6 +41,8 @@ public class PersonProfileActivity extends AppCompatActivity {
 
     private String current_user_id, visitUserId, idClass, idTeacher, className;
 
+    private Bundle bundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,9 +62,10 @@ public class PersonProfileActivity extends AppCompatActivity {
             }
         });
 
-        Bundle bundle = getIntent().getExtras();
+        bundle = getIntent().getExtras();
         if (bundle != null) {
             visitUserId = bundle.getString("VISIT_USER_ID");
+            idClass=bundle.getString("ID_CLASS");
         }
 
         // Khai báo các thành phần giao diện
@@ -92,9 +95,9 @@ public class PersonProfileActivity extends AppCompatActivity {
                         if(role.equals("Parent")){
                             userParentof.setVisibility(View.VISIBLE);
                             userBirthDay.setVisibility(View.VISIBLE);
-                            String myBirthday = dataSnapshot.child("birthday").getValue().toString();
+                            String myBirthday = dataSnapshot.child("mychildren").child(idClass).child("birthday").getValue().toString();
                             userBirthDay.setText("Sinh nhật: " + myBirthday);
-                            String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+                            String myParentOf = dataSnapshot.child("mychildren").child(idClass).child("name").getValue().toString();
                             userParentof.setText("Phụ huynh của bé: " + myParentOf);
                         }
                         else{

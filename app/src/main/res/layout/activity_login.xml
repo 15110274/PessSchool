@@ -30,7 +30,6 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:inputType="textEmailAddress"
-            android:text="@string/testMail"
             android:drawableEnd="@drawable/ic_mail"
             android:textColorHint="@color/hintcolor"
             android:textColor="@color/textcolor"
@@ -45,7 +44,6 @@
             android:hint="@string/password"
             android:drawableEnd="@drawable/ic_lock"
             android:password="true"
-            android:text="@string/testPass"
             android:textColor="@color/textcolor"
             android:textColorHint="@color/hintcolor"
             android:textIsSelectable="false" />

@@ -8,47 +8,25 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import sun.bob.mcalendarview.MCalendarView;
-import sun.bob.mcalendarview.vo.DateData;
-
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.Sampler;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CalendarView;
-import android.widget.DatePicker;
-import android.widget.ImageView;
-import android.widget.QuickContactBadge;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.preschool.Chats.MessageActivity;
-import com.example.preschool.FriendsFragment;
-import com.example.preschool.Notification.NotificationFragment;
-import com.example.preschool.PersonProfileActivity;
 import com.example.preschool.R;
-import com.example.preschool.TimeLine.Posts;
-import com.example.preschool.User;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 public class EventsActivity extends AppCompatActivity {

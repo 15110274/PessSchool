@@ -65,6 +65,7 @@ public class MessageActivity extends AppCompatActivity {
     private Intent intent;
     private ValueEventListener seenListener;
     private String idReciver, current_user_id;
+    private String saveCurrentDate, saveCurrentTime;
 
     private APIService apiService;
 
@@ -268,11 +269,17 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void sendMessage(String sender, final String receiver, String message) {
+        Calendar calFordDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        saveCurrentTime = currentDate.format(calFordDate.getTime());
+
+
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message.trim());
         hashMap.put("isseen", false);
+        hashMap.put("time",saveCurrentTime);
 
         MessagesRef.child(childToChat).push().setValue(hashMap);
 

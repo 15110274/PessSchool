@@ -50,8 +50,8 @@ public class ViewPhotoActivity extends AppCompatActivity {
         uriList = getIntent().getStringArrayListExtra("IMAGE_LINK");
         getSupportActionBar().setTitle("");
 
-        title=findViewById(R.id.position_photo);
-        title.setText("1/4");
+//        title=findViewById(R.id.position_photo);
+//        title.setText("1/4");
 //        title.setText(String.valueOf(uriList.size()));
 
         viewPager=findViewById(R.id.view_pager);

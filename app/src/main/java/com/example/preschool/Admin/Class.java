@@ -1,4 +1,4 @@
-package com.example.preschool;
+package com.example.preschool.Admin;
 
 public class Class {
     String classname,teacher;

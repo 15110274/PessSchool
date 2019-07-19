@@ -47,7 +47,7 @@
     <string name="back">Cancel</string>
     <string name="not_a_mail">Not a mail</string>
     <string name="notify_reset_pass">To reset password, enter your mail, press the button and check mail to follow instruction.</string>
-    <string name="reset_pass_successful">Check your mail to complete reset password your account</string>
+    <string name="reset_pass_successful">Check your email to complete reset password your account</string>
     <string name="logout">Log out</string>
     <string name="register">Register</string>
     <string name="menu">Menu</string>

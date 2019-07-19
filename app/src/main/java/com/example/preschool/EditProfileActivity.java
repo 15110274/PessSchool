@@ -2,6 +2,7 @@ package com.example.preschool;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.app.ProgressDialog;
@@ -34,85 +35,85 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.util.HashMap;
 
 public class EditProfileActivity extends AppCompatActivity {
-    private EditText userName,userFullName,userDOB,userParentOf, userPhoneNumber;
+    private EditText userName, userFullName, userDOB, userParentOf, userPhoneNumber;
     private Button UpdateAccountSettingButton;
     private CircleImageView userProfImage;
     private ProgressDialog loadingBar;
 
-    private DatabaseReference EditUserRef,ClassRef;
+    private DatabaseReference EditUserRef, ClassRef;
     private FirebaseAuth mAuth;
     private String currentUserId;
     final static int Gallery_Pick = 1;
     private StorageReference UserProfileImageRef;
     private Uri resultUri;
-    String myClass,role;
-    private TextView txtChildren,txtBirthday;
+    private String idClass, role;
+    private TextView txtChildren, txtBirthday;
+    private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        mAuth=FirebaseAuth.getInstance();
-        currentUserId=mAuth.getCurrentUser().getUid();
-        EditUserRef= FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
-        UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
-        ClassRef= FirebaseDatabase.getInstance().getReference().child("Class");
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            idClass = bundle.getString("ID_CLASS");
+        }
 
-        userProfImage=findViewById(R.id.edit_profile_image);
-        userName=findViewById(R.id.edit_username);
-        userFullName=findViewById(R.id.edit_fullname);
-        userDOB=findViewById(R.id.edit_birthday);
-        userParentOf=findViewById(R.id.edit_parentof);
-        userPhoneNumber=findViewById(R.id.edit_phonenumber);
-        UpdateAccountSettingButton=findViewById(R.id.update_account_settings_button);
-        txtBirthday=findViewById(R.id.textviewBirthday);
-        txtChildren=findViewById(R.id.textviewChildren);
-        loadingBar=new ProgressDialog(this);
+        mAuth = FirebaseAuth.getInstance();
+        currentUserId = mAuth.getCurrentUser().getUid();
+        EditUserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
+        UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
+        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
+
+        userProfImage = findViewById(R.id.edit_profile_image);
+        userName = findViewById(R.id.edit_username);
+        userFullName = findViewById(R.id.edit_fullname);
+        userDOB = findViewById(R.id.edit_birthday);
+        userParentOf = findViewById(R.id.edit_parentof);
+        userPhoneNumber = findViewById(R.id.edit_phonenumber);
+        UpdateAccountSettingButton = findViewById(R.id.update_account_settings_button);
+        txtBirthday = findViewById(R.id.textviewBirthday);
+        txtChildren = findViewById(R.id.textviewChildren);
+        loadingBar = new ProgressDialog(this);
 
         EditUserRef.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("idclass")){
-                    myClass = dataSnapshot.child("idclass").getValue().toString();
-                }
-                if(dataSnapshot.hasChild("role")){
+                if (dataSnapshot.hasChild("role")) {
                     role = dataSnapshot.child("role").getValue().toString();
-                    if(role.equals("Parent")){
+                    if (role.equals("Parent")) {
                         userParentOf.setVisibility(View.VISIBLE);
                         userDOB.setVisibility(View.VISIBLE);
                         txtBirthday.setVisibility(View.VISIBLE);
                         txtChildren.setVisibility(View.VISIBLE);
-                    }
-                    else {
+                    } else {
                         userParentOf.setVisibility(View.GONE);
                         userDOB.setVisibility(View.GONE);
                         txtBirthday.setVisibility(View.GONE);
                         txtChildren.setVisibility(View.GONE);
                     }
                 }
-                if(dataSnapshot.hasChild("profileimage")){
+                if (dataSnapshot.hasChild("profileimage")) {
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                     Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfImage);
                 }
-                if(dataSnapshot.hasChild("fullname")){
+                if (dataSnapshot.hasChild("fullname")) {
                     String myProfileName = dataSnapshot.child("fullname").getValue().toString();
                     userFullName.setText(myProfileName);
                 }
-                if(dataSnapshot.hasChild("username")){
+                if (dataSnapshot.hasChild("username")) {
                     String myUserName = dataSnapshot.child("username").getValue().toString();
                     userName.setText(myUserName);
                 }
-                if(dataSnapshot.hasChild("birthday")){
-                    String myDOB = dataSnapshot.child("birthday").getValue().toString();
+                if (dataSnapshot.hasChild("mychildren")) {
+                    String myDOB = dataSnapshot.child("mychildren").child(idClass).child("birthday").getValue().toString();
                     userDOB.setText(myDOB);
-                }
-                if(dataSnapshot.hasChild("parentof")){
-                    String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+                    String myParentOf = dataSnapshot.child("mychildren").child(idClass).child("name").getValue().toString();
                     userParentOf.setText(myParentOf);
                 }
-                if(dataSnapshot.hasChild("phonenumber")){
+                if (dataSnapshot.hasChild("phonenumber")) {
                     String myphone = dataSnapshot.child("phonenumber").getValue().toString();
                     userPhoneNumber.setText(myphone);
                 }
@@ -139,13 +140,12 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==Gallery_Pick && resultCode==RESULT_OK && data!=null)
-        {
+        if (requestCode == Gallery_Pick && resultCode == RESULT_OK && data != null) {
             Uri ImageUri = data.getData();
 
             CropImage.activity(ImageUri)
@@ -154,44 +154,42 @@ public class EditProfileActivity extends AppCompatActivity {
                     .start(this);
         }
 
-        if(requestCode==CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE)
-        {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
 
-            if(resultCode == RESULT_OK)
-            {
+            if (resultCode == RESULT_OK) {
                 resultUri = result.getUri();
                 userProfImage.setImageURI(resultUri);
             }
         }
     }
+
     private void ValidateAccountInfo() {
-        String username=userName.getText().toString();
-        String userfullname=userFullName.getText().toString();
-        String userdob="";
-        String userparentof="";
-        if(role.equals("Parent")){
-           userdob=userDOB.getText().toString();
-            userparentof=userParentOf.getText().toString();
+        String username = userName.getText().toString();
+        String userfullname = userFullName.getText().toString();
+        String userdob = "";
+        String userparentof = "";
+        if (role.equals("Parent")) {
+            userdob = userDOB.getText().toString();
+            userparentof = userParentOf.getText().toString();
         }
 
-        String userphonenumber=userPhoneNumber.getText().toString();
+        String userphonenumber = userPhoneNumber.getText().toString();
         loadingBar.setTitle("Profile Update");
         loadingBar.setMessage("Please wait, while we updating your profile...");
         loadingBar.setCanceledOnTouchOutside(true);
         loadingBar.show();
-        UpdateAccountInfo(username,userfullname,userdob,userparentof,userphonenumber);
+        UpdateAccountInfo(username, userfullname, userdob, userparentof, userphonenumber);
         loadingBar.dismiss();
     }
 
-    private void UpdateAccountInfo(final String username, final String userfullname, final String userdob, final String userparentof,final String userphonenumber) {
+    private void UpdateAccountInfo(final String username, final String userfullname, final String userdob, final String userparentof, final String userphonenumber) {
         StorageReference filePath = UserProfileImageRef.child(currentUserId + ".jpg");
-        if(resultUri!=null){
+        if (resultUri != null) {
             filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
-                public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task)
-                {
-                    if(task.isSuccessful()) {
+                public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+                    if (task.isSuccessful()) {
                         Toast.makeText(EditProfileActivity.this, "Profile Image stored successfully to Firebase storage...", Toast.LENGTH_SHORT).show();
                         Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
                         result.addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -217,29 +215,26 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             });
         }
-        HashMap userMap=new HashMap();
-        userMap.put("username",username);
-        userMap.put("fullname",userfullname);
-        if(role.equals("Parent")){
-            userMap.put("birthday",userdob);
-            userMap.put("parentof",userparentof);
-        }
-        userMap.put("phonenumber",userphonenumber);
+        HashMap userMap = new HashMap();
+        userMap.put("username", username);
+        userMap.put("fullname", userfullname);
+        userMap.put("phonenumber", userphonenumber);
+
         EditUserRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
-                if(task.isSuccessful()){
-                    if(role.equals("Parent")){
-                        final HashMap childrenMap=new HashMap();
-                        childrenMap.put("birthday",userdob);
-                        childrenMap.put("parentof",userparentof);
-                        ClassRef.child(myClass).child("Children").child(currentUserId).updateChildren(childrenMap);
+                if (task.isSuccessful()) {
+                    if (role.equals("Parent")) {
+                        final HashMap childrenMap = new HashMap();
+                        childrenMap.put("birthday", userdob);
+                        childrenMap.put("name", userparentof);
+                        EditUserRef.child("mychildren").child(idClass).updateChildren(childrenMap);
+                        ClassRef.child("Children").child(currentUserId).setValue(childrenMap);
                     }
-                    Toast.makeText(EditProfileActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditProfileActivity.this, "Updated Successful", Toast.LENGTH_SHORT).show();
                     finish();
-                }
-                else{
-                    Toast.makeText(EditProfileActivity.this,"Error",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(EditProfileActivity.this, "Error", Toast.LENGTH_SHORT).show();
 
                 }
             }

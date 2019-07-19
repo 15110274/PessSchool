@@ -1,4 +1,4 @@
-package com.example.preschool;
+package com.example.preschool.Admin;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -9,30 +9,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.preschool.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,31 +32,29 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public class ManageClassActivity extends AppCompatActivity {
     private RecyclerView classList;
     private FirebaseAuth mAuth;
     private EditText NameClass;
     private FloatingActionButton CreateClassButton;
     private ProgressDialog loadingBar;
-    private DatabaseReference ClassRef,UserRef;
+    private DatabaseReference ClassRef, UserRef;
     private ValueEventListener userEventListener;
 
-    private int positionChoose=0;
+    private int positionChoose = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manage_class);
-        mAuth= FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         NameClass = findViewById(R.id.setup_name_class);
         CreateClassButton = findViewById(R.id.create_button);
         loadingBar = new ProgressDialog(this);
-        ClassRef= FirebaseDatabase.getInstance().getReference().child("Class");
-        UserRef= FirebaseDatabase.getInstance().getReference().child("Users");
+        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
-        classList=findViewById(R.id.list_class);
+        classList = findViewById(R.id.list_class);
         classList.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ManageClassActivity.this);
         linearLayoutManager.setReverseLayout(true);
@@ -74,8 +64,7 @@ public class ManageClassActivity extends AppCompatActivity {
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         CreateClassButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 String name = NameClass.getText().toString();
                 if (!TextUtils.isEmpty(name)) {
                     String id = ClassRef.push().getKey();
@@ -95,19 +84,20 @@ public class ManageClassActivity extends AppCompatActivity {
         });
 
     }
+
     private void LoadAllClass() {
-        FirebaseRecyclerOptions<Class> options=new FirebaseRecyclerOptions.Builder<Class>().
+        FirebaseRecyclerOptions<Class> options = new FirebaseRecyclerOptions.Builder<Class>().
                 setQuery(ClassRef, Class.class).build();
-        FirebaseRecyclerAdapter<Class, ClassViewHolder> adapter=new FirebaseRecyclerAdapter<Class, ClassViewHolder>(options) {
+        FirebaseRecyclerAdapter<Class, ClassViewHolder> adapter = new FirebaseRecyclerAdapter<Class, ClassViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final ClassViewHolder classViewHolder, final int position, @NonNull final Class model) {
                 classViewHolder.setClassName(model.getClassname());
-                String idTeacher=model.getTeacher();
-                if(idTeacher!=null){
+                String idTeacher = model.getTeacher();
+                if (idTeacher != null) {
                     UserRef.child(idTeacher).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if(dataSnapshot.hasChild("fullname"))
+                            if (dataSnapshot.hasChild("fullname"))
                                 classViewHolder.setTeacherName(dataSnapshot.child("fullname").getValue().toString());
                             else
                                 classViewHolder.setTeacherName("Don't Setup");
@@ -118,8 +108,7 @@ public class ManageClassActivity extends AppCompatActivity {
 
                         }
                     });
-                }
-                else{
+                } else {
                     classViewHolder.setTeacherName("null");
                 }
                 classViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -137,15 +126,15 @@ public class ManageClassActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 //xóa class
-                                final String classID= getRef(position).getKey();
-                                if(which==2){
+                                final String classID = getRef(position).getKey();
+                                if (which == 2) {
                                     ClassRef.child(classID).removeValue();
-                                    userEventListener= UserRef.addValueEventListener(new ValueEventListener() {
+                                    userEventListener = UserRef.addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                            if(dataSnapshot.exists()){
-                                                for (DataSnapshot children: dataSnapshot.getChildren()) {
-                                                    if(children.hasChild("idclass")&&children.child("idclass").getValue().toString().equals(classID)){
+                                            if (dataSnapshot.exists()) {
+                                                for (DataSnapshot children : dataSnapshot.getChildren()) {
+                                                    if (children.hasChild("idclass") && children.child("idclass").getValue().toString().equals(classID)) {
                                                         UserRef.child(children.getKey()).child("idclass").setValue("");
                                                         UserRef.child(children.getKey()).child("classname").setValue("");
                                                     }
@@ -162,12 +151,12 @@ public class ManageClassActivity extends AppCompatActivity {
                                 }
                                 if (which == 0) {
                                     Intent intent = new Intent(ManageClassActivity.this, ViewClassActivity.class);
-                                    intent.putExtra("CLASS_ID",classID);
+                                    intent.putExtra("CLASS_ID", classID);
                                     startActivity(intent);
                                 }
                                 if (which == 1) {
                                     Intent intent = new Intent(ManageClassActivity.this, EditClassActivity.class);
-                                    intent.putExtra("CLASS_ID",classID);
+                                    intent.putExtra("CLASS_ID", classID);
                                     startActivity(intent);
                                 }
                             }
@@ -176,37 +165,41 @@ public class ManageClassActivity extends AppCompatActivity {
                     }
                 });
             }
+
             @NonNull
             @Override
             public ClassViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.all_class_display_layout,parent,false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.all_class_display_layout, parent, false);
 
-                ClassViewHolder viewHolder=new ClassViewHolder(view);
+                ClassViewHolder viewHolder = new ClassViewHolder(view);
                 return viewHolder;
             }
         };
         classList.setAdapter(adapter);
         adapter.startListening();
     }
-    public static class ClassViewHolder extends RecyclerView.ViewHolder{
+
+    public static class ClassViewHolder extends RecyclerView.ViewHolder {
         private TextView class_name;
         private TextView teacher;
         private final androidx.constraintlayout.widget.ConstraintLayout layout;
         final LinearLayout.LayoutParams params;
-        public ClassViewHolder(View itemView){
+
+        public ClassViewHolder(View itemView) {
             super(itemView);
-            layout =itemView.findViewById(R.id.all_class_layout);
+            layout = itemView.findViewById(R.id.all_class_layout);
 
             params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT);
-            class_name=layout.findViewById(R.id.all_class_name);
-            teacher=layout.findViewById(R.id.all_teacher_name);
+            class_name = layout.findViewById(R.id.all_class_name);
+            teacher = layout.findViewById(R.id.all_teacher_name);
 
         }
 
         public void setClassName(String className) {
             class_name.setText(className);
         }
+
         public void setTeacherName(String teacherName) {
             teacher.setText(teacherName);
         }
@@ -216,6 +209,7 @@ public class ManageClassActivity extends AppCompatActivity {
             layout.setLayoutParams(params);
         }
     }
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -224,16 +218,17 @@ public class ManageClassActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
-        Intent intent=new Intent(ManageClassActivity.this, AdminActivity.class);
+        Intent intent = new Intent(ManageClassActivity.this, AdminActivity.class);
         startActivity(intent);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if(userEventListener!=null){
+        if (userEventListener != null) {
             UserRef.removeEventListener(userEventListener);
         }
 

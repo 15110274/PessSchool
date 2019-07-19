@@ -136,10 +136,33 @@ public class FriendsFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, final int i, @NonNull final User user) {
                 try {
-                    if(user.getUserid().equals(idTeacher)){
+                    if (user.getUserid().equals(idTeacher)) {
                         friendsViewHolder.isTeacher.setVisibility(View.VISIBLE);
                         friendsViewHolder.kid_name.setVisibility(View.GONE);
-                    }else friendsViewHolder.kid_name.setText("Bé " + user.getParentof());
+                    } else {
+                        UsersRef.child(user.getUserid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                try {
+                                    friendsViewHolder.kid_name
+                                            .setText("Bé " + dataSnapshot.child("mychildren")
+                                                    .child(idClass)
+                                                    .child("name")
+                                                    .getValue(String.class));
+                                } catch (Exception e) {
+                                    friendsViewHolder.kid_name
+                                            .setText("");
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+//                        friendsViewHolder.kid_name.setText("Bé " + user.getParentof());
+                    }
                     friendsViewHolder.user_name.setText(user.getFullname());
 
                     friendsViewHolder.setProfileImage(user.getProfileimage());
@@ -147,13 +170,13 @@ public class FriendsFragment extends Fragment {
                     UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            try{
+                            try {
                                 if (dataSnapshot.child("type").getValue().toString().equals("online")) {
                                     friendsViewHolder.online.setVisibility(View.VISIBLE);
                                 } else {
                                     friendsViewHolder.online.setVisibility(View.GONE);
                                 }
-                            }catch (Exception e){
+                            } catch (Exception e) {
 
                             }
 
@@ -176,7 +199,7 @@ public class FriendsFragment extends Fragment {
 
 
                             CharSequence options[] = new CharSequence[]{
-                                    "Thông tin của "+user.getUsername(),
+                                    "Thông tin của " + user.getUsername(),
                                     "Gửi tin nhắn"
                             };
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -192,9 +215,9 @@ public class FriendsFragment extends Fragment {
                                         startActivity(profileIntent);
                                     }
                                     if (which == 1) {
-                                        if (visit_user_id.equals(current_user_id)){
-                                            Toast.makeText(getContext(),"Không thể nhắn tin cho chính bạn",Toast.LENGTH_SHORT).show();
-                                        }else {
+                                        if (visit_user_id.equals(current_user_id)) {
+                                            Toast.makeText(getContext(), "Không thể nhắn tin cho chính bạn", Toast.LENGTH_SHORT).show();
+                                        } else {
                                             Intent chatintent = new Intent(getActivity(), MessageActivity.class);
                                             bundle.putString("VISIT_USER_ID", visit_user_id);
                                             chatintent.putExtras(bundle);
@@ -322,7 +345,7 @@ public class FriendsFragment extends Fragment {
             user_name = itemView.findViewById(R.id.all_users_profile_full_name);
             online = itemView.findViewById(R.id.online);
             kid_name = itemView.findViewById(R.id.all_users_profile_kid_name);
-            isTeacher=itemView.findViewById(R.id.isTeacher);
+            isTeacher = itemView.findViewById(R.id.isTeacher);
         }
 
         public void setProfileImage(String profileimage) {

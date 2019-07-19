@@ -6,6 +6,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
@@ -35,7 +36,9 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class NewAlbumActivity extends AppCompatActivity {
 
@@ -48,6 +51,8 @@ public class NewAlbumActivity extends AppCompatActivity {
     private ImageView mImageView;
     private TextView addPhotos;
     private ProgressBar mProgressBar;
+    private ProgressDialog loadingBar;
+    private String date;
     private Uri mImageUri;
     private int uploads = 0;
 
@@ -77,12 +82,18 @@ public class NewAlbumActivity extends AppCompatActivity {
             }
         });
 
+        // Khai bao controls
         mButtonChooseImage = findViewById(R.id.select_photos);
         mButtonUpload = findViewById(R.id.upload_image);
         mEditTextAlbumName = findViewById(R.id.add_title_album);
         mImageView = findViewById(R.id.image_view);
         mProgressBar = findViewById(R.id.progress_bar);
         addPhotos = findViewById(R.id.add_photos);
+        loadingBar=new ProgressDialog(this);
+
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("dd-MM-yyyy");
+        date = currentTime.format(calendar.getTime());
 
         /**
          * quăng id class vô chổ này classtest1
@@ -107,7 +118,13 @@ public class NewAlbumActivity extends AppCompatActivity {
                 if (mUploadTask != null && mUploadTask.isInProgress()) {
                     Toast.makeText(NewAlbumActivity.this, "Image in progress", Toast.LENGTH_SHORT).show();
                 } else {
-                    uploadFile();
+                    if(!mEditTextAlbumName.getText().toString().equals("")){
+                        if(uriList.size()!=0){
+                            uploadFile();
+                        }
+                        else Toast.makeText(NewAlbumActivity.this,"Bạn chưa chọn ảnh",Toast.LENGTH_SHORT).show();
+
+                    }else Toast.makeText(NewAlbumActivity.this,"Bạn chưa nhập tên Album",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -139,15 +156,16 @@ public class NewAlbumActivity extends AppCompatActivity {
                         uriList.add(imageuri);
                         CurrentImageSelect = CurrentImageSelect + 1;
                     }
-                    addPhotos.setText("You Have Selected " + uriList.size() + " Pictures");
+                    addPhotos.setText("Bạn đã chọn  " + uriList.size() + " ảnh");
                     mImageUri = data.getClipData().getItemAt(0).getUri();
                     Picasso.get().load(mImageUri).into(mImageView);
 
                 }
 
-            }
+            }else Toast.makeText(NewAlbumActivity.this,"Bạn phải chọn từ 2 ảnh trở lên",Toast.LENGTH_SHORT).show();
 
-        }
+        }else Toast.makeText(NewAlbumActivity.this,"Bạn phải chọn từ 2 ảnh trở lên 1",Toast.LENGTH_SHORT).show();
+
 
     }
 
@@ -157,10 +175,18 @@ public class NewAlbumActivity extends AppCompatActivity {
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
+    private void getDate(){
+
+    }
 
     public void uploadFile() {
+        loadingBar.setTitle("Tải lên");
+        loadingBar.setMessage("Đang tải ảnh lên vui lòng chờ");
+        loadingBar.setCanceledOnTouchOutside(false);
+
         final Album album = new Album();
         if (uriList != null) {
+            loadingBar.show();
             for (int i = 0; i < uriList.size(); i++) {
 
                 StorageReference fileReference = mStorageRef.child(mEditTextAlbumName.getText().toString()).child(System.currentTimeMillis() + "." +
@@ -180,7 +206,7 @@ public class NewAlbumActivity extends AppCompatActivity {
                                         mProgressBar.setProgress(0);
                                     }
                                 }, 500);
-                                Toast.makeText(NewAlbumActivity.this, "Image Successful", Toast.LENGTH_LONG).show();
+//                                Toast.makeText(NewAlbumActivity.this, "Image Successful", Toast.LENGTH_LONG).show();
 //                                addPhotos.setText("Uploaded " + i/uriList.size() + " Pictures");
 //***************************************************************************************************************
                                 Task<Uri> urlTask = taskSnapshot.getStorage().getDownloadUrl();
@@ -191,6 +217,7 @@ public class NewAlbumActivity extends AppCompatActivity {
 
                                 imageUrlList.add(downloadUrl.toString());
 
+                                album.setDate(date);
                                 album.setName(mEditTextAlbumName.getText().toString());
                                 album.setImageUrlList(imageUrlList);
                                 if (imageUrlList.size()==uriList.size()) {
@@ -225,6 +252,7 @@ public class NewAlbumActivity extends AppCompatActivity {
             }
 
         } else {
+            loadingBar.dismiss();
             Toast.makeText(this, "NO File Selected", Toast.LENGTH_SHORT).show();
         }
     }

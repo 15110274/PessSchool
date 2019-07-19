@@ -1,24 +1,33 @@
 package com.example.preschool;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.example.preschool.Chats.ChatsFragment;
+import com.example.preschool.Children.StudentActivity;
 import com.example.preschool.Event.EventsActivity;
+import com.example.preschool.Help.HelpActivity;
 import com.example.preschool.Menu.MenuActivity;
 import com.example.preschool.Menu.ViewMenuActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepActivity;
 import com.example.preschool.NghiPhep.DonNghiPhepFullViewActivity;
-import com.example.preschool.Notification.NotificationFragment;
+import com.example.preschool.Notifications.NotificationFragment;
 import com.example.preschool.Notifications.Token;
 import com.example.preschool.PhotoAlbum.ViewAllAlbumActivity;
 import com.example.preschool.Setting.SettingActivity;
@@ -28,11 +37,12 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
@@ -42,6 +52,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -91,8 +102,24 @@ public class MainActivity extends AppCompatActivity
         updateToken(FirebaseInstanceId.getInstance().getToken());
 
         UserStateRef=FirebaseDatabase.getInstance().getReference("UserState");
-//        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
-//        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("classmane").toString();
+        UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
+        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Children");
+
+        // setup thông tin của trẻ cho lớp học
+        UsersRef.child("mychildren").child(idClass).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists() && !isTeacher){
+                    setupChildren();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
 
 
 //        updateUserStatus("online");
@@ -164,6 +191,82 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void setupChildren() {
+
+
+
+        final Dialog dialogSetupChildren=new Dialog(MainActivity.this);
+        dialogSetupChildren.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogSetupChildren.setCancelable(false);
+        dialogSetupChildren.setContentView(R.layout.setup_children_dialog);
+        dialogSetupChildren.getWindow().setBackgroundDrawableResource(android.R.color.white);
+        dialogSetupChildren.show();
+
+        TextView txtLabel=dialogSetupChildren.findViewById(R.id.textView);
+        final EditText childrenNam=dialogSetupChildren.findViewById(R.id.txtChildrenFullname);
+        final EditText childrenBirthday =dialogSetupChildren.findViewById(R.id.txtChildrenBirth);
+        final Button btnsave=dialogSetupChildren.findViewById(R.id.btnSave);
+
+        final DatePickerDialog.OnDateSetListener mDatePickerDialog;
+        mDatePickerDialog = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                month = month + 1;
+                String date = dayOfMonth + "/" + month + "/" + year;
+                childrenBirthday.setText(date);
+            }
+        };
+
+        Button btnChildrenBirthday=dialogSetupChildren.findViewById(R.id.btnChildrenBirthday);
+        btnChildrenBirthday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                    Calendar cal = Calendar.getInstance();
+                    int day = cal.get(Calendar.DAY_OF_MONTH);
+                    int month = cal.get(Calendar.MONTH);
+                    int year = cal.get(Calendar.YEAR);
+                    DatePickerDialog dialog = new DatePickerDialog(
+                            MainActivity.this,
+                            android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                            mDatePickerDialog,
+                            year, month, day);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    dialog.show();
+            }
+        });
+
+        txtLabel.setText("Cập nhật thông tin của bé cho lớp: "+className);
+        btnsave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                btnsave.setEnabled(false);
+                if(!childrenNam.getText().toString().equals("")){
+                    if(!childrenBirthday.getText().toString().equals("")){
+                        final HashMap childrenMap = new HashMap();
+                        childrenMap.put("birthday", childrenBirthday.getText().toString());
+                        childrenMap.put("name", childrenNam.getText().toString());
+
+                        UsersRef.child("mychildren").child(idClass).updateChildren(childrenMap)
+                                .addOnSuccessListener(new OnSuccessListener() {
+                            @Override
+                            public void onSuccess(Object o) {
+                                ClassRef.child(currentUserID).updateChildren(childrenMap)
+                                        .addOnSuccessListener(new OnSuccessListener() {
+                                    @Override
+                                    public void onSuccess(Object o) {
+                                        dialogSetupChildren.dismiss();
+                                    }
+                                });
+                            }
+                        });
+                    }else Toast.makeText(MainActivity.this,"Bạn chưa nhập sinh nhật cho bé",Toast.LENGTH_SHORT).show();
+                }else Toast.makeText(MainActivity.this,"Bạn chưa nhập tên cho bé",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+    }
+
 
     /**
      * Check xem user đã có full name hay chưa, nếu chưa gửi sang trang SetupActivity
@@ -216,6 +319,8 @@ public class MainActivity extends AppCompatActivity
         super.onStart();
         updateUserStatus("online");
 //        Toast.makeText(this,"Main Start",Toast.LENGTH_LONG).show();
+
+
     }
 
     @Override
@@ -287,6 +392,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.profile:
                 intent=new Intent(MainActivity.this, MyProfileActivity.class);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
             case R.id.event:

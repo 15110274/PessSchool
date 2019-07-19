@@ -1,4 +1,4 @@
-package com.example.preschool;
+package com.example.preschool.Help;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+
+import com.example.preschool.R;
 
 public class FragHelp extends BaseExpandableListAdapter {
     Context context;

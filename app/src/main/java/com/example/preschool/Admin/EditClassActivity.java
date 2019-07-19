@@ -1,7 +1,6 @@
-package com.example.preschool;
+package com.example.preschool.Admin;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -18,6 +17,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.preschool.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +25,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Logger;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -35,66 +34,63 @@ public class EditClassActivity extends AppCompatActivity {
     private EditText className;
     private Button UpdateClassButton;
     private ProgressDialog loadingBar;
-    private DatabaseReference ClassRef,UserRef;
+    private DatabaseReference ClassRef, UserRef;
     private FirebaseAuth mAuth;
     private Spinner teacherSpinner;
-    private final ArrayList<String> teacherid=new ArrayList<>();
-    private final ArrayList<String> teachername=new ArrayList<>();
-    private int teacherChoose=0;
-    private int teacherOld=0;
+    private final ArrayList<String> teacherid = new ArrayList<>();
+    private final ArrayList<String> teachername = new ArrayList<>();
+    private int teacherChoose = 0;
+    private int teacherOld = 0;
     private String classEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_class);
-        mAuth=FirebaseAuth.getInstance();
-        classEdit=getIntent().getStringExtra("CLASS_ID");
-        ClassRef= FirebaseDatabase.getInstance().getReference().child("Class");
-        UserRef= FirebaseDatabase.getInstance().getReference().child("Users");
-        className=findViewById(R.id.edit_classname);
-        UpdateClassButton=findViewById(R.id.update_class_button);
-        loadingBar=new ProgressDialog(this);
-        teacherSpinner=findViewById(R.id.teacherSpinner);
+        mAuth = FirebaseAuth.getInstance();
+        classEdit = getIntent().getStringExtra("CLASS_ID");
+        ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
+        UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
+        className = findViewById(R.id.edit_classname);
+        UpdateClassButton = findViewById(R.id.update_class_button);
+        loadingBar = new ProgressDialog(this);
+        teacherSpinner = findViewById(R.id.teacherSpinner);
         teachername.add("Choose Teacher...");
         teacherid.add("");
-        ValueEventListener ref1=UserRef.addValueEventListener(new ValueEventListener() {
+        ValueEventListener ref1 = UserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()){
-                    if(suggestionSnapshot.hasChild("role"))
-                    {
-                        if(suggestionSnapshot.child("role").getValue().toString().equals("Teacher")){
-                            String name="";
-                            if(suggestionSnapshot.hasChild("fullname")){
+                for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()) {
+                    if (suggestionSnapshot.hasChild("role")) {
+                        if (suggestionSnapshot.child("role").getValue().toString().equals("Teacher")) {
+                            String name = "";
+                            if (suggestionSnapshot.hasChild("fullname")) {
                                 name = suggestionSnapshot.child("fullname").getValue(String.class);
                             }
-                            String email=suggestionSnapshot.child("email").getValue(String.class);
+                            String email = suggestionSnapshot.child("email").getValue(String.class);
                             String id = suggestionSnapshot.getKey();
                             teacherid.add(id);
-                            teachername.add(name+"("+email+")");
+                            teachername.add(name + "(" + email + ")");
                         }
                     }
 
                 }
-                ValueEventListener ref2=ClassRef.child(classEdit).addValueEventListener(new ValueEventListener() {
+                ValueEventListener ref2 = ClassRef.child(classEdit).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.hasChild("classname")){
+                        if (dataSnapshot.hasChild("classname")) {
                             String name = dataSnapshot.child("classname").getValue().toString();
                             className.setText(name);
                         }
-                        if(dataSnapshot.hasChild("teacher")){
-                            String teacher=dataSnapshot.child("teacher").getValue().toString();
-                            int vitri=0;
-                            if(teacher=="")
-                            {
-                                vitri=0;
-                            }
-                            else{
-                                for(int i=1;i<teacherid.size();i++){
-                                    if(teacherid.get(i).equals(teacher)){
-                                        vitri=i;
+                        if (dataSnapshot.hasChild("teacher")) {
+                            String teacher = dataSnapshot.child("teacher").getValue().toString();
+                            int vitri = 0;
+                            if (teacher == "") {
+                                vitri = 0;
+                            } else {
+                                for (int i = 1; i < teacherid.size(); i++) {
+                                    if (teacherid.get(i).equals(teacher)) {
+                                        vitri = i;
                                     }
                                 }
                             }
@@ -112,49 +108,49 @@ public class EditClassActivity extends AppCompatActivity {
                 teacherSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        teacherChoose=position;
-                        if(temp[0] ==0){
-                            teacherOld= position;
-                            Toast.makeText(EditClassActivity.this, teacherOld+"", Toast.LENGTH_SHORT).show();
+                        teacherChoose = position;
+                        if (temp[0] == 0) {
+                            teacherOld = position;
+                            Toast.makeText(EditClassActivity.this, teacherOld + "", Toast.LENGTH_SHORT).show();
                         }
                         temp[0]++;
                     }
+
                     @Override
                     public void onNothingSelected(AdapterView<?> parent) {
                     }
                 });
 
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-        final ArrayAdapter<String> autoComplete = new ArrayAdapter<String>(EditClassActivity.this,android.R.layout.simple_spinner_item,teachername){
+        final ArrayAdapter<String> autoComplete = new ArrayAdapter<String>(EditClassActivity.this, android.R.layout.simple_spinner_item, teachername) {
             @Override
-            public boolean isEnabled(int position){
-                if(position == 0)
-                {
+            public boolean isEnabled(int position) {
+                if (position == 0) {
                     return false;
-                }
-                else
-                {
+                } else {
                     return true;
                 }
             }
+
             @Override
             public View getDropDownView(int position, View convertView,
                                         ViewGroup parent) {
                 View view = super.getDropDownView(position, convertView, parent);
                 TextView tv = (TextView) view;
-                if(position == 0){
+                if (position == 0) {
                     tv.setTextColor(getResources().getColor(R.color.hintcolor));
-                }
-                else {
+                } else {
                     tv.setTextColor(Color.WHITE);
                 }
                 view.setBackgroundColor(getResources().getColor(R.color.colorAccent));
                 return view;
             }
+
             public View getView(int position, View convertView, ViewGroup parent) {
                 // Cast the spinner collapsed item (non-popup item) as a text view
                 TextView tv = (TextView) super.getView(position, convertView, parent);
@@ -178,17 +174,17 @@ public class EditClassActivity extends AppCompatActivity {
     }
 
     private void ValidateClassInfo() {
-        final String name=className.getText().toString();
-        HashMap classMap=new HashMap();
-        classMap.put("classname",name);
-        if(teacherChoose!=0){
-            classMap.put("teacher",teacherid.get(teacherChoose));
+        final String name = className.getText().toString();
+        HashMap classMap = new HashMap();
+        classMap.put("classname", name);
+        if (teacherChoose != 0) {
+            classMap.put("teacher", teacherid.get(teacherChoose));
         }
 
         ClassRef.child(classEdit).updateChildren(classMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     if (teacherChoose != 0) {
 //                        ValueEventListener ref3=UserRef.child(teacherid.get(teacherChoose)).addValueEventListener(new ValueEventListener() {
 //                            @Override
@@ -216,17 +212,16 @@ public class EditClassActivity extends AppCompatActivity {
 //                        userMap2.put("classname", "");
 //                        UserRef.child(teacherid.get(teacherOld)).updateChildren(userMap2);
 //                    }
-                    Toast.makeText(EditClassActivity.this,"Updated Successful",Toast.LENGTH_SHORT).show();
-                }
-                else{
-                    Toast.makeText(EditClassActivity.this,"Error",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditClassActivity.this, "Updated Successful", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(EditClassActivity.this, "Error", Toast.LENGTH_SHORT).show();
 
                 }
             }
         });
-        Intent intent=new Intent(EditClassActivity.this, ViewClassActivity.class);
-        intent.putExtra("CLASS_ID",classEdit);
-        intent.putExtra("test",teacherid);
+        Intent intent = new Intent(EditClassActivity.this, ViewClassActivity.class);
+        intent.putExtra("CLASS_ID", classEdit);
+        intent.putExtra("test", teacherid);
         startActivity(intent);
     }
 }
