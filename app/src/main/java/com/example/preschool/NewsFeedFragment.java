@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -428,6 +429,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     private static class PostsViewHolder extends RecyclerView.ViewHolder {
 
         private TextView LikePostButton, CommentPostButton;
+        private ImageView imageViewLike;
         private TextView DisplayNoOfLikes, DisplayNoOfComments;
         private ImageButton optionButton;
         private int countLikes;
@@ -443,6 +445,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             CommentPostButton = itemView.findViewById(R.id.comment_button);
             DisplayNoOfLikes = itemView.findViewById(R.id.display_no_of_likes);
             DisplayNoOfComments = itemView.findViewById(R.id.display_no_of_comments);
+            imageViewLike=itemView.findViewById(R.id.img_like);
             optionButton = itemView.findViewById(R.id.post_option_button);
             postImages = itemView.findViewById(R.id.post_image);
             optionButton.setVisibility(View.GONE);
@@ -472,12 +475,12 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     }
                     if (dataSnapshot.child("Likes").hasChild(currentUserId)) {
                         countLikes = (int) dataSnapshot.child("Likes").getChildrenCount();
-                        LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp, 0, 0, 0);
+                        imageViewLike.setImageResource(R.drawable.ic_favorite_black_25dp);
                         DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                         LikePostButton.setTextColor(Color.parseColor("#FF5722"));
                     } else {
                         countLikes = (int) dataSnapshot.child("Likes").getChildrenCount();
-                        LikePostButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp, 0, 0, 0);
+                        imageViewLike.setImageResource(R.drawable.ic_favorite_border_black_25dp);
                         DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                         LikePostButton.setTextColor(Color.parseColor("#959292"));
                     }
@@ -588,4 +591,5 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
 
     }
+
 }

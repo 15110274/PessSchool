@@ -18,7 +18,7 @@
             android:layout_marginTop="10dp"
             android:src="@drawable/ic_person_black_50dp"/>
 
-        <EditText
+        <TextView
             android:id="@+id/edit_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,11 +28,11 @@
             android:layout_marginRight="40dp"
             android:hint="user name"
             android:textAlignment="center"
-            android:padding="15dp"
+            android:padding="10dp"
             android:textColor="@android:color/background_dark"
             android:textSize="20sp"
             android:textStyle="bold" />
-        <EditText
+        <TextView
             android:id="@+id/edit_fullname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,12 +40,12 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="15dp"
-            android:padding="12dp"
+            android:padding="10dp"
             android:textColor="@android:color/background_dark"
             android:textSize="20sp"
             android:textStyle="bold"
             android:hint="full name"/>
-        <EditText
+        <TextView
             android:id="@+id/edit_phonenumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="15dp"
-            android:padding="12dp"
+            android:padding="10dp"
             android:textColor="@android:color/background_dark"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -62,34 +62,7 @@
             android:id="@+id/childrenlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/edit_phonenumber">
-            <EditText
-                android:id="@+id/edit_birthday"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:padding="12dp"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:hint="birthday children"/>
-            <EditText
-                android:id="@+id/edit_parentof"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/edit_birthday"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
-                android:padding="12dp"
-                android:textColor="@android:color/background_dark"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:hint="children"/>
-        </RelativeLayout>
+            android:layout_below="@id/edit_phonenumber"/>
 
         <Spinner
             android:id="@+id/roleSniper"
@@ -127,7 +100,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_below="@+id/border2"
-            android:text="Update Account Button"
+            android:text="Cập nhật"
             android:layout_margin="5dp"
             android:textColor="@color/background"
             android:textSize="20sp"

@@ -51,6 +51,7 @@ public class CommentsActivity extends AppCompatActivity {
     private CircleImageView PostProfileImage;
     private TextView PostTime, PostDate;
     private TextView LikeButton, CommentButton;
+    private ImageView imageViewLike;
 
     private DatabaseReference clickPostRef, CommentsRef;
 
@@ -99,7 +100,7 @@ public class CommentsActivity extends AppCompatActivity {
         LikeButton = findViewById(R.id.like_button);
         CommentButton = findViewById(R.id.comment_button);
         DisplayNoOfLikes = findViewById(R.id.display_no_of_likes);
-
+        imageViewLike=findViewById(R.id.img_like);
 
         mAuth = FirebaseAuth.getInstance();
         current_user_id = mAuth.getCurrentUser().getUid();
@@ -288,12 +289,12 @@ public class CommentsActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild(current_user_id)) {
                     countLikes = (int) dataSnapshot.getChildrenCount();
-                    LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_black_25dp, 0, 0, 0);
+                    imageViewLike.setImageResource(R.drawable.ic_favorite_black_25dp);
                     DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                     LikeButton.setTextColor(Color.parseColor("#FF5722"));
                 } else {
                     countLikes = (int) dataSnapshot.getChildrenCount();
-                    LikeButton.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_favorite_border_black_25dp, 0, 0, 0);
+                    imageViewLike.setImageResource(R.drawable.ic_favorite_border_black_25dp);
                     DisplayNoOfLikes.setText((Integer.toString(countLikes) + " Likes"));
                     LikeButton.setTextColor(Color.parseColor("#959292"));
                 }

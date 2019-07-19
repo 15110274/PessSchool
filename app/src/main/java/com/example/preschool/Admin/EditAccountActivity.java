@@ -43,7 +43,7 @@ import java.util.HashMap;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditAccountActivity extends AppCompatActivity {
-    private EditText userName, userFullName, userDOB, userParentOf, userPhone;
+    private TextView userName, userFullName, userPhone;
     private Button UpdateAccountSettingButton;
     private CircleImageView userProfImage;
     private ProgressDialog loadingBar;
@@ -80,8 +80,8 @@ public class EditAccountActivity extends AppCompatActivity {
         userName = findViewById(R.id.edit_username);
         userFullName = findViewById(R.id.edit_fullname);
         userPhone = findViewById(R.id.edit_phonenumber);
-        userDOB = findViewById(R.id.edit_birthday);
-        userParentOf = findViewById(R.id.edit_parentof);
+//        userDOB = findViewById(R.id.edit_birthday);
+//        userParentOf = findViewById(R.id.edit_parentof);
         UpdateAccountSettingButton = findViewById(R.id.update_account_settings_button);
         loadingBar = new ProgressDialog(this);
         childrenLayout = findViewById(R.id.childrenlayout);
@@ -154,14 +154,14 @@ public class EditAccountActivity extends AppCompatActivity {
                             String myUserName = dataSnapshot.child("username").getValue().toString();
                             userName.setText(myUserName);
                         }
-                        if (dataSnapshot.hasChild("birthday")) {
-                            String myDOB = dataSnapshot.child("birthday").getValue().toString();
-                            userDOB.setText(myDOB);
-                        }
-                        if (dataSnapshot.hasChild("parentof")) {
-                            String myParentOf = dataSnapshot.child("parentof").getValue().toString();
-                            userParentOf.setText(myParentOf);
-                        }
+//                        if (dataSnapshot.hasChild("birthday")) {
+//                            String myDOB = dataSnapshot.child("birthday").getValue().toString();
+//                            userDOB.setText(myDOB);
+//                        }
+//                        if (dataSnapshot.hasChild("parentof")) {
+//                            String myParentOf = dataSnapshot.child("parentof").getValue().toString();
+//                            userParentOf.setText(myParentOf);
+//                        }
                         editRole = dataSnapshot.child("role").getValue().toString();
                         if (editRole.equals("Parent")) {
                             childrenLayout.setVisibility(View.VISIBLE);
@@ -228,8 +228,8 @@ public class EditAccountActivity extends AppCompatActivity {
         autoComplete.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         classNameSpinner.setAdapter(autoComplete);
         classNameSpinner.setVisibility(View.GONE);
-        userParentOf.setVisibility(View.GONE);
-        userDOB.setVisibility(View.GONE);
+//        userParentOf.setVisibility(View.GONE);
+//        userDOB.setVisibility(View.GONE);
 
         roleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -237,16 +237,16 @@ public class EditAccountActivity extends AppCompatActivity {
                 if (position == 1 || position == 2) {
                     classNameSpinner.setVisibility(View.VISIBLE);
                     if (position == 1) {
-                        userParentOf.setVisibility(View.VISIBLE);
-                        userDOB.setVisibility(View.VISIBLE);
+//                        userParentOf.setVisibility(View.VISIBLE);
+//                        userDOB.setVisibility(View.VISIBLE);
                     } else {
-                        userParentOf.setVisibility(View.GONE);
-                        userDOB.setVisibility(View.GONE);
+//                        userParentOf.setVisibility(View.GONE);
+//                        userDOB.setVisibility(View.GONE);
                     }
                 } else if (position == 3) {
                     classNameSpinner.setVisibility(View.GONE);
-                    userParentOf.setVisibility(View.GONE);
-                    userDOB.setVisibility(View.GONE);
+//                    userParentOf.setVisibility(View.GONE);
+//                    userDOB.setVisibility(View.GONE);
                 }
                 roleChoose = position;
             }
@@ -274,15 +274,15 @@ public class EditAccountActivity extends AppCompatActivity {
         });
 
 
-        userProfImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent galleryIntent = new Intent();
-                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-                galleryIntent.setType("image/*");
-                startActivityForResult(galleryIntent, Gallery_Pick);
-            }
-        });
+//        userProfImage.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent galleryIntent = new Intent();
+//                galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+//                galleryIntent.setType("image/*");
+//                startActivityForResult(galleryIntent, Gallery_Pick);
+//            }
+//        });
         UpdateAccountSettingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -316,17 +316,17 @@ public class EditAccountActivity extends AppCompatActivity {
     private void ValidateAccountInfo() {
         String username = userName.getText().toString();
         String userfullname = userFullName.getText().toString();
-        String userdob = userDOB.getText().toString();
-        String userparentof = userParentOf.getText().toString();
+//        String userdob = userDOB.getText().toString();
+//        String userparentof = userParentOf.getText().toString();
         String userphone = userPhone.getText().toString();
         loadingBar.setTitle("Profile Update");
         loadingBar.setMessage("Please wait, while we updating your profile...");
         loadingBar.setCanceledOnTouchOutside(true);
         loadingBar.show();
-        UpdateAccountInfo(username, userfullname, userdob, userparentof, userphone, role.get(roleChoose), classId.get(classChoose), className.get(classChoose));
+        UpdateAccountInfo( role.get(roleChoose), classId.get(classChoose), className.get(classChoose));
     }
 
-    private void UpdateAccountInfo(final String username, final String userfullname, final String userdob, final String userparentof, final String userphone, final String role, final String idclass, final String classname) {
+    private void UpdateAccountInfo( final String role, final String idclass, final String classname) {
         StorageReference filePath = UserProfileImageRef.child(getIntent().getStringExtra("USER_ID") + ".jpg");
         if (resultUri != null) {
             filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -358,16 +358,16 @@ public class EditAccountActivity extends AppCompatActivity {
         }
 
         HashMap userMap = new HashMap();
-        userMap.put("username", username);
-        userMap.put("fullname", userfullname);
+//        userMap.put("username", username);
+//        userMap.put("fullname", userfullname);
         userMap.put("role", role);
-        userMap.put("phonenumber", userphone);
+//        userMap.put("phonenumber", userphone);
         if (roleChoose == 1 || roleChoose == 2) {
             userMap.put("idclass", idclass);
             userMap.put("classname", classname);
             if (roleChoose == 1) {
-                userMap.put("parentof", userparentof);
-                userMap.put("birthday", userdob);
+//                userMap.put("parentof", userparentof);
+//                userMap.put("birthday", userdob);
             }
         }
         if (roleChoose == 3) {
