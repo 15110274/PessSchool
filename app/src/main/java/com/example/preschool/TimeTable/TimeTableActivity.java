@@ -192,7 +192,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
                 .showTodayButton(false)
                 .init();
         picker.setBackgroundColor(Color.WHITE);
-        picker.setDate(new DateTime().plusDays(4));
+        //picker.setDate(new DateTime().plusDays(4));
     }
 
     public void CreateSchedule() {

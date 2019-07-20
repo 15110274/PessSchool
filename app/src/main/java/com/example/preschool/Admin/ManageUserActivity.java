@@ -139,8 +139,7 @@ public class ManageUserActivity extends AppCompatActivity {
                         } else {
                             checkList.set(position, "0");
                         }
-                        Toast.makeText(ManageUserActivity.this, checkList.get(position), Toast.LENGTH_SHORT).show();
-
+//                        Toast.makeText(ManageUserActivity.this, checkList.get(position), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -229,6 +228,7 @@ public class ManageUserActivity extends AppCompatActivity {
             }
         };
         listClass.setAdapter(arrayAdapter);
+        arrayAdapter.notifyDataSetChanged();
 
         classCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
