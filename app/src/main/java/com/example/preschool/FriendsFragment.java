@@ -255,6 +255,7 @@ public class FriendsFragment extends Fragment {
             }
         };
         myFriendList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         adapter.startListening();
     }
 

@@ -66,6 +66,7 @@ public class DonNghiPhepFullViewActivity extends AppCompatActivity {
                 }
                 adapter = new DonNghiPhepFullViewAdapter(donNghiPhepArrayList);
                 recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
             }
 
             @Override

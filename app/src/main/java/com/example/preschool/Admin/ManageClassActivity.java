@@ -176,6 +176,7 @@ public class ManageClassActivity extends AppCompatActivity {
             }
         };
         classList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         adapter.startListening();
     }
 

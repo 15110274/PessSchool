@@ -111,7 +111,7 @@ public class EditClassActivity extends AppCompatActivity {
                         teacherChoose = position;
                         if (temp[0] == 0) {
                             teacherOld = position;
-                            Toast.makeText(EditClassActivity.this, teacherOld + "", Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(EditClassActivity.this, teacherOld + "", Toast.LENGTH_SHORT).show();
                         }
                         temp[0]++;
                     }
@@ -165,6 +165,7 @@ public class EditClassActivity extends AppCompatActivity {
         };
         autoComplete.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         teacherSpinner.setAdapter(autoComplete);
+        autoComplete.notifyDataSetChanged();
         UpdateClassButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

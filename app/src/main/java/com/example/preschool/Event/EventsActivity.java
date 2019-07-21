@@ -167,6 +167,7 @@ public class EventsActivity extends AppCompatActivity {
         };
 
         myEventsList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         adapter.startListening();
 
     }

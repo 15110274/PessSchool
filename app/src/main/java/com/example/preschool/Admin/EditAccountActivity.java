@@ -120,6 +120,7 @@ public class EditAccountActivity extends AppCompatActivity {
         };
         roleAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         roleSpinner.setAdapter(roleAdapter);
+        roleAdapter.notifyDataSetChanged();
 
         className.add("Choose Class...");
         classId.add("");
