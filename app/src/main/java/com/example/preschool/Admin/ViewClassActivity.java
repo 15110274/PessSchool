@@ -56,7 +56,7 @@ public class ViewClassActivity extends AppCompatActivity {
                                     if (children.hasChild("fullname")) {
                                         fullname = children.child("fullname").getValue().toString();
                                     }
-                                    teacher.setText("Giáo viên: " + fullname + "(" + email + ")");
+                                    teacher.setText("Giáo viên: " + fullname + " (" + email + ")");
                                 }
                             }
                         }
