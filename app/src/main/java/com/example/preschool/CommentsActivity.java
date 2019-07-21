@@ -331,6 +331,7 @@ public class CommentsActivity extends AppCompatActivity {
         };
         firebaseRecyclerAdapter.startListening();
         CommentsList.setAdapter(firebaseRecyclerAdapter);
+        firebaseRecyclerAdapter.notifyDataSetChanged();
     }
 
     public static class CommentsViewHolder extends RecyclerView.ViewHolder {

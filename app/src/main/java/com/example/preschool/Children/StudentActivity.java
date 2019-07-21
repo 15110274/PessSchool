@@ -89,6 +89,7 @@ public class StudentActivity extends AppCompatActivity {
         };
 
         childrenList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         adapter.startListening();
 
     }
