@@ -16,6 +16,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.preschool.Notifications.Data;
 import com.example.preschool.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +25,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class DonNghiPhepActivity extends AppCompatActivity {
 
@@ -49,9 +53,9 @@ public class DonNghiPhepActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_don_xin_phep);
         // Get bundle from Main
-        bundle=getIntent().getExtras();
-        if(bundle!=null){
-            idClass=bundle.getString("ID_CLASS");
+        bundle = getIntent().getExtras();
+        if (bundle != null) {
+            idClass = bundle.getString("ID_CLASS");
         }
 
         ngayNghi = findViewById(R.id.ngay_nghi);
@@ -79,11 +83,11 @@ public class DonNghiPhepActivity extends AppCompatActivity {
             }
         });
         // get children name
-        ChildrenRef=FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("mychildren").child(idClass);
+        ChildrenRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("mychildren").child(idClass);
         ChildrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mKidName=dataSnapshot.child("name").getValue(String.class);
+                mKidName = dataSnapshot.child("name").getValue(String.class);
             }
 
             @Override
@@ -93,12 +97,16 @@ public class DonNghiPhepActivity extends AppCompatActivity {
         });
 
 
-
         mDatePickerDialog = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month = month + 1;
-                String date = dayOfMonth + "/" + month + "/" + year;
+                String date;
+                if (month < 10) {
+                    date = dayOfMonth + "/0" + month + "/" + year;
+                } else {
+                    date = dayOfMonth + "/" + month + "/" + year;
+                }
                 ngayNghi.setText(date);
             }
         };
@@ -118,21 +126,38 @@ public class DonNghiPhepActivity extends AppCompatActivity {
 
         btnGui.setEnabled(false);
 
+        Calendar calFordDate = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = calFordDate.getTime();
 
         if (!TextUtils.isEmpty(mNgayNghi) && !TextUtils.isEmpty(mSoNgay) && !TextUtils.isEmpty(mLyDo)) {
+            try {
+                Date dayoff = simpleDateFormat.parse(mNgayNghi);
+                if (dayoff.after(date)) {
+                    String id = DonXinPhepRef.push().getKey();
+                    DonNghiPhep donNghiPhep = new DonNghiPhep(userId, mParentName, mKidName, mNgayNghi, mSoNgay, mLyDo);
+                    DonXinPhepRef.child(id).setValue(donNghiPhep, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                            Toast.makeText(DonNghiPhepActivity.this, "Đã nộp đơn", Toast.LENGTH_LONG).show();
+                            ngayNghi.setText("");
+                            soNgayNghi.setText("");
+                            lyDo.setText("");
+                            btnGui.setEnabled(true);
+                        }
+                    });
+
+                } else{
+                    btnGui.setEnabled(true);
+                    Toast.makeText(DonNghiPhepActivity.this, "Bạn không thể tạo đơn trước, trùng ngàny hiện tại", Toast.LENGTH_SHORT).show();
+                }
+
+
+            } catch (Exception e) {
+
+            }
             String id = DonXinPhepRef.push().getKey();
 
-            DonNghiPhep donNghiPhep = new DonNghiPhep(userId, mParentName, mKidName, mNgayNghi, mSoNgay, mLyDo);
-            DonXinPhepRef.child(id).setValue(donNghiPhep, new DatabaseReference.CompletionListener() {
-                @Override
-                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    Toast.makeText(DonNghiPhepActivity.this, "Đã nộp đơn", Toast.LENGTH_LONG).show();
-                    ngayNghi.setText("");
-                    soNgayNghi.setText("");
-                    lyDo.setText("");
-                    btnGui.setEnabled(true);
-                }
-            });
 
         } else {
             Toast.makeText(this, "Bạn phải điền đủ nội dung", Toast.LENGTH_SHORT).show();

@@ -8,7 +8,7 @@ public class ReturnMinute {
 
     public long getMinute(String dateStart, String dateStop){
 
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyy HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
         Date d1 = null;
 

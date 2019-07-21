@@ -221,7 +221,14 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
     @Override
     public void onDateSelected(DateTime dateSelected) {
         dateSelect = dateSelected.toString("ddMMyyyy");
+        cleanData();
         DisplayAllTimeTable(dateSelect);
+    }
+
+    private void cleanData() {
+        TxtStart.setText("00:00");
+        TxtEnd.setText("00:00");
+        EdtDiscription.setText("");
     }
 
     private void DisplayAllTimeTable(final String dateSelect) {
