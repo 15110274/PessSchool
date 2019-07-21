@@ -11,14 +11,14 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/edit_profile_image"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:src="@drawable/ic_person_black_50dp"/>
 
-        <TextView
+        <EditText
             android:id="@+id/edit_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -28,11 +28,11 @@
             android:layout_marginRight="40dp"
             android:hint="user name"
             android:textAlignment="center"
-            android:padding="10dp"
+            android:padding="15dp"
             android:textColor="@android:color/background_dark"
             android:textSize="20sp"
             android:textStyle="bold" />
-        <TextView
+        <EditText
             android:id="@+id/edit_fullname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,12 +40,12 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="15dp"
-            android:padding="10dp"
+            android:padding="12dp"
             android:textColor="@android:color/background_dark"
             android:textSize="20sp"
             android:textStyle="bold"
             android:hint="full name"/>
-        <TextView
+        <EditText
             android:id="@+id/edit_phonenumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,16 +53,21 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="15dp"
-            android:padding="10dp"
+            android:padding="12dp"
             android:textColor="@android:color/background_dark"
             android:textSize="20sp"
             android:textStyle="bold"
             android:hint="phone number"/>
-        <RelativeLayout
-            android:id="@+id/childrenlayout"
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_info_kid"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/edit_phonenumber"/>
+            android:layout_below="@id/edit_phonenumber"
+            android:layout_marginLeft="-40dp">
+
+        </androidx.recyclerview.widget.RecyclerView>
 
         <Spinner
             android:id="@+id/roleSniper"
@@ -70,7 +75,7 @@
             android:layout_height="45dp"
             android:padding="8dp"
             android:layout_marginLeft="10dp"
-            android:layout_below="@id/childrenlayout"/>
+            android:layout_below="@id/recycler_info_kid"/>
 
         <TextView
             android:id="@+id/border1"
@@ -100,7 +105,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_below="@+id/border2"
-            android:text="Cập nhật"
+            android:text="Update Account Button"
             android:layout_margin="5dp"
             android:textColor="@color/background"
             android:textSize="20sp"

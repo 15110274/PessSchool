@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +28,7 @@ import com.example.preschool.Notifications.Token;
 import com.example.preschool.PersonProfileActivity;
 import com.example.preschool.R;
 import com.example.preschool.User;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -54,7 +56,7 @@ public class MessageActivity extends AppCompatActivity {
     private CircleImageView profile_image;
     private TextView username;
     private TextView lastseen;
-    private DatabaseReference UsersRef, MessagesRef, UserStateRef,ChatListRef;
+    private DatabaseReference UsersRef, MessagesRef, UserStateRef, ChatListRef;
     private ImageButton btn_send;
     private ImageButton info_user;
     private EditText text_send;
@@ -88,7 +90,7 @@ public class MessageActivity extends AppCompatActivity {
 
         UserStateRef = FirebaseDatabase.getInstance().getReference("UserState");
         UsersRef = FirebaseDatabase.getInstance().getReference("Users");
-        ChatListRef=FirebaseDatabase.getInstance().getReference("ChatList");
+        ChatListRef = FirebaseDatabase.getInstance().getReference("ChatList");
         MessagesRef = FirebaseDatabase.getInstance().getReference("Messages");
 
 
@@ -136,7 +138,6 @@ public class MessageActivity extends AppCompatActivity {
 //                    notify = true;
                     sendMessage(current_user_id, idReciver, msg);
                     setChatList(current_user_id, idReciver);
-
                 }
                 text_send.setText("");
             }
@@ -158,8 +159,8 @@ public class MessageActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
-                            String state=dataSnapshot.child("type").getValue().toString();
-                            if (state.equals("online")||state.equals("chatting"))
+                            String state = dataSnapshot.child("type").getValue().toString();
+                            if (state.equals("online") || state.equals("chatting"))
                                 lastseen.setText("online");
                             else
                                 lastseen.setText(dataSnapshot.child("time").getValue().toString());
@@ -279,29 +280,59 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("receiver", receiver);
         hashMap.put("message", message.trim());
         hashMap.put("isseen", false);
-        hashMap.put("time",saveCurrentTime);
+        hashMap.put("time", saveCurrentTime);
 
-        MessagesRef.child(childToChat).push().setValue(hashMap);
+        final String msg = message.trim();
 
-        final String msg = message;
-
-        // send Notification
-        UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
+        MessagesRef.child(childToChat).push().setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                notify = true;
-                User user = dataSnapshot.getValue(User.class);
-                if (notify) {
-                    sendNotifiaction(receiver, user.getUsername(), msg);
-                }
-                notify = false;
-            }
+            public void onSuccess(Void aVoid) {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Query query = MessagesRef.child(childToChat).orderByKey().limitToLast(1);
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                String data= dataSnapshot.toString();
+                                if(data.contains("isseen=false")){
+                                    try{
+                                        UsersRef.child(current_user_id).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                User user = dataSnapshot.getValue(User.class);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                                sendNotifiaction(receiver, user.getUsername(), msg);
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }catch (Exception e){
+
+                                    }
+                                }
+
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+                    }
+                }, 2000);
 
             }
         });
+
+
+
+
     }
 
     private void sendNotifiaction(String receiver, final String username, final String message) {
@@ -312,7 +343,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(current_user_id, R.mipmap.ic_launcher, username + ": " + message, "New Message",
+                    Data data = new Data(current_user_id, R.mipmap.ic_launcher, username + ": " + message, "Tin Nhắn Mới",
                             idReciver);
 
                     Sender sender = new Sender(data, token.getToken());
@@ -323,7 +354,7 @@ public class MessageActivity extends AppCompatActivity {
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                                     if (response.code() == 200) {
                                         if (response.body().success != 1) {
-                                            Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+//                                            Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
                                         }
                                     }
                                 }
@@ -366,20 +397,21 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
     }
-    private void updateUserStatus(String state){
-        String saveCurrentDate,saveCurrentTime;
-        Calendar calForDate=Calendar.getInstance();
-        SimpleDateFormat currentDate= new SimpleDateFormat("MM dd,yyyy");
-        saveCurrentDate=currentDate.format(calForDate.getTime());
 
-        Calendar calForTime=Calendar.getInstance();
-        SimpleDateFormat currentTime=new SimpleDateFormat("hh:mm a");
-        saveCurrentTime=currentTime.format(calForTime.getTime());
+    private void updateUserStatus(String state) {
+        String saveCurrentDate, saveCurrentTime;
+        Calendar calForDate = Calendar.getInstance();
+        SimpleDateFormat currentDate = new SimpleDateFormat("MM dd,yyyy");
+        saveCurrentDate = currentDate.format(calForDate.getTime());
 
-        Map currentStateMap=new HashMap();
-        currentStateMap.put("time",saveCurrentTime);
-        currentStateMap.put("date",saveCurrentDate);
-        currentStateMap.put("type",state);
+        Calendar calForTime = Calendar.getInstance();
+        SimpleDateFormat currentTime = new SimpleDateFormat("hh:mm a");
+        saveCurrentTime = currentTime.format(calForTime.getTime());
+
+        Map currentStateMap = new HashMap();
+        currentStateMap.put("time", saveCurrentTime);
+        currentStateMap.put("date", saveCurrentDate);
+        currentStateMap.put("type", state);
 
         UserStateRef.child(current_user_id)
                 .setValue(currentStateMap);
@@ -408,4 +440,5 @@ public class MessageActivity extends AppCompatActivity {
         updateUserStatus("offline");
     }
 }
+
 
