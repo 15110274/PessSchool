@@ -95,10 +95,14 @@ public class EditProfileActivity extends AppCompatActivity {
                         txtChildren.setVisibility(View.GONE);
                     }
                 }
-                if (dataSnapshot.hasChild("profileimage")) {
+                try {
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                     Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfImage);
+                } catch (Exception e) {
+//                    Picasso.get().load(R.drawable.ic_person_black_50dp).into(userProfImage);
                 }
+
+
                 if (dataSnapshot.hasChild("fullname")) {
                     String myProfileName = dataSnapshot.child("fullname").getValue().toString();
                     userFullName.setText(myProfileName);

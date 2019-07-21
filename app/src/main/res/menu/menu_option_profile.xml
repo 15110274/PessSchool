@@ -4,7 +4,7 @@
     <item
         android:id="@+id/action_edit_profile"
         android:orderInCategory="100"
-        android:title="Sử thông tin"
+        android:title="Sửa thông tin"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_change_pass"

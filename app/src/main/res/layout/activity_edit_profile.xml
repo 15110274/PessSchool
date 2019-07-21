@@ -1,118 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp"
     tools:context=".EditProfileActivity">
-
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/edit_profile_image"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="10dp"
-        android:layout_gravity="center"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="16sp"
-        android:layout_marginTop="16dp"
-        android:text="Tên người dùng"/>
-    <EditText
-        android:id="@+id/edit_username"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_profile_image"
-        android:inputType="textCapSentences"
-        android:hint="Tên người dùng"
-        android:textColor="@android:color/background_dark"
-        android:textSize="18sp"
-        />
+        android:padding="8dp"
+        android:orientation="vertical">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/edit_profile_image"
+            android:src="@drawable/ic_person_black_50dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="10dp"
+            android:layout_gravity="center"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp"
+            android:layout_marginTop="16dp"
+            android:text="Tên người dùng"/>
+        <EditText
+            android:id="@+id/edit_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:hint="Tên người dùng"
+            android:textColor="@android:color/background_dark"
+            android:textSize="18sp"
+            />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="@android:color/darker_gray"
-        android:text="Họ và tên"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:text="Họ và tên"/>
 
-    <EditText
-        android:id="@+id/edit_fullname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_username"
-        android:inputType="textCapSentences"
-        android:hint="Họ và tên"
-        android:textColor="@android:color/background_dark" />
+        <EditText
+            android:id="@+id/edit_fullname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapSentences"
+            android:hint="Họ và tên"
+            android:textColor="@android:color/background_dark" />
 
-    <TextView
-        android:id="@+id/textviewBirthday"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/darker_gray"
-        android:textSize="16sp"
-        android:text="Sinh nhật"/>
+        <TextView
+            android:id="@+id/textviewBirthday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp"
+            android:text="Sinh nhật"/>
 
-    <EditText
-        android:id="@+id/edit_birthday"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Sinh nhật"
-        android:inputType="date"
-        android:textColor="@android:color/black"
-        />
+        <EditText
+            android:id="@+id/edit_birthday"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Sinh nhật"
+            android:inputType="date"
+            android:textColor="@android:color/black"
+            />
 
-    <TextView
-        android:id="@+id/textviewChildren"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="@android:color/darker_gray"
-        android:text="Phụ huynh của bé"/>
-
-
-    <EditText
-        android:id="@+id/edit_parentof"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_birthday"
-        android:hint="Phụ huynh của bé"
-        android:inputType="textCapSentences"
-        android:textColor="@android:color/background_dark"
-        />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textColor="@android:color/darker_gray"
-        android:text="Số điện thoại"/>
+        <TextView
+            android:id="@+id/textviewChildren"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:text="Phụ huynh của bé"/>
 
 
-    <EditText
-        android:id="@+id/edit_phonenumber"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/edit_birthday"
-        android:hint="Số điện thoại"
-        android:inputType="phone"
-        android:textColor="@android:color/background_dark"
-        />
+        <EditText
+            android:id="@+id/edit_parentof"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phụ huynh của bé"
+            android:inputType="textCapSentences"
+            android:textColor="@android:color/background_dark"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@android:color/darker_gray"
+            android:text="Số điện thoại"/>
 
-    <Button
-        android:id="@+id/update_account_settings_button"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_below="@+id/edit_parentof"
-        android:layout_margin="20dp"
-        android:background="@drawable/large_button"
-        android:text="Cập nhật"
-        android:textAllCaps="false"
-        android:textColor="@color/background"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        />
-</LinearLayout>
+
+        <EditText
+            android:id="@+id/edit_phonenumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Số điện thoại"
+            android:inputType="phone"
+            android:textColor="@android:color/background_dark"
+            />
+
+        <Button
+            android:id="@+id/update_account_settings_button"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="20dp"
+            android:background="@drawable/large_button"
+            android:text="Cập nhật"
+            android:textAllCaps="false"
+            android:textColor="@color/background"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            />
+    </LinearLayout>
+
+
+
+</ScrollView>

@@ -5,23 +5,25 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.preschool.TimeLine.Posts;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,20 +39,23 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
 public class CommentsActivity extends AppCompatActivity {
     private RecyclerView CommentsList;
     private ImageButton PostCommentButton;
+    private ImageButton PostOptionButton;
     private EditText CommentInputText;
     private DatabaseReference UsersRef, PostsRef,LikesRef;
     private ValueEventListener commentListener;
-    private ImageView PostImage;
+    private ViewPager PostImage;
     private TextView PostDescription, PostName;
     private CircleImageView PostProfileImage;
     private TextView PostTime, PostDate;
     private TextView LikeButton, CommentButton;
+    private LinearLayout linearLayoutLike, linearLayoutCmt;
     private ImageView imageViewLike;
 
     private DatabaseReference clickPostRef, CommentsRef;
@@ -92,15 +97,19 @@ public class CommentsActivity extends AppCompatActivity {
 
 
         PostName = findViewById(R.id.post_user_name);
-//        PostImage = findViewById(R.id.post_image);
+        PostImage = findViewById(R.id.post_image);
         PostDescription = findViewById(R.id.post_description);
         PostProfileImage = findViewById(R.id.post_profile_image);
         PostTime = findViewById(R.id.post_time);
         PostDate = findViewById(R.id.post_date);
         LikeButton = findViewById(R.id.like_button);
         CommentButton = findViewById(R.id.comment_button);
+        linearLayoutLike=findViewById(R.id.linearLayoutLike);
+        linearLayoutCmt=findViewById(R.id.linearLayoutCmt);
         DisplayNoOfLikes = findViewById(R.id.display_no_of_likes);
         imageViewLike=findViewById(R.id.img_like);
+        PostOptionButton=findViewById(R.id.post_option_button);
+        PostOptionButton.setVisibility(View.GONE);
 
         mAuth = FirebaseAuth.getInstance();
         current_user_id = mAuth.getCurrentUser().getUid();
@@ -131,6 +140,7 @@ public class CommentsActivity extends AppCompatActivity {
 
         CommentsList = findViewById(R.id.comments_list);
         CommentsList.setHasFixedSize(false);
+        CommentsList.setNestedScrollingEnabled(false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -170,7 +180,7 @@ public class CommentsActivity extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     setLikeButtonStatus(Post_Key);
                     setCommentPostButtonStatus(Post_Key);
-
+                    setImagePost(CommentsActivity.this, dataSnapshot.getValue(Posts.class).getPostimage());
                     description = dataSnapshot.child("description").getValue().toString();
 
 //                    postimage = dataSnapshot.child("postimage").getValue().toString();
@@ -217,13 +227,13 @@ public class CommentsActivity extends AppCompatActivity {
                     });
                     PostTime.setText(time);
                     PostDate.setText(date);
-                    CommentButton.setOnClickListener(new View.OnClickListener() {
+                    linearLayoutCmt.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             CommentInputText.requestFocus();
                         }
                     });
-                    LikeButton.setOnClickListener(new View.OnClickListener() {
+                    linearLayoutLike.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             LikeChecker = true;
@@ -259,7 +269,12 @@ public class CommentsActivity extends AppCompatActivity {
 
     }
 
-    public void setCommentPostButtonStatus(final String PostKey) {
+    private void setImagePost(Context context, ArrayList<String> postimage) {
+        AdapterImagePost adapter = new AdapterImagePost(context, postimage);
+        PostImage.setAdapter(adapter);
+    }
+
+    private void setCommentPostButtonStatus(final String PostKey) {
         CommentsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -281,7 +296,7 @@ public class CommentsActivity extends AppCompatActivity {
         });
     }
 
-    public void setLikeButtonStatus(final String PostKey) {
+    private void setLikeButtonStatus(final String PostKey) {
 
         LikesRef.addValueEventListener(new ValueEventListener() {
 

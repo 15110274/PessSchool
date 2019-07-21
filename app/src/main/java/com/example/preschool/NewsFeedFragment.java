@@ -1,30 +1,22 @@
 package com.example.preschool;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.preschool.Chats.MessageActivity;
-import com.example.preschool.PhotoAlbum.AdapterImageView;
-import com.example.preschool.PhotoAlbum.ViewPhotoActivity;
 import com.example.preschool.TimeLine.Posts;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -40,17 +32,11 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
-
-import org.w3c.dom.Comment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -60,7 +46,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -294,7 +279,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
 
                 //cmt
-                postsViewHolder.CommentPostButton.setOnClickListener(new View.OnClickListener() {
+                postsViewHolder.linearLayoutCmt.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent commentsIntent = new Intent(getActivity(), CommentsActivity.class);
@@ -304,7 +289,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                     }
                 });
                 //like
-                postsViewHolder.LikePostButton.setOnClickListener(new View.OnClickListener() {
+                postsViewHolder.linearLayoutLike.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         LikeChecker = true;
@@ -431,6 +416,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         private TextView LikePostButton, CommentPostButton;
         private ImageView imageViewLike;
         private TextView DisplayNoOfLikes, DisplayNoOfComments;
+        private LinearLayout linearLayoutLike, linearLayoutCmt;
         private ImageButton optionButton;
         private int countLikes;
         private int countComments;
@@ -448,6 +434,8 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             imageViewLike=itemView.findViewById(R.id.img_like);
             optionButton = itemView.findViewById(R.id.post_option_button);
             postImages = itemView.findViewById(R.id.post_image);
+            linearLayoutLike=itemView.findViewById(R.id.linearLayoutLike);
+            linearLayoutCmt=itemView.findViewById(R.id.linearLayoutCmt);
             optionButton.setVisibility(View.GONE);
 
             /**

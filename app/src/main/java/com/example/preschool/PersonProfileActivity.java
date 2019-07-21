@@ -65,7 +65,7 @@ public class PersonProfileActivity extends AppCompatActivity {
         bundle = getIntent().getExtras();
         if (bundle != null) {
             visitUserId = bundle.getString("VISIT_USER_ID");
-            idClass=bundle.getString("ID_CLASS");
+            idClass = bundle.getString("ID_CLASS");
         }
 
         // Khai báo các thành phần giao diện
@@ -74,41 +74,60 @@ public class PersonProfileActivity extends AppCompatActivity {
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
 
-        UserListener= UsersRef.child(visitUserId).addValueEventListener(new ValueEventListener() {
+        UserListener = UsersRef.child(visitUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     try {
-                        String role=dataSnapshot.child("role").getValue().toString();
-                        String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
-                        String myUserName = dataSnapshot.child("username").getValue().toString();
-                        String myProfileName = dataSnapshot.child("fullname").getValue().toString();
+                        String role = dataSnapshot.child("role").getValue().toString();
+                        try {
+                            String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
+                            Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
+                        } catch (Exception e) {
 
-                        String myClass = dataSnapshot.child("classname").getValue().toString();
-                        String myphoneNumber=dataSnapshot.child("phonenumber").getValue().toString();
+                        }
+                        try {
+                            String myUserName = dataSnapshot.child("username").getValue().toString();
+                            userName.setText(myUserName);
+                        } catch (Exception e) {
+                            userName.setText("");
+                        }
+                        try {
+                            String myProfileName = dataSnapshot.child("fullname").getValue().toString();
+                            userProfName.setText(myProfileName);
+                        } catch (Exception e) {
+                            userProfName.setText("");
+                        }
+                        try {
+                            String myClass = dataSnapshot.child("classname").getValue().toString();
+                            userClass.setText("Lớp: " + myClass);
+                        } catch (Exception e) {
+                            userClass.setText("Lớp: ");
+                        }
+                        try {
+                            String myphoneNumber = dataSnapshot.child("phonenumber").getValue().toString();
+                            userPhoneNumber.setText("Sdt: " + myphoneNumber);
+                        } catch (Exception e) {
+                            userPhoneNumber.setText("Sdt: ");
+                        }
+//                        String myUserName = dataSnapshot.child("username").getValue().toString();
 
-
-                        Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
-
-                        userName.setText(myUserName);
-                        userProfName.setText(myProfileName);
-                        if(role.equals("Parent")){
+                        if (role.equals("Parent")) {
                             userParentof.setVisibility(View.VISIBLE);
                             userBirthDay.setVisibility(View.VISIBLE);
                             String myBirthday = dataSnapshot.child("mychildren").child(idClass).child("birthday").getValue().toString();
                             userBirthDay.setText("Sinh nhật: " + myBirthday);
                             String myParentOf = dataSnapshot.child("mychildren").child(idClass).child("name").getValue().toString();
                             userParentof.setText("Phụ huynh của bé: " + myParentOf);
-                        }
-                        else{
+                        } else {
                             userParentof.setVisibility(View.GONE);
                             userBirthDay.setVisibility(View.GONE);
                         }
-                        userClass.setText("Lớp: " + myClass);
-                        userPhoneNumber.setText("Sdt: "+myphoneNumber);
 
 
-                    }catch (Exception e){
+
+
+                    } catch (Exception e) {
 
                     }
 
@@ -131,7 +150,7 @@ public class PersonProfileActivity extends AppCompatActivity {
         userParentof = findViewById(R.id.relationship_with_children);
         userBirthDay = findViewById(R.id.person_birthday);
         userClass = findViewById(R.id.person_class);
-        userPhoneNumber=findViewById(R.id.person_phone);
+        userPhoneNumber = findViewById(R.id.person_phone);
     }
 
     @Override

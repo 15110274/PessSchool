@@ -173,6 +173,7 @@ public class ChatsFragment extends Fragment {
                                     chatListViewHolder.last_msg.setText(child.child("message").getValue().toString());
                                     if(child.child("sender").getValue().toString().equals(current_user_id)){
                                         chatListViewHolder.sender.setVisibility(View.VISIBLE);
+                                        chatListViewHolder.sender.setWidth(100);
                                         setTextLastMess(child.child("message").getValue().toString()
                                                 ,chatListViewHolder.last_msg,true);
                                     }
