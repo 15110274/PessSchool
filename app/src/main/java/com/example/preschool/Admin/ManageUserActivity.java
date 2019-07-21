@@ -449,12 +449,32 @@ public class ManageUserActivity extends AppCompatActivity {
                     }
                     //nếu vừa chọn role vừa chọn class thì hiển theo role rồi hiển thị theo class
                     else {
-                        if (model.getRole() != null && model.getIdclass() != null && model.getRole().equals(roleChoose) && model.getIdclass().equals(idClassChoose)) {
+                        boolean view=false;
+                        if (model.getRole() != null
+                                && model.getIdclass() != null
+                                && model.getRole().equals(roleChoose))
+                        {
+                            if(model.getRole().equals("Teacher")){
+                                if(model.getIdclass().equals(idClassChoose))
+                                    view=true;
+                            }
+                            else{
+                                ArrayList<String> temp = model.getMyclass();
+                                for(String node:temp){
+                                    if(node.equals(idClassChoose)){
+                                        view=true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if(view==true){
                             if (model.getFullname() != null)
                                 usersViewHolder.setFullname(model.getFullname());
                             usersViewHolder.setProfileImage(model.getProfileimage());
                             usersViewHolder.setEmail(model.getEmail());
-                        } else usersViewHolder.Layout_hide();
+                        }
+                        else usersViewHolder.Layout_hide();
                     }
                 }
                 //ngược lại hiển thị toàn bộ user
@@ -563,6 +583,7 @@ public class ManageUserActivity extends AppCompatActivity {
             }
         };
         myAccountList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         adapter.startListening();
     }
 
