@@ -70,7 +70,7 @@ public class ViewMenuActivity extends AppCompatActivity implements DatePickerLis
                 .showTodayButton(false)
                 .init();
         picker.setBackgroundColor(getResources().getColor(R.color.bgr));
-        picker.setDate(new DateTime().plusDays(4));
+        picker.setDate(new DateTime().plusDays(0));
 
     }
 

@@ -94,7 +94,7 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
                 .showTodayButton(false)
                 .init();
         picker.setBackgroundColor(getResources().getColor(R.color.bgr));
-        picker.setDate(new DateTime().plusDays(4));
+        picker.setDate(new DateTime().plusDays(0));
         //btnSave
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                loadingBar.dismiss();
+//                                loadingBar.dismiss();
                                 final FirebaseUser currentUser = mAuth.getCurrentUser();
                                 currentUserID = mAuth.getCurrentUser().getUid();
                                 UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
