@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity
     private DatabaseReference UsersRef,ClassRef,UserStateRef;
     private TextView txtclassName;
     private String currentUserID;
+    private String teacherName,year,room;
     private Toolbar toolbar;
     private DrawerLayout drawer;
     private Bundle bundle;
@@ -103,7 +105,7 @@ public class MainActivity extends AppCompatActivity
 
         UserStateRef=FirebaseDatabase.getInstance().getReference("UserState");
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserID);
-        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Children");
+        ClassRef=FirebaseDatabase.getInstance().getReference().child("Class").child(idClass);
 
         // setup thông tin của trẻ cho lớp học
         UsersRef.child("mychildren").child(idClass).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -122,8 +124,42 @@ public class MainActivity extends AppCompatActivity
 
 
 
+
 //        updateUserStatus("online");
         AppCenter.start(getApplication(), "74bc89c2-9212-4cc3-9b55-6fc10baf76bb", Analytics.class, Crashes.class);
+
+
+
+        try{
+            ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    year=dataSnapshot.child("year").getValue(String.class);
+                    room=dataSnapshot.child("room").getValue(String.class);
+
+                    DatabaseReference TeacherRef= FirebaseDatabase.getInstance().getReference("Users").child(idTeacher);
+                    TeacherRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            teacherName= dataSnapshot.child("fullname").getValue(String.class);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }catch (Exception e){
+
+        }
 
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.toolbar);
@@ -131,6 +167,29 @@ public class MainActivity extends AppCompatActivity
 
         txtclassName=findViewById(R.id.class_name);
         txtclassName.setText(className);
+        txtclassName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Dialog dialogDetailClass =new Dialog(MainActivity.this);
+                dialogDetailClass.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialogDetailClass.setCancelable(true);
+                dialogDetailClass.setContentView(R.layout.detail_class);
+                dialogDetailClass.getWindow().setBackgroundDrawableResource(android.R.color.white);
+
+                final TextView txtClassName, txtNameTeacher, txtYear, txtRoom;
+                txtClassName=dialogDetailClass.findViewById(R.id.class_name);
+                txtNameTeacher=dialogDetailClass.findViewById(R.id.teacher_name);
+                txtRoom=dialogDetailClass.findViewById(R.id.room);
+                txtYear=dialogDetailClass.findViewById(R.id.year);
+
+                txtClassName.setText(className);
+                txtNameTeacher.setText(teacherName);
+                txtRoom.setText(room);
+                txtYear.setText(year);
+                dialogDetailClass.show();
+
+            }
+        });
 
         mViewPager = findViewById(R.id.viewPager);
         final TabLayout tabLayout = findViewById(R.id.tablayout);
@@ -250,7 +309,7 @@ public class MainActivity extends AppCompatActivity
                                 .addOnSuccessListener(new OnSuccessListener() {
                             @Override
                             public void onSuccess(Object o) {
-                                ClassRef.child(currentUserID).updateChildren(childrenMap)
+                                ClassRef.child("Children").child(currentUserID).updateChildren(childrenMap)
                                         .addOnSuccessListener(new OnSuccessListener() {
                                     @Override
                                     public void onSuccess(Object o) {

@@ -232,7 +232,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
     }
 
     private void DisplayAllTimeTable(final String dateSelect) {
-        Query query=TimeTableRef.child(dateSelect).orderByChild("timeStart");
+        Query query=TimeTableRef.child(dateSelect).orderByKey();
         FirebaseRecyclerOptions<TimeTable> options = new FirebaseRecyclerOptions.Builder<TimeTable>().setQuery(query
                 ,TimeTable.class)
                 .build();
