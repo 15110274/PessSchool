@@ -25,6 +25,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -42,6 +43,7 @@ public class EditClassActivity extends AppCompatActivity {
     private int teacherChoose = 0;
     private int teacherOld = 0;
     private String classEdit;
+    private ValueEventListener ref1, ref2, ref3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,25 +59,26 @@ public class EditClassActivity extends AppCompatActivity {
         teacherSpinner = findViewById(R.id.teacherSpinner);
         teachername.add("Choose Teacher...");
         teacherid.add("");
-        ValueEventListener ref1 = UserRef.addValueEventListener(new ValueEventListener() {
+
+        Query query = UserRef.orderByChild("role").equalTo("Teacher");
+        ref1 = query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                int count=(int)dataSnapshot.getChildrenCount()+1;
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()) {
-                    if (suggestionSnapshot.hasChild("role")) {
-                        if (suggestionSnapshot.child("role").getValue().toString().equals("Teacher")) {
-                            String name = "";
-                            if (suggestionSnapshot.hasChild("fullname")) {
-                                name = suggestionSnapshot.child("fullname").getValue(String.class);
-                            }
-                            String email = suggestionSnapshot.child("email").getValue(String.class);
-                            String id = suggestionSnapshot.getKey();
-                            teacherid.add(id);
-                            teachername.add(name + "(" + email + ")");
+                    if(teacherid.size()<=count&&teachername.size()<=count){
+                        String name = "";
+                        if (suggestionSnapshot.hasChild("fullname")) {
+                            name = suggestionSnapshot.child("fullname").getValue(String.class);
                         }
+                        String email = suggestionSnapshot.child("email").getValue(String.class);
+                        String id = suggestionSnapshot.getKey();
+                        teacherid.add(id);
+                        teachername.add(name + "(" + email + ")");
+                        if(teacherid.size()==count) teacherid.add("");
                     }
-
                 }
-                ValueEventListener ref2 = ClassRef.child(classEdit).addValueEventListener(new ValueEventListener() {
+                ClassRef.child(classEdit).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.hasChild("classname")) {
@@ -111,7 +114,7 @@ public class EditClassActivity extends AppCompatActivity {
                         teacherChoose = position;
                         if (temp[0] == 0) {
                             teacherOld = position;
-                           // Toast.makeText(EditClassActivity.this, teacherOld + "", Toast.LENGTH_SHORT).show();
+                            // Toast.makeText(EditClassActivity.this, teacherOld + "", Toast.LENGTH_SHORT).show();
                         }
                         temp[0]++;
                     }
@@ -224,5 +227,12 @@ public class EditClassActivity extends AppCompatActivity {
         intent.putExtra("CLASS_ID", classEdit);
         intent.putExtra("test", teacherid);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        if (ref2 != null)
+//            ClassRef.child(classEdit).removeEventListener(ref2);
     }
 }

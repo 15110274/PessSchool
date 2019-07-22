@@ -136,7 +136,7 @@ public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
             case R.id.action_rename_album:
                 if(isTeacher){
                     renameAlbum();
-                }else Toast.makeText(ViewAllPhotoAlbumActivity.this,"Bạn không phải là giảo viên",Toast.LENGTH_SHORT).show();
+                }else Toast.makeText(ViewAllPhotoAlbumActivity.this,"Bạn không phải là giáo viên",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.action_save_on_device:
                 Toast.makeText(ViewAllPhotoAlbumActivity.this,"Tính năng chưa hoàn thiện",Toast.LENGTH_SHORT).show();
@@ -145,7 +145,7 @@ public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
             case R.id.action_delete_album:
                 if(isTeacher){
                     deleteAlbum();
-                }else Toast.makeText(ViewAllPhotoAlbumActivity.this,"Bạn không phải là giảo viên",Toast.LENGTH_SHORT).show();
+                }else Toast.makeText(ViewAllPhotoAlbumActivity.this,"Bạn không phải là giáo viên",Toast.LENGTH_SHORT).show();
                 break;
 
 

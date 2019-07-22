@@ -121,15 +121,19 @@ public class ManageUserActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()) {
-                    String classname = suggestionSnapshot.child("classname").getValue(String.class);
-                    String classid = suggestionSnapshot.getKey();
-                    className.add(classname);
-                    classId.add(classid);
+                    int count=(int)dataSnapshot.getChildrenCount()+1;
+                    if(className.size()<=count
+                            && classId.size()<=count){
+                        String classname = suggestionSnapshot.child("classname").getValue(String.class);
+                        String classid = suggestionSnapshot.getKey();
+                        className.add(classname);
+                        classId.add(classid);
+                        if(classId.size()==count) classId.add("");
+                    }
                 }
                 for (int i = 0; i < classId.size(); i++) {
                     checkList.add(i, "0");
                 }
-
                 listClass.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
