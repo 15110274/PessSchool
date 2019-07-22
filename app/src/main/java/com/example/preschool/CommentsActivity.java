@@ -344,9 +344,15 @@ public class CommentsActivity extends AppCompatActivity {
                 return new CommentsViewHolder(view);
             }
         };
+
         firebaseRecyclerAdapter.startListening();
+//        firebaseRecyclerAdapter.notifyDataSetChanged();
         CommentsList.setAdapter(firebaseRecyclerAdapter);
-        firebaseRecyclerAdapter.notifyDataSetChanged();
+
+    }
+
+    private void showComment(){
+
     }
 
     public static class CommentsViewHolder extends RecyclerView.ViewHolder {
