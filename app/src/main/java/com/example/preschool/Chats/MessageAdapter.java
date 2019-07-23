@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +17,8 @@ import com.example.preschool.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -50,11 +53,27 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MessageAdapter.ViewHolder holder, int position) {
 
-        Chat chat = mChat.get(position);
-
+        final Chat chat = mChat.get(position);
+        final int[] count = {1};
         holder.show_message.setText(chat.getMessage());
+        holder.show_message.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.txt_timesend.setText(chat.getTime().substring(11,16));
+                if(count[0] ==1){
+                    holder.txt_timesend.setVisibility(View.VISIBLE);
+                    count[0] =0;
+                }
+               else{
+                    holder.txt_timesend.setVisibility(View.GONE);
+                    count[0]=1;
+                }
+
+            }
+        });
+
 
         if (imageurl.equals("default")){
             holder.profile_image.setImageResource(R.mipmap.ic_launcher);
@@ -64,9 +83,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         if (position == mChat.size()-1){
             if (chat.isIsseen()){
-                holder.txt_seen.setText("Seen");
+                holder.txt_seen.setText("Đã xem");
             } else {
-                holder.txt_seen.setText("Delivered");
+                holder.txt_seen.setText("Đã gửi");
             }
         } else {
             holder.txt_seen.setVisibility(View.GONE);
@@ -84,6 +103,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         public TextView show_message;
         public ImageView profile_image;
         public TextView txt_seen;
+        public TextView txt_timesend;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -91,6 +111,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             show_message = itemView.findViewById(R.id.show_message);
             profile_image = itemView.findViewById(R.id.profile_image);
             txt_seen = itemView.findViewById(R.id.txt_seen);
+            txt_timesend=itemView.findViewById(R.id.txt_timesend);
         }
     }
 
