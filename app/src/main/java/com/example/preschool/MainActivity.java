@@ -277,7 +277,16 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 month = month + 1;
-                String date = dayOfMonth + "/" + month + "/" + year;
+                String date;
+                if (month < 10) {
+                    if (dayOfMonth < 10) {
+                        date = "0" + dayOfMonth + "/0" + month + "/" + year;
+                    } else date = dayOfMonth + "/0" + month + "/" + year;
+                } else {
+                    if (dayOfMonth < 10) {
+                        date = "0" + dayOfMonth + "/0" + month + "/" + year;
+                    } else date = dayOfMonth + "/" + month + "/" + year;
+                }
                 childrenBirthday.setText(date);
             }
         };

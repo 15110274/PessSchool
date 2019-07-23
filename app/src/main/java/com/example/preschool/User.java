@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class User implements Serializable {
-    public String fullnamefather,fullnamemother,address,phonenumber,username,idclass,classname,profileimage,userid,email,role,deleted;
+    public String fullnamefather,fullnamemother,fullnameteacher, address,phonenumber,username,idclass,classname,profileimage,userid,email,role,deleted;
     public ArrayList<String> myclass;
 
     public String getFullnamefather() {
@@ -21,6 +21,14 @@ public class User implements Serializable {
 
     public void setFullnamemother(String fullnamemother) {
         this.fullnamemother = fullnamemother;
+    }
+
+    public String getFullnameteacher() {
+        return fullnameteacher;
+    }
+
+    public void setFullnameteacher(String fullnameteacher) {
+        this.fullnameteacher = fullnameteacher;
     }
 
     public String getAddress() {
@@ -111,12 +119,10 @@ public class User implements Serializable {
         this.myclass = myclass;
     }
 
-    public User() {
-    }
-
-    public User(String fullnamefather, String fullnamemother, String address, String phonenumber, String username, String idclass, String classname, String profileimage, String userid, String email, String role, String deleted, ArrayList<String> myclass) {
+    public User(String fullnamefather, String fullnamemother, String fullnameteacher, String address, String phonenumber, String username, String idclass, String classname, String profileimage, String userid, String email, String role, String deleted, ArrayList<String> myclass) {
         this.fullnamefather = fullnamefather;
         this.fullnamemother = fullnamemother;
+        this.fullnameteacher = fullnameteacher;
         this.address = address;
         this.phonenumber = phonenumber;
         this.username = username;
@@ -128,5 +134,8 @@ public class User implements Serializable {
         this.role = role;
         this.deleted = deleted;
         this.myclass = myclass;
+    }
+
+    public User() {
     }
 }

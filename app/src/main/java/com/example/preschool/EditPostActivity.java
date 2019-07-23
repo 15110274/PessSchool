@@ -194,7 +194,7 @@ public class EditPostActivity extends AppCompatActivity {
         userEventListener=UserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                userName.setText(dataSnapshot.child("username").getValue().toString());
+                userName.setText(dataSnapshot.child("fullnameteacher").getValue().toString());
                 Picasso.get()
                         .load(dataSnapshot.child("profileimage").getValue().toString())
                         .networkPolicy(NetworkPolicy.NO_CACHE)

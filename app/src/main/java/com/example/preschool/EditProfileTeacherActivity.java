@@ -3,13 +3,11 @@ package com.example.preschool;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.MenuItem;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,8 +32,11 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.HashMap;
 
-public class EditProfileActivity extends AppCompatActivity {
-    private EditText userName, userFullName, userDOB, userParentOf, userPhoneNumber;
+import de.hdodenhof.circleimageview.CircleImageView;
+
+public class EditProfileTeacherActivity extends AppCompatActivity {
+
+    private EditText userName, userFullName, userPhoneNumber, userAddress;
     private Button UpdateAccountSettingButton;
     private CircleImageView userProfImage;
     private ProgressDialog loadingBar;
@@ -46,20 +47,19 @@ public class EditProfileActivity extends AppCompatActivity {
     final static int Gallery_Pick = 1;
     private StorageReference UserProfileImageRef;
     private Uri resultUri;
-    private String idClass, role;
-    private TextView txtChildren, txtBirthday;
+    private String idClass;
     private Bundle bundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile);
+        setContentView(R.layout.activity_edit_profile_teacher);
 
         bundle = getIntent().getExtras();
         if (bundle != null) {
             idClass = bundle.getString("ID_CLASS");
         }
-
+//
         mAuth = FirebaseAuth.getInstance();
         currentUserId = mAuth.getCurrentUser().getUid();
         EditUserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId);
@@ -69,32 +69,17 @@ public class EditProfileActivity extends AppCompatActivity {
         userProfImage = findViewById(R.id.edit_profile_image);
         userName = findViewById(R.id.edit_username);
         userFullName = findViewById(R.id.edit_fullname);
-        userDOB = findViewById(R.id.edit_birthday);
-        userParentOf = findViewById(R.id.edit_parentof);
-        userPhoneNumber = findViewById(R.id.edit_phonenumber);
+        userPhoneNumber = findViewById(R.id.sdt);
+        userAddress = findViewById(R.id.address);
         UpdateAccountSettingButton = findViewById(R.id.update_account_settings_button);
-        txtBirthday = findViewById(R.id.textviewBirthday);
-        txtChildren = findViewById(R.id.textviewChildren);
         loadingBar = new ProgressDialog(this);
-
+//
         EditUserRef.addValueEventListener(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChild("role")) {
-                    role = dataSnapshot.child("role").getValue().toString();
-                    if (role.equals("Parent")) {
-                        userParentOf.setVisibility(View.VISIBLE);
-                        userDOB.setVisibility(View.VISIBLE);
-                        txtBirthday.setVisibility(View.VISIBLE);
-                        txtChildren.setVisibility(View.VISIBLE);
-                    } else {
-                        userParentOf.setVisibility(View.GONE);
-                        userDOB.setVisibility(View.GONE);
-                        txtBirthday.setVisibility(View.GONE);
-                        txtChildren.setVisibility(View.GONE);
-                    }
-                }
+
+
                 try {
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                     Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfImage);
@@ -102,24 +87,21 @@ public class EditProfileActivity extends AppCompatActivity {
 //                    Picasso.get().load(R.drawable.ic_person_black_50dp).into(userProfImage);
                 }
 
-
-                if (dataSnapshot.hasChild("fullname")) {
-                    String myProfileName = dataSnapshot.child("fullname").getValue().toString();
+                if (dataSnapshot.hasChild("fullnameteacher")) {
+                    String myProfileName = dataSnapshot.child("fullnameteacher").getValue().toString();
                     userFullName.setText(myProfileName);
                 }
                 if (dataSnapshot.hasChild("username")) {
                     String myUserName = dataSnapshot.child("username").getValue().toString();
                     userName.setText(myUserName);
                 }
-                if (dataSnapshot.hasChild("mychildren")) {
-                    String myDOB = dataSnapshot.child("mychildren").child(idClass).child("birthday").getValue().toString();
-                    userDOB.setText(myDOB);
-                    String myParentOf = dataSnapshot.child("mychildren").child(idClass).child("name").getValue().toString();
-                    userParentOf.setText(myParentOf);
-                }
                 if (dataSnapshot.hasChild("phonenumber")) {
                     String myphone = dataSnapshot.child("phonenumber").getValue().toString();
                     userPhoneNumber.setText(myphone);
+                }
+                if (dataSnapshot.hasChild("address")) {
+                    String myphone = dataSnapshot.child("address").getValue().toString();
+                    userAddress.setText(myphone);
                 }
             }
 
@@ -171,45 +153,55 @@ public class EditProfileActivity extends AppCompatActivity {
     private void ValidateAccountInfo() {
         String username = userName.getText().toString();
         String userfullname = userFullName.getText().toString();
-        String userdob = "";
-        String userparentof = "";
-        if (role.equals("Parent")) {
-            userdob = userDOB.getText().toString();
-            userparentof = userParentOf.getText().toString();
-        }
-
         String userphonenumber = userPhoneNumber.getText().toString();
-        loadingBar.setTitle("Profile Update");
-        loadingBar.setMessage("Please wait, while we updating your profile...");
-        loadingBar.setCanceledOnTouchOutside(true);
-        loadingBar.show();
-        UpdateAccountInfo(username, userfullname, userdob, userparentof, userphonenumber);
-        loadingBar.dismiss();
+        String useraddress = userAddress.getText().toString();
+
+        if (TextUtils.isEmpty(username) ||
+                TextUtils.isEmpty(userfullname) ||
+                TextUtils.isEmpty(userphonenumber) ||
+                TextUtils.isEmpty(useraddress)) {
+            Toast.makeText(EditProfileTeacherActivity.this,"Chưa nhập đủ thông tin",Toast.LENGTH_LONG).show();
+        }else UpdateAccountInfo(username, userfullname, userphonenumber, useraddress);
+
+//        loadingBar.dismiss();
     }
 
-    private void UpdateAccountInfo(final String username, final String userfullname, final String userdob, final String userparentof, final String userphonenumber) {
-        StorageReference filePath = UserProfileImageRef.child(currentUserId + ".jpg");
+    private void UpdateAccountInfo(final String username, final String userfullname, final String userphonenumber, final String useraddress) {
+
+        loadingBar.setTitle("Cập nhật tài khoản");
+        loadingBar.setMessage("Vui lòng chờ cập nhật thông tin");
+        loadingBar.setCanceledOnTouchOutside(false);
+        loadingBar.show();
+
+        final HashMap userMap = new HashMap();
+        userMap.put("username", username);
+        userMap.put("fullnameteacher", userfullname);
+        userMap.put("phonenumber", userphonenumber);
+        userMap.put("address",useraddress);
+
+        final StorageReference filePath = UserProfileImageRef.child(currentUserId + ".jpg");
         if (resultUri != null) {
             filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
                     if (task.isSuccessful()) {
-                        Toast.makeText(EditProfileActivity.this, "Profile Image stored successfully to Firebase storage...", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(EditProfileTeacherActivity.this, "Profile Image stored successfully to Firebase storage...", Toast.LENGTH_SHORT).show();
                         Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
                         result.addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
-                                final String downloadUrl = uri.toString();
-                                //lưu hình ảnh lên
-                                EditUserRef.child("profileimage").setValue(downloadUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                userMap.put("profileimage",uri.toString());
+
+
+                                EditUserRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                                     @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
+                                    public void onComplete(@NonNull Task task) {
                                         if (task.isSuccessful()) {
-                                            //Toast.makeText(EditProfileActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
-                                            //finish();
+                                            Toast.makeText(EditProfileTeacherActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                                            finish();
                                         } else {
-                                            //String message = task.getException().getMessage();
-                                            //Toast.makeText(EditProfileActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(EditProfileTeacherActivity.this, "Error", Toast.LENGTH_SHORT).show();
+
                                         }
                                     }
                                 });
@@ -218,32 +210,24 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
                 }
             });
-        }
-        HashMap userMap = new HashMap();
-        userMap.put("username", username);
-        userMap.put("fullname", userfullname);
-        userMap.put("phonenumber", userphonenumber);
+        } else {
+            EditUserRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(EditProfileTeacherActivity.this, "Cập nhật thành công", Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(EditProfileTeacherActivity.this, "Error", Toast.LENGTH_SHORT).show();
 
-        EditUserRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
-            @Override
-            public void onComplete(@NonNull Task task) {
-                if (task.isSuccessful()) {
-                    if (role.equals("Parent")) {
-                        final HashMap childrenMap = new HashMap();
-                        childrenMap.put("birthday", userdob);
-                        childrenMap.put("name", userparentof);
-                        EditUserRef.child("mychildren").child(idClass).updateChildren(childrenMap);
-                        ClassRef.child("Children").child(currentUserId).setValue(childrenMap);
                     }
-                    Toast.makeText(EditProfileActivity.this, "Updated Successful", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(EditProfileActivity.this, "Error", Toast.LENGTH_SHORT).show();
-
                 }
-            }
-        });
+            });
+        }
+
     }
 
 }
+
+
 

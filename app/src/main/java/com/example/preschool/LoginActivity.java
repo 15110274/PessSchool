@@ -240,7 +240,7 @@ public class LoginActivity extends AppCompatActivity {
                                                             .show();
                                                 }
                                                 else {
-                                                    if (!dataSnapshot.hasChild("usermane")) {
+                                                    if (!dataSnapshot.hasChild("username")) {
                                                         intent = new Intent(LoginActivity.this, SetupActivity.class);
                                                         startActivity(intent);
                                                     }

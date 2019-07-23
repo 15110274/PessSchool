@@ -143,10 +143,14 @@ public class FriendsFragment extends Fragment {
                         if (user.getUserid().equals(idTeacher) && user.getIdclass().equals(idClass)) {
                             friendsViewHolder.isTeacher.setVisibility(View.VISIBLE);
                             friendsViewHolder.kid_name.setVisibility(View.GONE);
+                            friendsViewHolder.user_name.setText(user.getFullnameteacher());
                             view =true;
                         }
                     }
                     if (user.getRole().equals("Parent")) {
+                        if(!user.getFullnamefather().equals("")){
+                            friendsViewHolder.user_name.setText(user.getFullnamefather());
+                        }else friendsViewHolder.user_name.setText(user.getFullnamemother());
                         ArrayList<String> temp = user.getMyclass();
                         for (String node : temp) {
                             if (node.equals(idClass)) {
@@ -180,9 +184,9 @@ public class FriendsFragment extends Fragment {
                         if(user.getProfileimage()!=null){
                             friendsViewHolder.setProfileImage(user.getProfileimage());
                         }
-                        if(user.getUsername()!=null){
-                            friendsViewHolder.user_name.setText(user.getUsername());
-                        }
+//                        if(user.getUsername()!=null){
+//                            friendsViewHolder.user_name.setText(user.getUsername());
+//                        }
                         UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
