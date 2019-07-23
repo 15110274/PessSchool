@@ -41,10 +41,8 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
     private Button btnSave;
     private DatabaseReference MenuRef;
     private String daysele;
-    private Button btnEdit;
     private String idClass;
     private Bundle bundle;
-    private Button btnDelete;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +72,8 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
         edtTrua = findViewById(R.id.itrua);
         edtXe = findViewById(R.id.ixe);
         btnSave = findViewById(R.id.save);
-        btnDelete = findViewById(R.id.delete);
-        btnEdit = findViewById(R.id.edit);
+        txtViewDay.setVisibility(View.GONE);
+
         MenuRef = FirebaseDatabase.getInstance().getReference("Class").child(idClass).child("Menu");
         //Calendar
         HorizontalPicker picker = (HorizontalPicker) findViewById(R.id.datePicker);
@@ -103,24 +101,8 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
 
             }
         });
-        btnEdit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                edtSang.setEnabled(true);
-                edtTrua.setEnabled(true);
-                edtXe.setEnabled(true);
 
-                btnSave.setVisibility(View.VISIBLE);
-                btnEdit.setVisibility(View.INVISIBLE);
-                btnDelete.setVisibility(View.INVISIBLE);
-            }
-        });
-        btnDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DeleteMenu();
-            }
-        });
+
     }
 
     //DateSelected
@@ -136,9 +118,8 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         Menu menu = dataSnapshot.getValue(Menu.class);
                         if (menu != null) {
-                            btnEdit.setVisibility(View.VISIBLE);
+
                             btnSave.setVisibility(View.INVISIBLE);
-                            btnDelete.setVisibility(View.VISIBLE);
                             edtSang.setText(menu.getiSang());
                             edtTrua.setText(menu.getiTrua());
                             edtXe.setText(menu.getiChieu());
@@ -147,8 +128,6 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
                             edtXe.setEnabled(false);
                         } else {
                             btnSave.setVisibility(View.VISIBLE);
-                            btnEdit.setVisibility(View.INVISIBLE);
-                            btnDelete.setVisibility(View.INVISIBLE);
                             edtSang.setText("");
                             edtTrua.setText("");
                             edtXe.setText("");
@@ -173,39 +152,6 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
         }
     }
 
-    //Delete Menu to firebase
-    public void DeleteMenu() {
-
-        final AlertDialog.Builder dialogDeleteMenu = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);
-        dialogDeleteMenu.setMessage("Bạn có chắc muốn thực đơn này?");
-        dialogDeleteMenu.setCancelable(false);
-        dialogDeleteMenu.setPositiveButton("Có", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(final DialogInterface dialogInterface, int i) {
-                // Delete Album on CloudStorage
-                MenuRef.child(daysele).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        dialogInterface.dismiss();
-                        btnSave.setVisibility(View.VISIBLE);
-                        btnEdit.setVisibility(View.INVISIBLE);
-                        edtSang.setEnabled(true);
-                        edtTrua.setEnabled(true);
-                        edtXe.setEnabled(true);
-                    }
-                });
-
-            }
-        }).setNegativeButton("Không", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-        dialogDeleteMenu.show();
-
-
-    }
 
     // Create Menu to firebase
     public void CreateMenu() {
@@ -228,8 +174,6 @@ public class MenuActivity extends AppCompatActivity implements DatePickerListene
             MenuRef.child(daysele).setValue(menu).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    btnDelete.setVisibility(View.VISIBLE);
-                    btnEdit.setVisibility(View.VISIBLE);
                     btnSave.setVisibility(View.INVISIBLE);
                     edtSang.setEnabled(false);
                     edtTrua.setEnabled(false);

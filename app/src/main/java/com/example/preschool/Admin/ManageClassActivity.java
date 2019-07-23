@@ -9,14 +9,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,16 +36,20 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class ManageClassActivity extends AppCompatActivity {
     private RecyclerView classList;
     private FirebaseAuth mAuth;
-    private EditText NameClass;
+    private EditText NameClass,Year,Room;
     private FloatingActionButton CreateClassButton;
     private ProgressDialog loadingBar;
     private DatabaseReference ClassRef, UserRef;
     private ValueEventListener userEventListener;
-
+    private ArrayList<String> arrYear=new ArrayList<>();
     private int positionChoose = 0;
+    private Spinner yearSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,30 +57,73 @@ public class ManageClassActivity extends AppCompatActivity {
         setContentView(R.layout.activity_manage_class);
         mAuth = FirebaseAuth.getInstance();
         NameClass = findViewById(R.id.setup_name_class);
+        Room=findViewById(R.id.setup_phong);
         CreateClassButton = findViewById(R.id.create_button);
         loadingBar = new ProgressDialog(this);
         ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
         UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
+        yearSpinner=findViewById(R.id.yearSniper);
         classList = findViewById(R.id.list_class);
         classList.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ManageClassActivity.this);
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         classList.setLayoutManager(linearLayoutManager);
-        LoadAllClass();
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        int temp=2015;
+        arrYear.add("Chọn niên khóa");
+        for(int i=0;i<7;i++){
+            String year=temp+"-"+(temp+1);
+            arrYear.add(year);
+            temp++;
+        }
+        final ArrayAdapter<String> yearAdapter = new ArrayAdapter<String>(ManageClassActivity.this, android.R.layout.simple_spinner_item, arrYear) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if (position == 0) {
+                    tv.setTextColor(getResources().getColor(R.color.hintcolor));
+                } else {
+                    tv.setTextColor(Color.WHITE);
+                }
+                view.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                return view;
+            }
+        };
+        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        yearAdapter.notifyDataSetChanged();
+        yearSpinner.setAdapter(yearAdapter);
         CreateClassButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String name = NameClass.getText().toString();
-                if (!TextUtils.isEmpty(name)) {
+                String room = Room.getText().toString();
+                String year= arrYear.get(yearSpinner.getSelectedItemPosition());
+                if (!TextUtils.isEmpty(name)&&!TextUtils.isEmpty(room)) {
                     String id = ClassRef.push().getKey();
-                    ClassRef.child(id).child("classname").setValue(name).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    HashMap hashMap=new HashMap();
+                    hashMap.put("classname",name);
+                    hashMap.put("room",room);
+                    hashMap.put("year",year);
+                    ClassRef.child(id).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             Toast.makeText(ManageClassActivity.this, "Bạn đã thêm thành công", Toast.LENGTH_SHORT).show();
                             NameClass.setText("");
+                            yearSpinner.setSelection(0);
+                            Room.setText("");
                         }
                     });
 
@@ -82,34 +133,77 @@ public class ManageClassActivity extends AppCompatActivity {
             }
 
         });
+        yearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                LoadAllClass(arrYear.get(position));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
     }
 
-    private void LoadAllClass() {
+    private void LoadAllClass(final String yearChoose) {
         FirebaseRecyclerOptions<Class> options = new FirebaseRecyclerOptions.Builder<Class>().
                 setQuery(ClassRef, Class.class).build();
         FirebaseRecyclerAdapter<Class, ClassViewHolder> adapter = new FirebaseRecyclerAdapter<Class, ClassViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final ClassViewHolder classViewHolder, final int position, @NonNull final Class model) {
-                classViewHolder.setClassName(model.getClassname());
-                String idTeacher = model.getTeacher();
-                if (idTeacher != null) {
-                    UserRef.child(idTeacher).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.hasChild("fullname"))
-                                classViewHolder.setTeacherName(dataSnapshot.child("fullname").getValue().toString());
-                            else
-                                classViewHolder.setTeacherName("Don't Setup");
-                        }
+                //Nếu không chọn niên khóa thì view hết
+                if(!yearChoose.equals("Chọn niên khóa")){
+                    if(model.getYear().equals(yearChoose)){
+                        classViewHolder.setClassName(model.getClassname());
+                        classViewHolder.setYear(model.getYear());
+                        String idTeacher = model.getTeacher();
+                        if (idTeacher != null) {
+                            UserRef.child(idTeacher).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.hasChild("fullname"))
+                                        classViewHolder.setTeacherName(dataSnapshot.child("fullname").getValue().toString());
+                                    else
+                                        classViewHolder.setTeacherName("Don't Setup");
+                                }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
+                                }
+                            });
+                        } else {
+                            classViewHolder.setTeacherName("null");
                         }
-                    });
-                } else {
-                    classViewHolder.setTeacherName("null");
+                    }
+                    else{
+                        classViewHolder.Layout_hide();
+                    }
+                }
+                else{
+                        classViewHolder.setClassName(model.getClassname());
+                        classViewHolder.setYear(model.getYear());
+                        String idTeacher = model.getTeacher();
+                        if (idTeacher != null) {
+                            UserRef.child(idTeacher).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.hasChild("fullname"))
+                                        classViewHolder.setTeacherName(dataSnapshot.child("fullname").getValue().toString());
+                                    else
+                                        classViewHolder.setTeacherName("Don't Setup");
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        } else {
+                            classViewHolder.setTeacherName("null");
+                        }
                 }
                 classViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -183,6 +277,7 @@ public class ManageClassActivity extends AppCompatActivity {
     public static class ClassViewHolder extends RecyclerView.ViewHolder {
         private TextView class_name;
         private TextView teacher;
+        private TextView year;
         private final androidx.constraintlayout.widget.ConstraintLayout layout;
         final LinearLayout.LayoutParams params;
 
@@ -194,13 +289,15 @@ public class ManageClassActivity extends AppCompatActivity {
                     ViewGroup.LayoutParams.WRAP_CONTENT);
             class_name = layout.findViewById(R.id.all_class_name);
             teacher = layout.findViewById(R.id.all_teacher_name);
-
+            year=layout.findViewById(R.id.all_nienkhoa);
         }
 
         public void setClassName(String className) {
             class_name.setText(className);
         }
-
+        public void setYear(String nienkhoa) {
+            year.setText(nienkhoa);
+        }
         public void setTeacherName(String teacherName) {
             teacher.setText(teacherName);
         }
