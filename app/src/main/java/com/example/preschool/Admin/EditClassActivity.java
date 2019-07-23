@@ -32,18 +32,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EditClassActivity extends AppCompatActivity {
-    private EditText className;
+    private EditText className,room;
     private Button UpdateClassButton;
     private ProgressDialog loadingBar;
     private DatabaseReference ClassRef, UserRef;
     private FirebaseAuth mAuth;
-    private Spinner teacherSpinner;
+    private Spinner teacherSpinner,yearSpinner;
     private final ArrayList<String> teacherid = new ArrayList<>();
     private final ArrayList<String> teachername = new ArrayList<>();
-    private int teacherChoose = 0;
+    private int teacherChoose = 0,yearChoose=0;
     private int teacherOld = 0;
     private String classEdit;
     private ValueEventListener ref1, ref2, ref3;
+    private ArrayList<String> arrYear=new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +56,56 @@ public class EditClassActivity extends AppCompatActivity {
         ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
         UserRef = FirebaseDatabase.getInstance().getReference().child("Users");
         className = findViewById(R.id.edit_classname);
+        room=findViewById(R.id.edit_room);
         UpdateClassButton = findViewById(R.id.update_class_button);
         loadingBar = new ProgressDialog(this);
+        arrYear.add("Chọn niên khóa");
+        yearSpinner=findViewById(R.id.yearSpinner);
+        int temp=2015;
+
+        for(int i=0;i<7;i++){
+            String year=temp+"-"+(temp+1);
+            arrYear.add(year);
+            temp++;
+        }
+        final ArrayAdapter<String> yearAdapter = new ArrayAdapter<String>(EditClassActivity.this, android.R.layout.simple_spinner_item, arrYear) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if (position == 0) {
+                    tv.setTextColor(getResources().getColor(R.color.hintcolor));
+                } else {
+                    tv.setTextColor(Color.WHITE);
+                }
+                view.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                return view;
+            }
+            public View getView(int position, View convertView, ViewGroup parent) {
+                // Cast the spinner collapsed item (non-popup item) as a text view
+                TextView tv = (TextView) super.getView(position, convertView, parent);
+
+                // Set the text color of spinner item
+                tv.setTextColor(Color.GRAY);
+
+                // Return the view
+                return tv;
+            }
+        };
+        yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        yearAdapter.notifyDataSetChanged();
+        yearSpinner.setAdapter(yearAdapter);
+
         teacherSpinner = findViewById(R.id.teacherSpinner);
         teachername.add("Choose Teacher...");
         teacherid.add("");
@@ -85,6 +135,19 @@ public class EditClassActivity extends AppCompatActivity {
                             String name = dataSnapshot.child("classname").getValue().toString();
                             className.setText(name);
                         }
+                        if (dataSnapshot.hasChild("year")) {
+                            String y = dataSnapshot.child("year").getValue().toString();
+                            for(int i=0;i<arrYear.size();i++){
+                                if(y.equals(arrYear.get(i))){
+                                    yearSpinner.setSelection(i);
+                                    break;
+                                }
+                            }
+                        }
+                        if (dataSnapshot.hasChild("room")) {
+                            String r = dataSnapshot.child("room").getValue().toString();
+                            room.setText(r);
+                        }
                         if (dataSnapshot.hasChild("teacher")) {
                             String teacher = dataSnapshot.child("teacher").getValue().toString();
                             int vitri = 0;
@@ -99,6 +162,17 @@ public class EditClassActivity extends AppCompatActivity {
                             }
                             teacherSpinner.setSelection(vitri);
                         }
+                        yearSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                yearChoose=position;
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
                     }
 
                     @Override
@@ -179,43 +253,26 @@ public class EditClassActivity extends AppCompatActivity {
 
     private void ValidateClassInfo() {
         final String name = className.getText().toString();
+        final String r= room.getText().toString();
         HashMap classMap = new HashMap();
         classMap.put("classname", name);
+        classMap.put("room",r);
         if (teacherChoose != 0) {
             classMap.put("teacher", teacherid.get(teacherChoose));
         }
-
+        if (yearChoose != 0) {
+            classMap.put("year", arrYear.get(yearChoose));
+        }
         ClassRef.child(classEdit).updateChildren(classMap).addOnCompleteListener(new OnCompleteListener() {
             @Override
             public void onComplete(@NonNull Task task) {
                 if (task.isSuccessful()) {
                     if (teacherChoose != 0) {
-//                        ValueEventListener ref3=UserRef.child(teacherid.get(teacherChoose)).addValueEventListener(new ValueEventListener() {
-//                            @Override
-//                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                String classNew=dataSnapshot.child("idclass").getValue().toString();
-//                                if(classNew!=""){
-//                                    ClassRef.child(classNew).child("teacher").setValue("");
-//
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                            }
-//                        });
                         HashMap userMap = new HashMap();
                         userMap.put("idclass", classEdit);
                         userMap.put("classname", name);
                         UserRef.child(teacherid.get(teacherChoose)).updateChildren(userMap);
                     }
-//                    if(teacherOld!=0){
-//                        HashMap userMap2 = new HashMap();
-//                        userMap2.put("idclass", "");
-//                        userMap2.put("classname", "");
-//                        UserRef.child(teacherid.get(teacherOld)).updateChildren(userMap2);
-//                    }
                     Toast.makeText(EditClassActivity.this, "Updated Successful", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(EditClassActivity.this, "Error", Toast.LENGTH_SHORT).show();
@@ -232,7 +289,5 @@ public class EditClassActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-//        if (ref2 != null)
-//            ClassRef.child(classEdit).removeEventListener(ref2);
     }
 }

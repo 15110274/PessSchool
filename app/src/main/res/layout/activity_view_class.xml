@@ -41,12 +41,40 @@
             android:text="Giáo viên: "
             android:textColor="@color/textcolor"
             android:textStyle="bold" />
-
         <TextView
+            android:id="@+id/year"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:drawableLeft="@drawable/ic_dob"
+            android:drawablePadding="10dp"
+            android:gravity="left"
+            android:paddingStart="50dp"
+            android:paddingLeft="20dp"
+            android:text="Niên khóa: "
+            android:textColor="@color/textcolor"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/room"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawableLeft="@drawable/ic_place"
+            android:drawablePadding="10dp"
+            android:gravity="left"
+            android:paddingStart="50dp"
+            android:paddingLeft="20dp"
+            android:text="Phòng học: "
+            android:textColor="@color/textcolor"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/count_album"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawableLeft="@drawable/ic_count"
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingStart="50dp"
@@ -54,12 +82,26 @@
             android:text="Số album ảnh: "
             android:textColor="@color/textcolor"
             android:textStyle="bold" />
-
         <TextView
+            android:id="@+id/count_event"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:drawableLeft="@drawable/ic_dob"
+            android:drawableLeft="@drawable/ic_count"
+            android:drawablePadding="10dp"
+            android:gravity="center"
+            android:paddingStart="50dp"
+            android:paddingLeft="20dp"
+            android:text="Số sự kiện: "
+            android:textColor="@color/textcolor"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/count_post"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawableLeft="@drawable/ic_count"
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingStart="50dp"
@@ -69,10 +111,11 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/count_donphep"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:drawableLeft="@drawable/ic_dob"
+            android:drawableLeft="@drawable/ic_count"
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingStart="50dp"
@@ -82,28 +125,16 @@
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/count_children"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:drawableLeft="@drawable/ic_dob"
+            android:drawableLeft="@drawable/ic_count"
             android:drawablePadding="10dp"
             android:gravity="center"
             android:paddingStart="50dp"
             android:paddingLeft="20dp"
-            android:text="Số phụ huynh: "
-            android:textColor="@color/textcolor"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:drawableLeft="@drawable/ic_dob"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:paddingStart="50dp"
-            android:paddingLeft="20dp"
-            android:text="Số học sinh: "
+            android:text="Số bé: "
             android:textColor="@color/textcolor"
             android:textStyle="bold" />
 

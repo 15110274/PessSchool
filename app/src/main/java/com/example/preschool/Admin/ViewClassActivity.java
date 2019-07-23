@@ -19,7 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class ViewClassActivity extends AppCompatActivity {
-    private TextView classname, teacher;
+    private TextView classname, teacher,year,room,countevent, countalbum,countpost,countdonphep,countchildren;
 
     private Button EditButton;
 
@@ -36,13 +36,33 @@ public class ViewClassActivity extends AppCompatActivity {
         ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
         classname = findViewById(R.id.class_name);
         teacher = findViewById(R.id.teacher);
+        countalbum=findViewById(R.id.count_album);
+        countchildren=findViewById(R.id.count_children);
+        countdonphep=findViewById(R.id.count_donphep);
+        countpost=findViewById(R.id.count_post);
+        countevent=findViewById(R.id.count_event);
+        year=findViewById(R.id.year);
+        room=findViewById(R.id.room);
         EditButton = findViewById(R.id.edit_class);
         ClassRef.child(getIntent().getStringExtra("CLASS_ID")).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                countalbum.setText("Số album ảnh: "+dataSnapshot.child("Albums").getChildrenCount()+"");
+                countevent.setText("Số sự kiện: "+dataSnapshot.child("Events").getChildrenCount()+"");
+                countpost.setText("Số bài viết: "+dataSnapshot.child("Posts").getChildrenCount()+"");
+                countdonphep.setText("Số đơn xin phép: "+dataSnapshot.child("DonXinPhep").getChildrenCount()+"");
+                countchildren.setText("Số bé: "+dataSnapshot.child("Children").getChildrenCount()+"");
                 if (dataSnapshot.hasChild("classname")) {
                     String name = dataSnapshot.child("classname").getValue().toString();
                     classname.setText("Tên lớp: " + name);
+                }
+                if (dataSnapshot.hasChild("year")) {
+                    String nam = dataSnapshot.child("year").getValue().toString();
+                    year.setText("Niên khóa: " + nam);
+                }
+                if (dataSnapshot.hasChild("room")) {
+                    String r = dataSnapshot.child("room").getValue().toString();
+                    room.setText("Phòng học: " + r);
                 }
                 if (dataSnapshot.hasChild("teacher")) {
                     final String _teacher = dataSnapshot.child("teacher").getValue().toString();

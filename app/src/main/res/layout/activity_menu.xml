@@ -91,7 +91,7 @@
                         android:layout_marginTop="5dp"
                         android:inputType="textCapSentences"
                         android:text=""
-                        android:hint="Nhập món ăn.."
+                        android:hint="Chưa có thực đơn"
                         android:textColor="#000000"
                         android:textSize="13sp" />
 
@@ -136,7 +136,7 @@
                         android:layout_height="match_parent"
                         android:layout_marginTop="5dp"
                         android:text=""
-                        android:hint="Nhập món ăn.."
+                        android:hint="Chưa có thực đơn"
                         android:inputType="textCapSentences"
                         android:textColor="#000000"
                         android:textSize="13sp" />
@@ -181,7 +181,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginTop="5dp"
-                        android:hint="Nhập món ăn.."
+                        android:hint="Chưa có thực đơn"
                         android:inputType="textCapSentences"
                         android:text=""
                         android:textColor="#000000"
@@ -198,15 +198,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:orientation="horizontal">
-            <Button
-                android:id="@+id/edit"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="2"
-                android:layout_margin="8dp"
-                android:background="@drawable/edit_button"
-                android:textColor="@color/background"
-                android:text="@string/edit" />
+
             <Button
                 android:id="@+id/save"
                 android:layout_width="0dp"
@@ -216,15 +208,6 @@
                 android:background="@drawable/large_button"
                 android:textColor="@color/background"
                 android:text="@string/save" />
-            <Button
-                android:id="@+id/delete"
-                android:layout_width="0dp"
-                android:layout_height="40dp"
-                android:layout_weight="2"
-                android:layout_margin="8dp"
-                android:background="@drawable/delete_button"
-                android:textColor="@color/background"
-                android:text="Xóa" />
         </LinearLayout>
 
 
