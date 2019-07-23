@@ -4,45 +4,39 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class User implements Serializable {
-    public String fullname,username,idclass,classname,birthday,parentof,profileimage,userid,email,role,deleted;
+    public String fullnamefather,fullnamemother,address,phonenumber,username,idclass,classname,profileimage,userid,email,role,deleted;
     public ArrayList<String> myclass;
 
-    public ArrayList<String> getMyclass() {
-        return myclass;
+    public String getFullnamefather() {
+        return fullnamefather;
     }
 
-    public void setMyclass(ArrayList<String> myclass) {
-        this.myclass = myclass;
+    public void setFullnamefather(String fullnamefather) {
+        this.fullnamefather = fullnamefather;
     }
 
-    public String getDeleted() {
-        return deleted;
+    public String getFullnamemother() {
+        return fullnamemother;
     }
 
-    public String getRole() {
-        return role;
+    public void setFullnamemother(String fullnamemother) {
+        this.fullnamemother = fullnamemother;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public String getAddress() {
+        return address;
     }
 
-    public String getEmail() {
-        return email;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public String getPhonenumber() {
+        return phonenumber;
     }
 
-    public UserState userState;
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
+    public void setPhonenumber(String phonenumber) {
+        this.phonenumber = phonenumber;
     }
 
     public String getUsername() {
@@ -69,22 +63,6 @@ public class User implements Serializable {
         this.classname = classname;
     }
 
-    public String getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(String birthday) {
-        this.birthday = birthday;
-    }
-
-    public String getParentof() {
-        return parentof;
-    }
-
-    public void setParentof(String parentof) {
-        this.parentof = parentof;
-    }
-
     public String getProfileimage() {
         return profileimage;
     }
@@ -101,26 +79,54 @@ public class User implements Serializable {
         this.userid = userid;
     }
 
-    public UserState getUserState() {
-        return userState;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserState(UserState userState) {
-        this.userState = userState;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public User(String fullname, String username, String idclass, String classname, String birthday, String parentof, String profileimage, String userid, UserState userState) {
-        this.fullname = fullname;
-        this.username = username;
-        this.idclass = idclass;
-        this.classname = classname;
-        this.birthday = birthday;
-        this.parentof = parentof;
-        this.profileimage = profileimage;
-        this.userid = userid;
-        this.userState = userState;
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(String deleted) {
+        this.deleted = deleted;
+    }
+
+    public ArrayList<String> getMyclass() {
+        return myclass;
+    }
+
+    public void setMyclass(ArrayList<String> myclass) {
+        this.myclass = myclass;
     }
 
     public User() {
+    }
+
+    public User(String fullnamefather, String fullnamemother, String address, String phonenumber, String username, String idclass, String classname, String profileimage, String userid, String email, String role, String deleted, ArrayList<String> myclass) {
+        this.fullnamefather = fullnamefather;
+        this.fullnamemother = fullnamemother;
+        this.address = address;
+        this.phonenumber = phonenumber;
+        this.username = username;
+        this.idclass = idclass;
+        this.classname = classname;
+        this.profileimage = profileimage;
+        this.userid = userid;
+        this.email = email;
+        this.role = role;
+        this.deleted = deleted;
+        this.myclass = myclass;
     }
 }

@@ -112,7 +112,7 @@ public class StartActivity extends AppCompatActivity {
                                                 .show();
                                     }
                                     else {
-                                        if (!dataSnapshot.hasChild("fullname")) {
+                                        if (!dataSnapshot.hasChild("username")) {
                                             intent = new Intent(StartActivity.this, SetupActivity.class);
                                             startActivity(intent);
                                         }

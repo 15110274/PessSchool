@@ -154,7 +154,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
                         if (dataSnapshot.exists()) {
                             try {
                                 final String image = dataSnapshot.child("profileimage").getValue().toString();
-                                final String name = dataSnapshot.child("fullname").getValue().toString();
+                                final String name = dataSnapshot.child("fullnameteacher").getValue().toString();
                                 postsViewHolder.setFullname(name);
                                 postsViewHolder.setProfileImage(image);
                             } catch (Exception e) {

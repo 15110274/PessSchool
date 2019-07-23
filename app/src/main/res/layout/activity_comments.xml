@@ -21,14 +21,15 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginBottom="40dp"
         android:scrollbars="none"
+        android:fillViewport="true"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <include layout="@layout/post_layout" />
@@ -36,8 +37,9 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/comments_list"
                 android:layout_width="match_parent"
+                android:scrollbars="none"
+                android:layout_marginTop="-12dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="200dp"
                 android:background="@color/background" />
 
 
@@ -63,7 +65,7 @@
             android:background="@drawable/border_chat_items"
             android:hint="Write a comment here..."
             android:inputType="textMultiLine|textCapSentences"
-            android:padding="9dp"
+            android:padding="10dp"
             android:textColor="@android:color/black" />
 
         <ImageButton

@@ -180,8 +180,8 @@ public class FriendsFragment extends Fragment {
                         if(user.getProfileimage()!=null){
                             friendsViewHolder.setProfileImage(user.getProfileimage());
                         }
-                        if(user.getFullname()!=null){
-                            friendsViewHolder.user_name.setText(user.getFullname());
+                        if(user.getUsername()!=null){
+                            friendsViewHolder.user_name.setText(user.getUsername());
                         }
                         UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
                             @Override
@@ -207,7 +207,7 @@ public class FriendsFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 CharSequence options[] = new CharSequence[]{
-                                        "Thông tin của " + user.getFullname(),
+                                        "Thông tin của " + user.getUsername(),
                                         "Gửi tin nhắn"
                                 };
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

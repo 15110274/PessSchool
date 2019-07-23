@@ -3,6 +3,7 @@ package com.example.preschool;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import android.app.ProgressDialog;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.preschool.MainActivity;
@@ -36,10 +38,14 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.util.HashMap;
 
 public class SetupActivity extends AppCompatActivity {
-    private EditText UserName, FullName, PhoneNumber;
+    private EditText UserName, FullNameTeacher, FullNameFather, FullNameMother, PhoneNumberFather, PhoneNumberMother, PhoneNumberTeacher, address;
+
+    private LinearLayout layoutTeacher, layoutParent;
     private Button SaveInformationbuttion;
     private CircleImageView ProfileImage;
     private ProgressDialog loadingBar;
+
+    private Boolean isTeacher;
 
     private FirebaseAuth mAuth;
     private DatabaseReference UsersRef;
@@ -49,7 +55,7 @@ public class SetupActivity extends AppCompatActivity {
 
     final static int Gallery_Pick = 1;
 
-    String currentUserID,role;
+    String currentUserID, role;
     String myClass;
 
     @Override
@@ -63,17 +69,47 @@ public class SetupActivity extends AppCompatActivity {
         ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
         UserProfileImageRef = FirebaseStorage.getInstance().getReference().child("Profile Images");
 
-        UserName = findViewById(R.id.setup_username);
-        FullName = findViewById(R.id.setup_fullname);
-        PhoneNumber=findViewById(R.id.setup_phonenumber);
+        UserName=findViewById(R.id.setup_username);
+        address=findViewById(R.id.setup_address);
         SaveInformationbuttion = findViewById(R.id.setup_information_button);
         ProfileImage = findViewById(R.id.setup_profile_image);
+
+        UsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.child("role").getValue(String.class).equals("Teacher")) {
+                    layoutTeacher = findViewById(R.id.layout_teacher);
+                    layoutTeacher.setVisibility(View.VISIBLE);
+                    FullNameTeacher=findViewById(R.id.setup_fullnameteacher);
+                    PhoneNumberTeacher=findViewById(R.id.setup_phoneteacher);
+                    isTeacher=true;
+                } else {
+                    layoutParent=findViewById(R.id.layout_parent);
+                    layoutParent.setVisibility(View.VISIBLE);
+                    FullNameFather = findViewById(R.id.setup_fullnameFather);
+                    PhoneNumberFather = findViewById(R.id.setup_phonenumberFather);
+                    FullNameMother = findViewById(R.id.setup_fullnameMother);
+                    PhoneNumberMother = findViewById(R.id.setup_phonenumberMother);
+                    isTeacher=false;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
         loadingBar = new ProgressDialog(this);
 
         SaveInformationbuttion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SaveAccountSetupInformation();
+                if(isTeacher){
+                    SaveInfoTeacher();
+                }else SaveInfoParent();
+//                SaveAccountSetupInformation();
             }
         });
         //chọn ảnh đại diện
@@ -88,7 +124,7 @@ public class SetupActivity extends AppCompatActivity {
                 startActivityForResult(galleryIntent, Gallery_Pick);
             }
         });
-        UsersRef.addValueEventListener(new ValueEventListener() {
+        UsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -103,21 +139,21 @@ public class SetupActivity extends AppCompatActivity {
 //                            BirthDay.setVisibility(View.GONE);
 //                        }
 //                    }
-                    if(dataSnapshot.hasChild("idclass")){
-                        myClass=dataSnapshot.child("idclass").getValue().toString();
+                    if (dataSnapshot.hasChild("idclass")) {
+                        myClass = dataSnapshot.child("idclass").getValue().toString();
                         //Toast.makeText(SetupActivity.this, "id la"+myClass, Toast.LENGTH_SHORT).show();
                     }
-                    if (dataSnapshot.hasChild("profileimage")) {
-                        String image = dataSnapshot.child("profileimage").getValue().toString();
-
-                        Picasso.get()
-                                .load(image)
-                                .placeholder(R.drawable.ic_person_black_50dp)
-                                .into(ProfileImage);
-
-                    } else {
-//                        Toast.makeText(SetupActivity.this, "Please select profile image first.", Toast.LENGTH_SHORT).show();
-                    }
+//                    if (dataSnapshot.hasChild("profileimage")) {
+//                        String image = dataSnapshot.child("profileimage").getValue().toString();
+//
+//                        Picasso.get()
+//                                .load(image)
+//                                .placeholder(R.drawable.ic_person_black_50dp)
+//                                .into(ProfileImage);
+//
+//                    } else {
+////                        Toast.makeText(SetupActivity.this, "Please select profile image first.", Toast.LENGTH_SHORT).show();
+//                    }
                 }
             }
 
@@ -126,6 +162,205 @@ public class SetupActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void SaveInfoTeacher() {
+        final String username = UserName.getText().toString();
+        final String fullnameteacher = FullNameTeacher.getText().toString();
+        final String addr = address.getText().toString();
+        final String phonenumber = PhoneNumberTeacher.getText().toString();
+//        final String[] classname = new String[1];
+
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(this, "Chưa nhập tên người dùng", Toast.LENGTH_SHORT).show();
+        }
+        if (TextUtils.isEmpty(fullnameteacher)) {
+            Toast.makeText(this, "Chưa nhập họ tên", Toast.LENGTH_SHORT).show();
+        }
+        if(TextUtils.isEmpty(addr)){
+            Toast.makeText(this, "Chưa nhập địa chỉ của bạn", Toast.LENGTH_SHORT).show();
+        }
+        if (TextUtils.isEmpty(phonenumber)) {
+            Toast.makeText(this, "Chưa nhập số điện thoại", Toast.LENGTH_SHORT).show();
+        } else {
+            loadingBar.setTitle("Đang lưu thông tin");
+            loadingBar.setMessage("vui lòng chờ cập nhật thông tin tài khoản");
+            loadingBar.show();
+            loadingBar.setCanceledOnTouchOutside(false);
+            StorageReference filePath = UserProfileImageRef.child(currentUserID + ".jpg");
+
+            if (resultUri != null) {
+                filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+
+                            Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+
+                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    final String downloadUrl = uri.toString();
+
+                                    final HashMap userMap = new HashMap();
+                                    userMap.put("username", username);
+                                    userMap.put("fullnameteacher", fullnameteacher);
+                                    userMap.put("phonenumber", phonenumber);
+                                    userMap.put("userid", currentUserID);
+                                    userMap.put("address",addr);
+                                    userMap.put("profileimage", downloadUrl);
+
+                                    UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+                                        public void onComplete(@NonNull Task task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(SetupActivity.this, "Cập nhật thông tin thành công", Toast.LENGTH_LONG).show();
+                                                SendUserToMainActivity();
+                                            } else {
+                                                String message = task.getException().getMessage();
+                                                Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+                                                loadingBar.dismiss();
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            }else Toast.makeText(SetupActivity.this,"Bạn chưa chọn ảnh đại diện",Toast.LENGTH_SHORT).show();
+
+        }
+    }
+
+    private void SaveInfoParent() {
+        final String username = UserName.getText().toString();
+        final String fullnamefather = FullNameFather.getText().toString();
+        final String fullnamemother = FullNameMother.getText().toString();
+        final String addr = address.getText().toString();
+        final String phonenumber = PhoneNumberFather.getText().toString() + "-" + PhoneNumberMother.getText().toString();
+        final String[] classname = new String[1];
+
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(this, "Chưa nhập tên người dùng", Toast.LENGTH_SHORT).show();
+        }
+        if (TextUtils.isEmpty(fullnamefather) && TextUtils.isEmpty(fullnamemother)) {
+            Toast.makeText(this, "Chưa nhập tên của phụ huynh", Toast.LENGTH_SHORT).show();
+        }
+        if(TextUtils.isEmpty(addr)){
+            Toast.makeText(this, "Chưa nhập địa chỉ của bạn", Toast.LENGTH_SHORT).show();
+        }
+        if (phonenumber.equals("-")) {
+            Toast.makeText(this, "Chưa nhập số điện thoại", Toast.LENGTH_SHORT).show();
+        } else {
+            loadingBar.setTitle("Đang lưu thông tin");
+            loadingBar.setMessage("vui lòng chờ cập nhật thông tin tài khoản");
+            loadingBar.show();
+            loadingBar.setCanceledOnTouchOutside(false);
+            StorageReference filePath = UserProfileImageRef.child(currentUserID + ".jpg");
+
+            if (resultUri != null) {
+                filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+
+//                            Toast.makeText(SetupActivity.this, "Profile Image stored successfully to Firebase storage...", Toast.LENGTH_SHORT).show();
+
+                            Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+
+                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    final String downloadUrl = uri.toString();
+
+                                    final HashMap userMap = new HashMap();
+                                    userMap.put("username", username);
+                                    userMap.put("fullnamefather", fullnamefather);
+                                    userMap.put("fullnamemother", fullnamemother);
+                                    userMap.put("phonenumber", phonenumber);
+                                    userMap.put("address",addr);
+                                    userMap.put("userid", currentUserID);
+                                    userMap.put("profileimage", downloadUrl);
+
+                                    UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+                                        public void onComplete(@NonNull Task task) {
+                                            if (task.isSuccessful()) {
+//                                if(role.equals("Parent")){
+//                                    final HashMap childrenMap=new HashMap();
+////                                    childrenMap.put("parentof", parentof);
+////                                    childrenMap.put("birthday", birthday);
+//                                    ClassRef.child(myClass).child("Children").child(currentUserID).updateChildren(childrenMap);
+//                                }
+
+                                                Toast.makeText(SetupActivity.this, "Cập nhật thông tin thành công", Toast.LENGTH_LONG).show();
+//                                                loadingBar.dismiss();
+                                                SendUserToMainActivity();
+                                            } else {
+                                                String message = task.getException().getMessage();
+                                                Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+                                                loadingBar.dismiss();
+                                            }
+                                        }
+                                    });
+//                                    UsersRef.child("profileimage").setValue(downloadUrl)
+//                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                @Override
+//                                                public void onComplete(@NonNull Task<Void> task) {
+//                                                    if (task.isSuccessful()) {
+////                                                        Toast.makeText(SetupActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
+//                                                        //finish();
+//                                                    } else {
+//                                                        String message = task.getException().getMessage();
+//                                                        Toast.makeText(SetupActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+//                                                    }
+//                                                }
+//                                            });
+                                }
+                            });
+                        }
+                    }
+                });
+            }else Toast.makeText(SetupActivity.this,"Bạn chưa chọn ảnh đại diện",Toast.LENGTH_SHORT).show();
+//            final HashMap userMap = new HashMap();
+//            userMap.put("username", username);
+//            userMap.put("fullname", fullname);
+//            userMap.put("phonenumber", phonenumber);
+//
+//            userMap.put("userid", currentUserID);
+////            if(role.equals("Parent")){
+////                userMap.put("parentof", parentof);
+//                userMap.put("birthday", birthday);
+//            }
+
+
+//            ClassRef.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//
+//                    UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+//
+//                        public void onComplete(@NonNull Task task) {
+//                            if (task.isSuccessful()) {
+//                                SendUserToMainActivity();
+//                                Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
+//                                loadingBar.dismiss();
+//                            } else {
+//                                String message = task.getException().getMessage();
+//                                Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+//                                loadingBar.dismiss();
+//                            }
+//                        }
+//                    });
+//                }
+//
+//                @Override
+//                public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//                }
+//            });
+
+        }
     }
 
     @Override
@@ -160,153 +395,161 @@ public class SetupActivity extends AppCompatActivity {
         }
     }
 
-    private void SaveAccountSetupInformation() {
-
-        final String username = UserName.getText().toString();
-        final String fullname = FullName.getText().toString();
-//        final String parentof = ParentOf.getText().toString();
-//        final String birthday = BirthDay.getText().toString();
-        final String phonenumber=PhoneNumber.getText().toString();
-        final String[] classname = new String[1];
-//        if(role.equals("Parent")){
-//            if (TextUtils.isEmpty(parentof)) {
-//                Toast.makeText(this, "Please write children name...", Toast.LENGTH_SHORT).show();
-//            }
-//            if (TextUtils.isEmpty(birthday)) {
-//                Toast.makeText(this, "Please write birthday of your child...", Toast.LENGTH_SHORT).show();
-//            }
+//    private void SaveAccountSetupInformation() {
+//
+//        final String username = UserName.getText().toString();
+//
+//        final String fullnamefather = FullNameFather.getText().toString();
+//        final String fullnamemother = FullNameMother.getText().toString();
+//        String addr = address.getText().toString();
+//        final String phonenumber = PhoneNumberFather.getText().toString() + "-" + PhoneNumberFather.getText().toString();
+//        final String[] classname = new String[1];
+////        if(role.equals("Parent")){
+////            if (TextUtils.isEmpty(parentof)) {
+////                Toast.makeText(this, "Please write children name...", Toast.LENGTH_SHORT).show();
+////            }
+////            if (TextUtils.isEmpty(birthday)) {
+////                Toast.makeText(this, "Please write birthday of your child...", Toast.LENGTH_SHORT).show();
+////            }
+////        }
+//        if (TextUtils.isEmpty(username)) {
+//            Toast.makeText(this, "Chưa nhập tên người dùng", Toast.LENGTH_SHORT).show();
 //        }
-        if (TextUtils.isEmpty(username)) {
-            Toast.makeText(this, "Please write your username...", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(fullname)) {
-            Toast.makeText(this, "Please write your full name...", Toast.LENGTH_SHORT).show();
-        }
-        if (TextUtils.isEmpty(phonenumber)) {
-            Toast.makeText(this, "Please write your phone number...", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            loadingBar.setTitle("Saving Information");
-            loadingBar.setMessage("Please wait, while we are creating your new Account...");
-            loadingBar.show();
-            loadingBar.setCanceledOnTouchOutside(false);
-            StorageReference filePath = UserProfileImageRef.child(currentUserID + ".jpg");
-
-            if(resultUri!=null){
-                filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
-                        if (task.isSuccessful()) {
-
-//                            Toast.makeText(SetupActivity.this, "Profile Image stored successfully to Firebase storage...", Toast.LENGTH_SHORT).show();
-
-                            Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
-
-                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                @Override
-                                public void onSuccess(Uri uri) {
-                                    final String downloadUrl = uri.toString();
-
-                                    UsersRef.child("profileimage").setValue(downloadUrl)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> task) {
-                                                    if (task.isSuccessful()) {
-//                                                        Toast.makeText(SetupActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
-                                                        //finish();
-                                                    } else {
-                                                        String message = task.getException().getMessage();
-                                                        Toast.makeText(SetupActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-            final HashMap userMap = new HashMap();
-            userMap.put("username", username);
-            userMap.put("fullname", fullname);
-            userMap.put("phonenumber", phonenumber);
-
-            userMap.put("userid", currentUserID);
-//            if(role.equals("Parent")){
-//                userMap.put("parentof", parentof);
-//                userMap.put("birthday", birthday);
-//            }
-
-            UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
-                        public void onComplete(@NonNull Task task) {
-                            if (task.isSuccessful()) {
-//                                if(role.equals("Parent")){
-//                                    final HashMap childrenMap=new HashMap();
-////                                    childrenMap.put("parentof", parentof);
-////                                    childrenMap.put("birthday", birthday);
-//                                    ClassRef.child(myClass).child("Children").child(currentUserID).updateChildren(childrenMap);
+//        if (TextUtils.isEmpty(fullnamefather) && TextUtils.isEmpty(fullnamemother)) {
+//            Toast.makeText(this, "Chưa nhập tên của phụ huynh", Toast.LENGTH_SHORT).show();
+//        }
+//        if (phonenumber.equals("-")) {
+//            Toast.makeText(this, "Chưa nhập số điện thoại", Toast.LENGTH_SHORT).show();
+//        } else {
+//            loadingBar.setTitle("Đang lưu thông tin");
+//            loadingBar.setMessage("vui lòng chờ cập nhật thông tin tài khoản");
+//            loadingBar.show();
+//            loadingBar.setCanceledOnTouchOutside(false);
+//            StorageReference filePath = UserProfileImageRef.child(currentUserID + ".jpg");
+//
+//            if (resultUri != null) {
+//                filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull final Task<UploadTask.TaskSnapshot> task) {
+//                        if (task.isSuccessful()) {
+//
+////                            Toast.makeText(SetupActivity.this, "Profile Image stored successfully to Firebase storage...", Toast.LENGTH_SHORT).show();
+//
+//                            Task<Uri> result = task.getResult().getMetadata().getReference().getDownloadUrl();
+//
+//                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+//                                @Override
+//                                public void onSuccess(Uri uri) {
+//                                    final String downloadUrl = uri.toString();
+//
+//                                    final HashMap userMap = new HashMap();
+//                                    userMap.put("username", username);
+//                                    userMap.put("fullnamefather", fullnamefather);
+//                                    userMap.put("fullnamemother", fullnamemother);
+//                                    userMap.put("phonenumber", phonenumber);
+//                                    userMap.put("userid", currentUserID);
+//                                    userMap.put("profileimage", downloadUrl);
+//
+//                                    UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+//                                        public void onComplete(@NonNull Task task) {
+//                                            if (task.isSuccessful()) {
+////                                if(role.equals("Parent")){
+////                                    final HashMap childrenMap=new HashMap();
+//////                                    childrenMap.put("parentof", parentof);
+//////                                    childrenMap.put("birthday", birthday);
+////                                    ClassRef.child(myClass).child("Children").child(currentUserID).updateChildren(childrenMap);
+////                                }
+//
+//                                                Toast.makeText(SetupActivity.this, "Cập nhật thông tin thành công", Toast.LENGTH_LONG).show();
+////                                                loadingBar.dismiss();
+//                                                SendUserToMainActivity();
+//                                            } else {
+//                                                String message = task.getException().getMessage();
+//                                                Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+//                                                loadingBar.dismiss();
+//                                            }
+//                                        }
+//                                    });
+////                                    UsersRef.child("profileimage").setValue(downloadUrl)
+////                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+////                                                @Override
+////                                                public void onComplete(@NonNull Task<Void> task) {
+////                                                    if (task.isSuccessful()) {
+//////                                                        Toast.makeText(SetupActivity.this, "Profile Image stored to Firebase Database Successfully...", Toast.LENGTH_SHORT).show();
+////                                                        //finish();
+////                                                    } else {
+////                                                        String message = task.getException().getMessage();
+////                                                        Toast.makeText(SetupActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+////                                                    }
+////                                                }
+////                                            });
 //                                }
-
-                                Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
-                                loadingBar.dismiss();
-                                SendUserToMainActivity();
-                            } else {
-                                String message = task.getException().getMessage();
-                                Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
-                                loadingBar.dismiss();
-                            }
-                        }
-                    });
-//            ClassRef.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//
-//
-//                    UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
-//
-//                        public void onComplete(@NonNull Task task) {
-//                            if (task.isSuccessful()) {
-//                                SendUserToMainActivity();
-//                                Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
-//                                loadingBar.dismiss();
-//                            } else {
-//                                String message = task.getException().getMessage();
-//                                Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
-//                                loadingBar.dismiss();
-//                            }
+//                            });
 //                        }
-//                    });
-//                }
+//                    }
+//                });
+//            }
+////            final HashMap userMap = new HashMap();
+////            userMap.put("username", username);
+////            userMap.put("fullname", fullname);
+////            userMap.put("phonenumber", phonenumber);
+////
+////            userMap.put("userid", currentUserID);
+//////            if(role.equals("Parent")){
+//////                userMap.put("parentof", parentof);
+////                userMap.put("birthday", birthday);
+////            }
 //
-//                @Override
-//                public void onCancelled(@NonNull DatabaseError databaseError) {
 //
-//                }
-//            });
+////            ClassRef.addValueEventListener(new ValueEventListener() {
+////                @Override
+////                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+////
+////
+////                    UsersRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
+////
+////                        public void onComplete(@NonNull Task task) {
+////                            if (task.isSuccessful()) {
+////                                SendUserToMainActivity();
+////                                Toast.makeText(SetupActivity.this, "your Account is created Successfully.", Toast.LENGTH_LONG).show();
+////                                loadingBar.dismiss();
+////                            } else {
+////                                String message = task.getException().getMessage();
+////                                Toast.makeText(SetupActivity.this, "Error Occured: " + message, Toast.LENGTH_SHORT).show();
+////                                loadingBar.dismiss();
+////                            }
+////                        }
+////                    });
+////                }
+////
+////                @Override
+////                public void onCancelled(@NonNull DatabaseError databaseError) {
+////
+////                }
+////            });
+//
+//        }
+//    }
 
-        }
-    }
-
-    private void SendUserToMainActivity()
-    {
+    private void SendUserToMainActivity() {
         //////////////////////////////////////////////////////
         String currentUserID = mAuth.getCurrentUser().getUid();
         final DatabaseReference UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
-        final DatabaseReference ClassRef=FirebaseDatabase.getInstance().getReference().child("Class");
+        final DatabaseReference ClassRef = FirebaseDatabase.getInstance().getReference().child("Class");
         UsersRef.child(currentUserID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String idClass=dataSnapshot.child("idclass").getValue().toString();
+                final String idClass = dataSnapshot.child("idclass").getValue().toString();
                 ClassRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        final String idTeacher=dataSnapshot.child(idClass).child("teacher").getValue().toString();
-                        String className=dataSnapshot.child(idClass).child("classname").getValue().toString();
+                        final String idTeacher = dataSnapshot.child(idClass).child("teacher").getValue().toString();
+                        String className = dataSnapshot.child(idClass).child("classname").getValue().toString();
                         Intent mainIntent = new Intent(SetupActivity.this, MainActivity.class);
-                        Bundle bundle=new Bundle();
-                        bundle.putString("ID_CLASS",idClass);
-                        bundle.putString("CLASS_NAME",className);
-                        bundle.putString("ID_TEACHER",idTeacher);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("ID_CLASS", idClass);
+                        bundle.putString("CLASS_NAME", className);
+                        bundle.putString("ID_TEACHER", idTeacher);
                         mainIntent.putExtras(bundle);
                         finish();
                         //mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -320,6 +563,7 @@ public class SetupActivity extends AppCompatActivity {
                 });
 
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
             }
@@ -336,9 +580,10 @@ public class SetupActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
-        Intent intent=new Intent(SetupActivity.this, LoginActivity.class);
+        Intent intent = new Intent(SetupActivity.this, LoginActivity.class);
         startActivity(intent);
     }
 

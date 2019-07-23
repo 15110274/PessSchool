@@ -14,8 +14,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -265,6 +267,10 @@ public class MainActivity extends AppCompatActivity
         final EditText childrenNam=dialogSetupChildren.findViewById(R.id.txtChildrenFullname);
         final EditText childrenBirthday =dialogSetupChildren.findViewById(R.id.txtChildrenBirth);
         final Button btnsave=dialogSetupChildren.findViewById(R.id.btnSave);
+        final RadioButton radioButtonMale=dialogSetupChildren.findViewById(R.id.radioButton_male);
+        final RadioButton radioButtonFemale=dialogSetupChildren.findViewById(R.id.radioButton_female);
+
+
 
         final DatePickerDialog.OnDateSetListener mDatePickerDialog;
         mDatePickerDialog = new DatePickerDialog.OnDateSetListener() {
@@ -302,6 +308,9 @@ public class MainActivity extends AppCompatActivity
                 if(!childrenNam.getText().toString().equals("")){
                     if(!childrenBirthday.getText().toString().equals("")){
                         final HashMap childrenMap = new HashMap();
+                        if(radioButtonMale.isChecked()){
+                            childrenMap.put("sex","Nam");
+                        }else childrenMap.put("sex","Nữ");
                         childrenMap.put("birthday", childrenBirthday.getText().toString());
                         childrenMap.put("name", childrenNam.getText().toString());
 

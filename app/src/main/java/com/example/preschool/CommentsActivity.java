@@ -213,7 +213,7 @@ public class CommentsActivity extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
                                 final String image = dataSnapshot.child("profileimage").getValue().toString();
-                                final String name = dataSnapshot.child("fullname").getValue().toString();
+                                final String name = dataSnapshot.child("fullnameteacher").getValue().toString();
                                 PostName.setText(name);
                                 Picasso.get().load(image).resize(70, 0).into(PostProfileImage);
                             }

@@ -121,14 +121,14 @@ public class ManageUserActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()) {
-                    int count=(int)dataSnapshot.getChildrenCount()+1;
-                    if(className.size()<=count
-                            && classId.size()<=count){
+                    int count = (int) dataSnapshot.getChildrenCount() + 1;
+                    if (className.size() <= count
+                            && classId.size() <= count) {
                         String classname = suggestionSnapshot.child("classname").getValue(String.class);
                         String classid = suggestionSnapshot.getKey();
                         className.add(classname);
                         classId.add(classid);
-                        if(classId.size()==count) classId.add("");
+                        if (classId.size() == count) classId.add("");
                     }
                 }
                 for (int i = 0; i < classId.size(); i++) {
@@ -313,7 +313,7 @@ public class ManageUserActivity extends AppCompatActivity {
                                         userMap.put("role", role.get(roleChoose));
                                         if (roleChoose == 1 || roleChoose == 2) {
                                             if (roleChoose == 1) {
-                                                if( classCheckBox.isChecked() == true){
+                                                if (classCheckBox.isChecked() == true) {
                                                     for (int i = 0; i < checkList.size(); i++) {
                                                         if (checkList.get(i).equals("1")) {
                                                             userMap.put("classname", className.get(i));
@@ -328,8 +328,7 @@ public class ManageUserActivity extends AppCompatActivity {
                                                         }
                                                     }
                                                     userMap.put("myclass", temp);
-                                                }
-                                                else{
+                                                } else {
                                                     userMap.put("classname", className.get(classChoose));
                                                     userMap.put("idclass", classId.get(classChoose));
                                                     ArrayList<String> temp = new ArrayList<>();
@@ -445,47 +444,44 @@ public class ManageUserActivity extends AppCompatActivity {
                     //nếu ko chọn class thì sẽ hiển thị theo role
                     if (idClassChoose.equals("")) {
                         if (model.getRole() != null && model.getRole().equals(roleChoose)) {
-                            if (model.getFullname() != null)
-                                usersViewHolder.setFullname(model.getFullname());
+                            if (model.getFullnamefather() != null || model.getFullnamemother() != null)
+                                usersViewHolder.setFullname(model.getFullnamefather());
                             usersViewHolder.setProfileImage(model.getProfileimage());
                             usersViewHolder.setEmail(model.getEmail());
                         } else usersViewHolder.Layout_hide();
                     }
                     //nếu vừa chọn role vừa chọn class thì hiển theo role rồi hiển thị theo class
                     else {
-                        boolean view=false;
+                        boolean view = false;
                         if (model.getRole() != null
                                 && model.getIdclass() != null
-                                && model.getRole().equals(roleChoose))
-                        {
-                            if(model.getRole().equals("Teacher")){
-                                if(model.getIdclass().equals(idClassChoose))
-                                    view=true;
-                            }
-                            else{
+                                && model.getRole().equals(roleChoose)) {
+                            if (model.getRole().equals("Teacher")) {
+                                if (model.getIdclass().equals(idClassChoose))
+                                    view = true;
+                            } else {
                                 ArrayList<String> temp = model.getMyclass();
-                                for(String node:temp){
-                                    if(node.equals(idClassChoose)){
-                                        view=true;
+                                for (String node : temp) {
+                                    if (node.equals(idClassChoose)) {
+                                        view = true;
                                         break;
                                     }
                                 }
                             }
                         }
-                        if(view==true){
-                            if (model.getFullname() != null)
-                                usersViewHolder.setFullname(model.getFullname());
+                        if (view == true) {
+                            if (model.getFullnamefather() != null)
+                                usersViewHolder.setFullname(model.getFullnamefather());
                             usersViewHolder.setProfileImage(model.getProfileimage());
                             usersViewHolder.setEmail(model.getEmail());
-                        }
-                        else usersViewHolder.Layout_hide();
+                        } else usersViewHolder.Layout_hide();
                     }
                 }
                 //ngược lại hiển thị toàn bộ user
                 else {
                     if (model.getRole() != null) {
-                        if (model.getFullname() != null)
-                            usersViewHolder.setFullname(model.getFullname());
+                        if (model.getFullnamefather() != null)
+                            usersViewHolder.setFullname(model.getFullnamefather());
                         usersViewHolder.setProfileImage(model.getProfileimage());
                         usersViewHolder.setEmail(model.getEmail());
                     } else usersViewHolder.Layout_hide();

@@ -78,7 +78,7 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                 UsersRef.child(idUserPost).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        postsViewHolder.setFullname(dataSnapshot.child("username").getValue().toString());
+                        postsViewHolder.setFullname(dataSnapshot.child("fullnameteacher").getValue().toString());
                         postsViewHolder.setProfileImage(dataSnapshot.child("profileimage").getValue().toString());
                     }
 
