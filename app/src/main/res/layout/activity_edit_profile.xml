@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textColor="@android:color/darker_gray"
-            android:text="Họ và tên cha"/>
+            android:text="Họ và tên mẹ"/>
 
         <EditText
             android:id="@+id/mothername"
@@ -172,7 +172,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Đại chỉ"
-            android:inputType="phone"
             android:textColor="@android:color/background_dark"
             />
 

@@ -36,7 +36,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MyProfileActivity extends AppCompatActivity {
 
     private TextView userName, parentFullName, className, father, mother, childrenName, birthday, phoneNumber, gender, address;
-    private TextView teacherName, phoneNumberTeacher;
+    private TextView phoneNumberTeacher;
     private LinearLayout layoutParent;
     private CircleImageView userProfileImage;
     private DatabaseReference UsersRef;

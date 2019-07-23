@@ -49,6 +49,7 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.microsoft.appcenter.AppCenter;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.microsoft.appcenter.crashes.Crashes;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -66,11 +67,14 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
+    private CircleImageView imageViewUser;
     private FirebaseAuth mAuth;
     private DatabaseReference UsersRef,ClassRef,UserStateRef;
     private TextView txtclassName;
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         // Nhận bundle
         bundle = getIntent().getExtras();
@@ -143,7 +148,7 @@ public class MainActivity extends AppCompatActivity
                     TeacherRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            teacherName= dataSnapshot.child("fullname").getValue(String.class);
+                            teacherName= dataSnapshot.child("fullnameteacher").getValue(String.class);
                         }
 
                         @Override
@@ -163,9 +168,31 @@ public class MainActivity extends AppCompatActivity
 
         }
 
-        setContentView(R.layout.activity_main);
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        imageViewUser=findViewById(R.id.icon_user);
+        UsersRef.child("profileimage").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Picasso.get().load(dataSnapshot.getValue(String.class)).resize(70,0).into(imageViewUser);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        imageViewUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(MainActivity.this,MyProfileActivity.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
 
         txtclassName=findViewById(R.id.class_name);
         txtclassName.setText(className);

@@ -234,7 +234,7 @@ public class EditProfileParentActivity extends AppCompatActivity {
     private void ValidateAccountInfo() {
         String username = userName.getText().toString();
         String userfathername = userFatherName.getText().toString();
-        String usermothername = userFatherName.getText().toString();
+        String usermothername = userMotherName.getText().toString();
         String userdob = userDOB.getText().toString();
         String userparentof = userParentOf.getText().toString();
         String userphonenumber = userPhoneNumber.getText().toString();
@@ -274,8 +274,8 @@ public class EditProfileParentActivity extends AppCompatActivity {
 
         final HashMap userMap = new HashMap();
         userMap.put("username", username);
-        userMap.put("fullfathername", userfathername);
-        userMap.put("fullmothername", usermothername);
+        userMap.put("fullnamefather", userfathername);
+        userMap.put("fullnamemother", usermothername);
         userMap.put("address", useraddress);
         userMap.put("phonenumber", userphonenumber);
 

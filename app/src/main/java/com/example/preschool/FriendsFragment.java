@@ -211,7 +211,7 @@ public class FriendsFragment extends Fragment {
                             @Override
                             public void onClick(View v) {
                                 CharSequence options[] = new CharSequence[]{
-                                        "Thông tin của " + user.getUsername(),
+                                        "Thông tin của " + friendsViewHolder.user_name.getText().toString(),
                                         "Gửi tin nhắn"
                                 };
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
