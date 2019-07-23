@@ -6,12 +6,21 @@
     android:paddingBottom="2dp"
     android:paddingTop="2dp"
     android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:visibility="gone"
+        android:id="@+id/txt_timesend"/>
 
     <RelativeLayout
         android:layout_width="300dp"
         android:layout_alignParentEnd="true"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true">
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/txt_timesend"
+        >
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="wrap_content"
