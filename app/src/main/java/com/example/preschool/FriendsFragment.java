@@ -197,7 +197,7 @@ public class FriendsFragment extends Fragment {
                                     friendsViewHolder.online.setVisibility(View.GONE);
                                 }
                             } catch (Exception e) {
-
+                                friendsViewHolder.online.setVisibility(View.GONE);
                             }
 
                         }
@@ -211,33 +211,36 @@ public class FriendsFragment extends Fragment {
                     friendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            CharSequence options[] = new CharSequence[]{
-                                    "Thông tin của " + friendsViewHolder.user_name.getText().toString(),
-                                    "Gửi tin nhắn"
-                            };
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                            builder.setItems(options, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (which == 0) {
-                                        Intent profileIntent = new Intent(getContext(), PersonProfileActivity.class);
-                                        bundle.putString("VISIT_USER_ID", visit_user_id);
-                                        profileIntent.putExtras(bundle);
-                                        startActivity(profileIntent);
-                                    }
-                                    if (which == 1) {
-                                        if (visit_user_id.equals(current_user_id)) {
-                                            Toast.makeText(getContext(), "Không thể nhắn tin cho chính bạn", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Intent chatintent = new Intent(getActivity(), MessageActivity.class);
+                            if(!friendsViewHolder.kid_name.getText().equals("Bé null")){
+                                CharSequence options[] = new CharSequence[]{
+                                        "Thông tin của " + friendsViewHolder.user_name.getText().toString(),
+                                        "Gửi tin nhắn"
+                                };
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                builder.setItems(options, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (which == 0) {
+                                            Intent profileIntent = new Intent(getContext(), PersonProfileActivity.class);
                                             bundle.putString("VISIT_USER_ID", visit_user_id);
-                                            chatintent.putExtras(bundle);
-                                            startActivity(chatintent);
+                                            profileIntent.putExtras(bundle);
+                                            startActivity(profileIntent);
+                                        }
+                                        if (which == 1) {
+                                            if (visit_user_id.equals(current_user_id)) {
+                                                Toast.makeText(getContext(), "Không thể nhắn tin cho chính bạn", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Intent chatintent = new Intent(getActivity(), MessageActivity.class);
+                                                bundle.putString("VISIT_USER_ID", visit_user_id);
+                                                chatintent.putExtras(bundle);
+                                                startActivity(chatintent);
+                                            }
                                         }
                                     }
-                                }
-                            });
-                            builder.show();
+                                });
+                                builder.show();
+                            }
+
                         }
                     });
                 } else {

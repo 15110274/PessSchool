@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class DonNghiPhepViewAdapter extends RecyclerView.Adapter<DonNghiPhepViewAdapter.ViewHolder>{
+public class DonNghiPhepViewAdapter extends RecyclerView.Adapter<DonNghiPhepViewAdapter.ViewHolder> {
 
     private ArrayList<DonNghiPhep> list;
 
@@ -30,9 +30,15 @@ public class DonNghiPhepViewAdapter extends RecyclerView.Adapter<DonNghiPhepView
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
-        holder.ngayNghi.setText("Ngày nghỉ: "+list.get(i).getNgayNghi());
-        holder.soNgayNghi.setText("Số ngày: "+list.get(i).getSoNgay());
-        holder.lyDo.setText("Lý do: "+list.get(i).getLyDo());
+
+        try {
+            holder.ngayNghi.setText("Ngày nghỉ: " + list.get(i).getNgayNghi());
+            holder.soNgayNghi.setText("Số ngày: " + list.get(i).getSoNgay());
+            holder.lyDo.setText("Lý do: " + list.get(i).getLyDo());
+            holder.parent.setText("Người viết: " + list.get(i).getParentName());
+        } catch (Exception e) {
+        }
+
     }
 
     @Override
@@ -40,13 +46,15 @@ public class DonNghiPhepViewAdapter extends RecyclerView.Adapter<DonNghiPhepView
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView ngayNghi,soNgayNghi,lyDo;
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private TextView ngayNghi, soNgayNghi, lyDo, parent;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ngayNghi=itemView.findViewById(R.id.view_ngay_nghi);
-            soNgayNghi=itemView.findViewById(R.id.view_so_ngay_nghi);
-            lyDo=itemView.findViewById(R.id.view_ly_do);
+            ngayNghi = itemView.findViewById(R.id.view_ngay_nghi);
+            soNgayNghi = itemView.findViewById(R.id.view_so_ngay_nghi);
+            lyDo = itemView.findViewById(R.id.view_ly_do);
+            parent = itemView.findViewById(R.id.parent);
         }
     }
 }

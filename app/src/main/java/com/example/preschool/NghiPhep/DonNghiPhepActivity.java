@@ -40,6 +40,7 @@ public class DonNghiPhepActivity extends AppCompatActivity {
     private EditText ngayNghi;
     private EditText soNgayNghi;
     private EditText lyDo;
+    private EditText nguoiViet;
     private Button btnGui;
     private DatabaseReference DonXinPhepRef, UserRef, ChildrenRef;
     private DatePickerDialog.OnDateSetListener mDatePickerDialog;
@@ -62,26 +63,25 @@ public class DonNghiPhepActivity extends AppCompatActivity {
         soNgayNghi = findViewById(R.id.so_ngay_nghi);
         lyDo = findViewById(R.id.ly_do);
         btnGui = findViewById(R.id.gui_don);
-
+        nguoiViet=findViewById(R.id.parent);
         // Lấy User ID hiện tại đang đăng nhập
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
         DonXinPhepRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("DonNghiPhep");
 
 
         // get parent name
-        UserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
-        UserRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                mParentName = dataSnapshot.child("fullname").getValue(String.class);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+//        UserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
+//        UserRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                mParentName = dataSnapshot.child("fullname").getValue(String.class);
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
         // get children name
         ChildrenRef = FirebaseDatabase.getInstance().getReference().child("Users").child(userId).child("mychildren").child(idClass);
         ChildrenRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -123,6 +123,7 @@ public class DonNghiPhepActivity extends AppCompatActivity {
         String mNgayNghi = ngayNghi.getText().toString();
         String mSoNgay = soNgayNghi.getText().toString();
         String mLyDo = lyDo.getText().toString();
+        String mNguoiViet=nguoiViet.getText().toString();
 
         btnGui.setEnabled(false);
 
@@ -130,12 +131,12 @@ public class DonNghiPhepActivity extends AppCompatActivity {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         Date date = calFordDate.getTime();
 
-        if (!TextUtils.isEmpty(mNgayNghi) && !TextUtils.isEmpty(mSoNgay) && !TextUtils.isEmpty(mLyDo)) {
+        if (!TextUtils.isEmpty(mNgayNghi) && !TextUtils.isEmpty(mSoNgay) && !TextUtils.isEmpty(mLyDo) && !TextUtils.isEmpty(mNguoiViet)) {
             try {
                 Date dayoff = simpleDateFormat.parse(mNgayNghi);
                 if (dayoff.after(date)) {
                     String id = DonXinPhepRef.push().getKey();
-                    DonNghiPhep donNghiPhep = new DonNghiPhep(userId, mParentName, mKidName, mNgayNghi, mSoNgay, mLyDo);
+                    DonNghiPhep donNghiPhep = new DonNghiPhep(userId, mNguoiViet, mKidName, mNgayNghi, mSoNgay, mLyDo);
                     DonXinPhepRef.child(id).setValue(donNghiPhep, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
@@ -143,6 +144,7 @@ public class DonNghiPhepActivity extends AppCompatActivity {
                             ngayNghi.setText("");
                             soNgayNghi.setText("");
                             lyDo.setText("");
+                            nguoiViet.setText("");
                             btnGui.setEnabled(true);
                         }
                     });
