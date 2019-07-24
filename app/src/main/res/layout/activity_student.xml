@@ -17,47 +17,22 @@
         android:layout_height="wrap_content"
         android:background="@color/colorAccent"
         android:theme="@style/Base.ThemeOverlay.AppCompat.Dark.ActionBar" />
-    <LinearLayout
+
+    <TextView
+        android:id="@+id/textView2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:text="Danh sách bé"
+        android:textSize="22dp"
+        android:textAlignment="center"/>
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2.5"
-            android:text="Họ và tên"
-            android:textSize="22dp"
-            android:textAlignment="center"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="|"
-            android:textSize="20dp"
-            android:textAlignment="center"/>
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.5"
-            android:text="Ngày sinh"
-            android:textSize="22dp"
-            android:textAlignment="center"/>
-    </LinearLayout>
-    <TextView
-        android:id="@+id/border1"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="5dp"
-        android:background="@color/colorAccent"
-      />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/childrenRecycleView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="20dp">
 
     </androidx.recyclerview.widget.RecyclerView>
 

@@ -1,7 +1,7 @@
 package com.example.preschool.Children;
 
 public class Children {
-    String birthday, name, sex;
+    String birthday, name, sex ;
 
     public String getBirthday() {
         return birthday;
@@ -27,12 +27,12 @@ public class Children {
         this.sex = sex;
     }
 
-    public Children() {
-    }
-
     public Children(String birthday, String name, String sex) {
         this.birthday = birthday;
         this.name = name;
         this.sex = sex;
+    }
+
+    public Children() {
     }
 }
