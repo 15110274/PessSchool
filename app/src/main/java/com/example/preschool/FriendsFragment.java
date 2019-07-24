@@ -137,25 +137,26 @@ public class FriendsFragment extends Fragment {
         adapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, int i, @NonNull final User user) {
-                try {
+                    String key=getRef(i).getKey();
                     boolean view=false;
                     if (user.getRole().equals("Teacher")) {
-                        if (user.getUserid().equals(idTeacher) && user.getIdclass().equals(idClass)) {
-                            friendsViewHolder.isTeacher.setVisibility(View.VISIBLE);
-                            friendsViewHolder.kid_name.setVisibility(View.GONE);
-                            friendsViewHolder.user_name.setText(user.getFullnameteacher());
-                            view =true;
-                        }
+                            if (user.getIdclass().equals(idClass)&&key.equals(idTeacher)) {
+
+                                    friendsViewHolder.isTeacher.setVisibility(View.VISIBLE);
+                                    friendsViewHolder.kid_name.setVisibility(View.GONE);
+                                    friendsViewHolder.user_name.setText(user.getFullnameteacher());
+                                    view =true;
+
+
+                            }
+
                     }
                     if (user.getRole().equals("Parent")) {
                         friendsViewHolder.user_name.setText(user.getUsername());
-//                        if(!user.getFullnamefather().equals("")){
-//                            friendsViewHolder.user_name.setText(user.getFullnamefather());
-//                        }else friendsViewHolder.user_name.setText(user.getFullnamemother());
                         ArrayList<String> temp = user.getMyclass();
                         for (String node : temp) {
                             if (node.equals(idClass)) {
-                                UsersRef.child(user.getUserid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                UsersRef.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                         try {
@@ -185,10 +186,7 @@ public class FriendsFragment extends Fragment {
                         if(user.getProfileimage()!=null){
                             friendsViewHolder.setProfileImage(user.getProfileimage());
                         }
-//                        if(user.getUsername()!=null){
-//                            friendsViewHolder.user_name.setText(user.getUsername());
-//                        }
-                        UserStateRef.child(user.getUserid()).addValueEventListener(new ValueEventListener() {
+                        UserStateRef.child(key).addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 try {
@@ -244,11 +242,6 @@ public class FriendsFragment extends Fragment {
                     else{
                         friendsViewHolder.Layout_hide();
                     }
-
-            } catch (Exception e) {
-                    friendsViewHolder.user_name.setText("Phụ huynh chưa đăng nhập");
-                    friendsViewHolder.online.setVisibility(View.GONE);
-                }
             }
             @NonNull
             @Override
