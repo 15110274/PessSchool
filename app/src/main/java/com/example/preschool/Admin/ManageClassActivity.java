@@ -153,6 +153,7 @@ public class ManageClassActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<Class, ClassViewHolder> adapter = new FirebaseRecyclerAdapter<Class, ClassViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final ClassViewHolder classViewHolder, final int position, @NonNull final Class model) {
+                classViewHolder.setIsRecyclable(false);
                 //Nếu không chọn niên khóa thì view hết
                 if(!yearChoose.equals("Chọn niên khóa")){
                     if(model.getYear().equals(yearChoose)){
