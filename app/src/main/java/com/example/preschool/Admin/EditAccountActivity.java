@@ -50,7 +50,7 @@ import java.util.HashMap;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditAccountActivity extends AppCompatActivity {
-    private EditText userName, userFullName, userDOB, userParentOf, userPhone;
+    private EditText userName, userFullName, userFather, userMother, userPhone,userAddress;
     private Button UpdateAccountSettingButton;
     private CircleImageView userProfImage;
     private ProgressDialog loadingBar;
@@ -85,6 +85,9 @@ public class EditAccountActivity extends AppCompatActivity {
         userName = findViewById(R.id.edit_username);
         userFullName = findViewById(R.id.edit_fullname);
         userPhone = findViewById(R.id.edit_phonenumber);
+        userAddress=findViewById(R.id.edit_address);
+        userFather=findViewById(R.id.edit_fullnamefather);
+        userMother=findViewById(R.id.edit_fullnamemother);
         UpdateAccountSettingButton = findViewById(R.id.update_account_settings_button);
         loadingBar = new ProgressDialog(this);
 
@@ -163,7 +166,18 @@ public class EditAccountActivity extends AppCompatActivity {
                             String myUserName = dataSnapshot.child("username").getValue().toString();
                             userName.setText(myUserName);
                         }
-
+                        if (dataSnapshot.hasChild("address")) {
+                            String myUserName = dataSnapshot.child("address").getValue().toString();
+                            userAddress.setText(myUserName);
+                        }
+                        if (dataSnapshot.hasChild("fullnamefather")) {
+                            String myUserName = dataSnapshot.child("fullnamefather").getValue().toString();
+                            userFather.setText(myUserName);
+                        }
+                        if (dataSnapshot.hasChild("fullnamemother")) {
+                            String myUserName = dataSnapshot.child("fullnamemother").getValue().toString();
+                            userMother.setText(myUserName);
+                        }
 
                         editRole = dataSnapshot.child("role").getValue().toString();
                         if (editRole.equals("Parent")) {
@@ -274,9 +288,9 @@ public class EditAccountActivity extends AppCompatActivity {
             }
         };
         autoComplete.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        autoComplete.notifyDataSetChanged();
         classNameSpinner.setAdapter(autoComplete);
         classNameSpinner.setVisibility(View.GONE);
-
 
         roleSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -284,7 +298,25 @@ public class EditAccountActivity extends AppCompatActivity {
                 if (position == 2) {
                     classNameSpinner.setVisibility(View.VISIBLE);
                     classNameSpinner.setEnabled(false);
-                } else if (position == 3 || position == 1) {
+                    userFullName.setVisibility(View.VISIBLE);
+                    userMother.setVisibility(View.GONE);
+                    userFather.setVisibility(View.GONE);
+                    userAddress.setVisibility(View.VISIBLE);
+                    userPhone.setVisibility(View.VISIBLE);
+                } else if (position == 3 ) {
+                    classNameSpinner.setVisibility(View.GONE);
+                    userFullName.setVisibility(View.VISIBLE);
+                    userMother.setVisibility(View.GONE);
+                    userFather.setVisibility(View.GONE);
+                    userAddress.setVisibility(View.VISIBLE);
+                    userPhone.setVisibility(View.VISIBLE);
+                }
+                else if(position==1){
+                    userFullName.setVisibility(View.GONE);
+                    userMother.setVisibility(View.VISIBLE);
+                    userFather.setVisibility(View.VISIBLE);
+                    userAddress.setVisibility(View.VISIBLE);
+                    userPhone.setVisibility(View.VISIBLE);
                     classNameSpinner.setVisibility(View.GONE);
                 }
                 roleChoose = position;
@@ -351,14 +383,23 @@ public class EditAccountActivity extends AppCompatActivity {
         String username = userName.getText().toString();
         String userfullname = userFullName.getText().toString();
         String userphone = userPhone.getText().toString();
+        String father = userFather.getText().toString();
+        String mother = userMother.getText().toString();
+        String address = userAddress.getText().toString();
+
         loadingBar.setTitle("Profile Update");
         loadingBar.setMessage("Please wait, while we updating your profile...");
         loadingBar.setCanceledOnTouchOutside(true);
         loadingBar.show();
-        UpdateAccountInfo(username, userfullname, userphone, role.get(roleChoose), classId.get(classChoose), className.get(classChoose));
+        UpdateAccountInfo(username, userfullname, userphone, role.get(roleChoose),
+                classId.get(classChoose), className.get(classChoose),
+                father,mother,address);
     }
 
-    private void UpdateAccountInfo(final String username, final String userfullname, final String userphone, final String role, final String idclass, final String classname) {
+    private void UpdateAccountInfo(final String username, final String userfullname,
+                                   final String userphone, final String role, final String idclass,
+                                   final String classname,  final String father,  final String mother,
+                                   final String address) {
         StorageReference filePath = UserProfileImageRef.child(getIntent().getStringExtra("USER_ID") + ".jpg");
         if (resultUri != null) {
             filePath.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -377,10 +418,21 @@ public class EditAccountActivity extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<Void> task) {
                                         if (task.isSuccessful()) {
                                             HashMap userMap = new HashMap();
+                                            if(role.equals("Parent")){
+                                                userMap.put("fullnameparent", father);
+                                                userMap.put("fullnamemother", mother);
+                                            }
+                                            if(role.equals("Teacher")){
+                                                userMap.put("fullname", userfullname);
+                                            }
+                                            if(role.equals("Admin")){
+                                                userMap.put("fullname", userfullname);
+                                            }
                                             userMap.put("username", username);
-                                            userMap.put("fullname", userfullname);
-                                            userMap.put("role", role);
                                             userMap.put("phonenumber", userphone);
+                                            userMap.put("address", address);
+                                            userMap.put("role", role);
+
 
                                             EditUserRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                                                 @Override
@@ -412,10 +464,20 @@ public class EditAccountActivity extends AppCompatActivity {
         }
         else{
             HashMap userMap = new HashMap();
+            if(role.equals("Parent")){
+                userMap.put("fullnameparent", father);
+                userMap.put("fullnamemother", mother);
+            }
+            if(role.equals("Teacher")){
+                userMap.put("fullname", userfullname);
+            }
+            if(role.equals("Admin")){
+                userMap.put("fullname", userfullname);
+            }
             userMap.put("username", username);
-            userMap.put("fullname", userfullname);
-            userMap.put("role", role);
             userMap.put("phonenumber", userphone);
+            userMap.put("address", address);
+            userMap.put("role", role);
 
             EditUserRef.updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                 @Override

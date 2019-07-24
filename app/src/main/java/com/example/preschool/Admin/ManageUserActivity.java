@@ -444,8 +444,7 @@ public class ManageUserActivity extends AppCompatActivity {
                     //nếu ko chọn class thì sẽ hiển thị theo role
                     if (idClassChoose.equals("")) {
                         if (model.getRole() != null && model.getRole().equals(roleChoose)) {
-                            if (model.getFullnamefather() != null || model.getFullnamemother() != null)
-                                usersViewHolder.setFullname(model.getFullnamefather());
+                            usersViewHolder.setFullname(model.getUsername());
                             usersViewHolder.setProfileImage(model.getProfileimage());
                             usersViewHolder.setEmail(model.getEmail());
                         } else usersViewHolder.Layout_hide();
@@ -470,8 +469,7 @@ public class ManageUserActivity extends AppCompatActivity {
                             }
                         }
                         if (view == true) {
-                            if (model.getFullnamefather() != null)
-                                usersViewHolder.setFullname(model.getFullnamefather());
+                            usersViewHolder.setFullname(model.getUsername());
                             usersViewHolder.setProfileImage(model.getProfileimage());
                             usersViewHolder.setEmail(model.getEmail());
                         } else usersViewHolder.Layout_hide();
@@ -480,8 +478,7 @@ public class ManageUserActivity extends AppCompatActivity {
                 //ngược lại hiển thị toàn bộ user
                 else {
                     if (model.getRole() != null) {
-                        if (model.getFullnamefather() != null)
-                            usersViewHolder.setFullname(model.getFullnamefather());
+                        usersViewHolder.setFullname(model.getUsername());
                         usersViewHolder.setProfileImage(model.getProfileimage());
                         usersViewHolder.setEmail(model.getEmail());
                     } else usersViewHolder.Layout_hide();
