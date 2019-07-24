@@ -128,6 +128,7 @@ public class ChatsFragment extends Fragment {
 
             @Override
             protected void onBindViewHolder(@NonNull final ChatListViewHolder chatListViewHolder, int i, @NonNull final String s) {
+                chatListViewHolder.setIsRecyclable(false);
                 UsersRef.child(s).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

@@ -215,7 +215,7 @@ public class CommentsActivity extends AppCompatActivity {
                                 final String image = dataSnapshot.child("profileimage").getValue().toString();
                                 final String name = dataSnapshot.child("fullnameteacher").getValue().toString();
                                 PostName.setText(name);
-                                Picasso.get().load(image).resize(70, 0).into(PostProfileImage);
+                                Picasso.get().load(image).resize(100, 0).into(PostProfileImage);
                             }
 
                         }

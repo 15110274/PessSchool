@@ -40,6 +40,7 @@
         android:id="@+id/all_notification_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
         android:layout_marginTop="8dp"
         android:layout_marginRight="10dp"
         android:textAlignment="textStart"
@@ -65,7 +66,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.032"
         app:layout_constraintStart_toEndOf="@+id/all_notification_profile_image"
-        app:layout_constraintTop_toBottomOf="@+id/all_notification_content" />
+        app:layout_constraintTop_toBottomOf="@+id/all_notification_full_name" />
 
 
 

@@ -43,7 +43,7 @@ public class AdapterImagePost extends PagerAdapter {
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Picasso.get()
                 .load(imageUrls.get(position))
-                .resize(600, 0)
+                .resize(800, 0)
                 .centerCrop()
                 .into(imageView);
 

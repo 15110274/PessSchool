@@ -66,7 +66,7 @@ public class FriendsFragment extends Fragment {
 //        FriendsRef = FirebaseDatabase.getInstance().getReference().child("Class").child(idClass).child("Friends").child(current_user_id);
         UsersRef = FirebaseDatabase.getInstance().getReference().child("Users");
         myFriendList = view.findViewById(R.id.friend_list);
-        myFriendList.setHasFixedSize(true);
+        myFriendList.setHasFixedSize(false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
@@ -131,28 +131,31 @@ public class FriendsFragment extends Fragment {
     }
 
     private void showAllFriend() {
-        Query showAllFriendsQuery = UsersRef;
+        Query showAllFriendsQuery = UsersRef.orderByChild("username").startAt("").endAt(""+"\uf8ff");
         FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>().
                 setQuery(showAllFriendsQuery, User.class).build();
         adapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, int i, @NonNull final User user) {
-                String key=getRef(i).getKey();
-                boolean view=false;
+                String key = getRef(i).getKey();
+                friendsViewHolder.setIsRecyclable(false);
+                boolean view = false;
                 if (user.getRole().equals("Teacher")) {
-                    if (user.getIdclass().equals(idClass)&&key.equals(idTeacher)) {
+                    if (user.getIdclass().equals(idClass) && key.equals(idTeacher)) {
 
                         friendsViewHolder.isTeacher.setVisibility(View.VISIBLE);
                         friendsViewHolder.kid_name.setVisibility(View.GONE);
                         friendsViewHolder.user_name.setText(user.getFullnameteacher());
-                        view =true;
+                        view = true;
 
 
                     }
 
                 }
                 if (user.getRole().equals("Parent")) {
-                    friendsViewHolder.user_name.setText(user.getUsername());
+                    if(user.getUsername()!=null){
+                        friendsViewHolder.user_name.setText(user.getUsername());
+                    }
                     ArrayList<String> temp = user.getMyclass();
                     for (String node : temp) {
                         if (node.equals(idClass)) {
@@ -160,11 +163,14 @@ public class FriendsFragment extends Fragment {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     try {
-                                        friendsViewHolder.kid_name
-                                                .setText("Bé " + dataSnapshot.child("mychildren")
-                                                        .child(idClass)
-                                                        .child("name")
-                                                        .getValue(String.class));
+                                        String kidname=dataSnapshot.child("mychildren")
+                                                .child(idClass)
+                                                .child("name")
+                                                .getValue(String.class);
+                                        if(kidname!=null){
+                                            friendsViewHolder.kid_name
+                                                    .setText("Bé " + kidname);
+                                        }
                                     } catch (Exception e) {
                                         friendsViewHolder.kid_name
                                                 .setText("");
@@ -176,14 +182,14 @@ public class FriendsFragment extends Fragment {
 
                                 }
                             });
-                            view=true;
+                            view = true;
                             break;
                         }
                     }
 
                 }
-                if(view==true){
-                    if(user.getProfileimage()!=null){
+                if (view == true) {
+                    if (user.getProfileimage() != null) {
                         friendsViewHolder.setProfileImage(user.getProfileimage());
                     }
                     UserStateRef.child(key).addValueEventListener(new ValueEventListener() {
@@ -196,10 +202,12 @@ public class FriendsFragment extends Fragment {
                                     friendsViewHolder.online.setVisibility(View.GONE);
                                 }
                             } catch (Exception e) {
+                                friendsViewHolder.online.setVisibility(View.GONE);
 
                             }
 
                         }
+
                         @Override
                         public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -235,14 +243,17 @@ public class FriendsFragment extends Fragment {
                                     }
                                 }
                             });
-                            builder.show();
+                            if(user.getProfileimage()!=null){
+                                builder.show();
+                            }
+
                         }
                     });
-                }
-                else{
+                } else {
                     friendsViewHolder.Layout_hide();
                 }
             }
+
             @NonNull
             @Override
             public FriendsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -284,7 +295,7 @@ public class FriendsFragment extends Fragment {
         }
 
         public void setProfileImage(String profileimage) {
-            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).resize(100, 0).into(user_image);
+            Picasso.get().load(profileimage).placeholder(R.drawable.ic_person_black_50dp).resize(150, 0).into(user_image);
 
         }
 
