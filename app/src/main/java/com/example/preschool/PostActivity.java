@@ -160,12 +160,12 @@ public class PostActivity extends AppCompatActivity {
         Description = PostDescription.getText().toString();
 
         if (ImageUri == null) {
-            Toast.makeText(PostActivity.this, "Please select post image...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PostActivity.this, "Hãy chọn hình ảnh", Toast.LENGTH_SHORT).show();
         } else if (TextUtils.isEmpty(Description)) {
-            Toast.makeText(PostActivity.this, "Please say something about your image...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PostActivity.this, "Vui lòng nhập nội dung", Toast.LENGTH_SHORT).show();
         } else {
-            loadingBar.setTitle("Add New Post");
-            loadingBar.setMessage("Please wait, while we are updating your new post...");
+            loadingBar.setTitle("Tạo Bài Đăng");
+            loadingBar.setMessage("Vui lòng chờ trong giây lát");
             loadingBar.show();
             loadingBar.setCanceledOnTouchOutside(false);
 
@@ -404,11 +404,11 @@ public class PostActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(PostActivity.this, "New Post is updated successfully.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(PostActivity.this, "Tạo bài đăng thành công", Toast.LENGTH_SHORT).show();
                                         loadingBar.dismiss();
                                         SendUserToNewsFeedActivity();
                                     } else {
-                                        Toast.makeText(PostActivity.this, "Error Occured while updating your post.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(PostActivity.this, "Lỗi rồi.", Toast.LENGTH_SHORT).show();
                                         loadingBar.dismiss();
                                         SendUserToNewsFeedActivity();
                                     }
