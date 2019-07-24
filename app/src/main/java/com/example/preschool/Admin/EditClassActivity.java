@@ -118,8 +118,8 @@ public class EditClassActivity extends AppCompatActivity {
                 for (DataSnapshot suggestionSnapshot : dataSnapshot.getChildren()) {
                     if(teacherid.size()<=count&&teachername.size()<=count){
                         String name = "";
-                        if (suggestionSnapshot.hasChild("fullname")) {
-                            name = suggestionSnapshot.child("fullname").getValue(String.class);
+                        if (suggestionSnapshot.hasChild("fullnameteacher")) {
+                            name = suggestionSnapshot.child("fullnameteacher").getValue(String.class);
                         }
                         String email = suggestionSnapshot.child("email").getValue(String.class);
                         String id = suggestionSnapshot.getKey();

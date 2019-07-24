@@ -131,7 +131,7 @@ public class FriendsFragment extends Fragment {
     }
 
     private void showAllFriend() {
-        Query showAllFriendsQuery = UsersRef;
+        Query showAllFriendsQuery = UsersRef.orderByChild("username").startAt("").endAt(""+"\uf8ff");
         FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>().
                 setQuery(showAllFriendsQuery, User.class).build();
         adapter = new FirebaseRecyclerAdapter<User, FriendsViewHolder>(options) {
@@ -153,7 +153,9 @@ public class FriendsFragment extends Fragment {
 
                 }
                 if (user.getRole().equals("Parent")) {
-                    friendsViewHolder.user_name.setText(user.getUsername());
+                    if(user.getUsername()!=null){
+                        friendsViewHolder.user_name.setText(user.getUsername());
+                    }
                     ArrayList<String> temp = user.getMyclass();
                     for (String node : temp) {
                         if (node.equals(idClass)) {
@@ -161,11 +163,14 @@ public class FriendsFragment extends Fragment {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     try {
-                                        friendsViewHolder.kid_name
-                                                .setText("Bé " + dataSnapshot.child("mychildren")
-                                                        .child(idClass)
-                                                        .child("name")
-                                                        .getValue(String.class));
+                                        String kidname=dataSnapshot.child("mychildren")
+                                                .child(idClass)
+                                                .child("name")
+                                                .getValue(String.class);
+                                        if(kidname!=null){
+                                            friendsViewHolder.kid_name
+                                                    .setText("Bé " + kidname);
+                                        }
                                     } catch (Exception e) {
                                         friendsViewHolder.kid_name
                                                 .setText("");
@@ -198,6 +203,7 @@ public class FriendsFragment extends Fragment {
                                 }
                             } catch (Exception e) {
                                 friendsViewHolder.online.setVisibility(View.GONE);
+
                             }
 
                         }
@@ -211,33 +217,33 @@ public class FriendsFragment extends Fragment {
                     friendsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if(!friendsViewHolder.kid_name.getText().equals("Bé null")){
-                                CharSequence options[] = new CharSequence[]{
-                                        "Thông tin của " + friendsViewHolder.user_name.getText().toString(),
-                                        "Gửi tin nhắn"
-                                };
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                builder.setItems(options, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if (which == 0) {
-                                            Intent profileIntent = new Intent(getContext(), PersonProfileActivity.class);
+                            CharSequence options[] = new CharSequence[]{
+                                    "Thông tin của " + friendsViewHolder.user_name.getText().toString(),
+                                    "Gửi tin nhắn"
+                            };
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            builder.setItems(options, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (which == 0) {
+                                        Intent profileIntent = new Intent(getContext(), PersonProfileActivity.class);
+                                        bundle.putString("VISIT_USER_ID", visit_user_id);
+                                        profileIntent.putExtras(bundle);
+                                        startActivity(profileIntent);
+                                    }
+                                    if (which == 1) {
+                                        if (visit_user_id.equals(current_user_id)) {
+                                            Toast.makeText(getContext(), "Không thể nhắn tin cho chính bạn", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Intent chatintent = new Intent(getActivity(), MessageActivity.class);
                                             bundle.putString("VISIT_USER_ID", visit_user_id);
-                                            profileIntent.putExtras(bundle);
-                                            startActivity(profileIntent);
-                                        }
-                                        if (which == 1) {
-                                            if (visit_user_id.equals(current_user_id)) {
-                                                Toast.makeText(getContext(), "Không thể nhắn tin cho chính bạn", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Intent chatintent = new Intent(getActivity(), MessageActivity.class);
-                                                bundle.putString("VISIT_USER_ID", visit_user_id);
-                                                chatintent.putExtras(bundle);
-                                                startActivity(chatintent);
-                                            }
+                                            chatintent.putExtras(bundle);
+                                            startActivity(chatintent);
                                         }
                                     }
-                                });
+                                }
+                            });
+                            if(user.getProfileimage()!=null){
                                 builder.show();
                             }
 

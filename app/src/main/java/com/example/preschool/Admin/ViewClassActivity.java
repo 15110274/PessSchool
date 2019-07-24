@@ -73,8 +73,8 @@ public class ViewClassActivity extends AppCompatActivity {
                                 if (children.getKey().equals(_teacher)) {
                                     String email = children.child("email").getValue().toString();
                                     String fullname = "";
-                                    if (children.hasChild("fullname")) {
-                                        fullname = children.child("fullname").getValue().toString();
+                                    if (children.hasChild("fullnameteacher")) {
+                                        fullname = children.child("fullnameteacher").getValue().toString();
                                     }
                                     teacher.setText("Giáo viên: " + fullname + " (" + email + ")");
                                 }
