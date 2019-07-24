@@ -169,7 +169,10 @@ public class ViewAccountActivity extends AppCompatActivity {
 
                         }else {
                             userRole.setText("Quyền: Quản trị viên");
-                            userProfName.setText("Quản trị viên");
+                            userName.setText(dataSnapshot.child("username").getValue().toString());
+                            userProfName.setText(dataSnapshot.child("fullnameadmin").getValue().toString());
+                            userPhoneTeacher.setText(dataSnapshot.child("phonenumber").getValue().toString());
+                            userPhoneTeacher.setVisibility(View.VISIBLE);
                         }
                     }
 
@@ -198,68 +201,6 @@ public class ViewAccountActivity extends AppCompatActivity {
             }
         });
 
-//        UsersRef.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                if (dataSnapshot.hasChild("role")) {
-//                    //show on recyclerview
-//                    String myRole = dataSnapshot.child("role").getValue().toString();
-////                    if (myRole.equals("Admin")) {
-////                        userClass.setVisibility(View.GONE);
-////                        userParentof.setVisibility(View.GONE);
-////                        userBirthDay.setVisibility(View.GONE);
-////                    } else {
-////                        String myClass = dataSnapshot.child("classname").getValue().toString();
-////                        userClass.setText("Lớp: " + myClass);
-////                    }
-//                    if (myRole.equals("Teacher")) {
-//                        userClass.setVisibility(View.VISIBLE);
-//                        String myClass = dataSnapshot.child("classname").getValue().toString();
-//                        userClass.setText("Lớp: " + myClass);
-////                        userClass.setText("Lớp: " + myClass);
-////                        userParentof.setVisibility(View.GONE);
-////                        userBirthDay.setVisibility(View.GONE);
-//                    }else if(myRole.equals("Parent")){
-//
-//                        Query SortPostsInDecendingOrder = UsersRef.child("");
-//                        final FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>().setQuery(SortPostsInDecendingOrder, Posts.class).build();
-//                        adapter = new FirebaseRecyclerAdapter<Posts, NewsFeedFragment.PostsViewHolder>(options)
-//                    }
-////                    if (myRole.equals("Parent")) {
-////                        userClass.setVisibility(View.VISIBLE);
-////                        userParentof.setVisibility(View.VISIBLE);
-////                        userBirthDay.setVisibility(View.VISIBLE);
-////                    }
-////                    userRole.setText("Role: " + myRole);
-//                }
-//
-//
-//
-//                String myEmail = dataSnapshot.child("email").getValue().toString();
-//                userEmail.setText("Email: " + myEmail);
-//                if (dataSnapshot.hasChild("profileimage")) {
-//                    String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
-//                    Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
-//                }
-//                if (dataSnapshot.hasChild("phonenumber")) {
-//                    String phone = dataSnapshot.child("phonenumber").getValue().toString();
-//                    userPhone.setText("Sdt: " + phone);
-//                }
-//                if (dataSnapshot.hasChild("fullname")) {
-//                    String myProfileName = dataSnapshot.child("fullname").getValue().toString();
-//                    userProfName.setText(myProfileName);
-//                }
-//                if (dataSnapshot.hasChild("username")) {
-//                    String myUserName = dataSnapshot.child("username").getValue().toString();
-//                    userName.setText(myUserName);
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
         EditButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
