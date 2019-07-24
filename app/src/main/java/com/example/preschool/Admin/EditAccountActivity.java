@@ -158,10 +158,6 @@ public class EditAccountActivity extends AppCompatActivity {
                             String phone = dataSnapshot.child("phonenumber").getValue().toString();
                             userPhone.setText(phone);
                         }
-                        if (dataSnapshot.hasChild("fullname")) {
-                            String myProfileName = dataSnapshot.child("fullname").getValue().toString();
-                            userFullName.setText(myProfileName);
-                        }
                         if (dataSnapshot.hasChild("username")) {
                             String myUserName = dataSnapshot.child("username").getValue().toString();
                             userName.setText(myUserName);
@@ -180,6 +176,18 @@ public class EditAccountActivity extends AppCompatActivity {
                         }
 
                         editRole = dataSnapshot.child("role").getValue().toString();
+                        if(editRole.equals("Admin")){
+                            if (dataSnapshot.hasChild("fullnameadmin")) {
+                                String myProfileName = dataSnapshot.child("fullnameadmin").getValue().toString();
+                                userFullName.setText(myProfileName);
+                            }
+                        }
+                        if(editRole.equals("Teacher")){
+                            if (dataSnapshot.hasChild("fullnameteacher")) {
+                                String myProfileName = dataSnapshot.child("fullnameteacher").getValue().toString();
+                                userFullName.setText(myProfileName);
+                            }
+                        }
                         if (editRole.equals("Parent")) {
                             //////////////////////////////////////////////////
                             recyclerView.setVisibility(View.VISIBLE);
@@ -423,10 +431,10 @@ public class EditAccountActivity extends AppCompatActivity {
                                                 userMap.put("fullnamemother", mother);
                                             }
                                             if(role.equals("Teacher")){
-                                                userMap.put("fullname", userfullname);
+                                                userMap.put("fullnameteacher", userfullname);
                                             }
                                             if(role.equals("Admin")){
-                                                userMap.put("fullname", userfullname);
+                                                userMap.put("fullnameadmin", userfullname);
                                             }
                                             userMap.put("username", username);
                                             userMap.put("phonenumber", userphone);
@@ -469,10 +477,10 @@ public class EditAccountActivity extends AppCompatActivity {
                 userMap.put("fullnamemother", mother);
             }
             if(role.equals("Teacher")){
-                userMap.put("fullname", userfullname);
+                userMap.put("fullnameteacher", userfullname);
             }
             if(role.equals("Admin")){
-                userMap.put("fullname", userfullname);
+                userMap.put("fullnameadmin", userfullname);
             }
             userMap.put("username", username);
             userMap.put("phonenumber", userphone);
