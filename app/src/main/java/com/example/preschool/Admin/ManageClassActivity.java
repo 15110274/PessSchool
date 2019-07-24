@@ -163,8 +163,8 @@ public class ManageClassActivity extends AppCompatActivity {
                             UserRef.child(idTeacher).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.hasChild("fullname"))
-                                        classViewHolder.setTeacherName(dataSnapshot.child("fullname").getValue().toString());
+                                    if (dataSnapshot.hasChild("fullnameteacher"))
+                                        classViewHolder.setTeacherName(dataSnapshot.child("fullnameteacher").getValue().toString());
                                     else
                                         classViewHolder.setTeacherName("Don't Setup");
                                 }
@@ -190,8 +190,8 @@ public class ManageClassActivity extends AppCompatActivity {
                             UserRef.child(idTeacher).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.hasChild("fullname"))
-                                        classViewHolder.setTeacherName(dataSnapshot.child("fullname").getValue().toString());
+                                    if (dataSnapshot.hasChild("fullnameteacher"))
+                                        classViewHolder.setTeacherName(dataSnapshot.child("fullnameteacher").getValue().toString());
                                     else
                                         classViewHolder.setTeacherName("Don't Setup");
                                 }
