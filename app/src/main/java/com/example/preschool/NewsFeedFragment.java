@@ -145,7 +145,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
             @Override
             protected void onBindViewHolder(@NonNull final PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
-
+                postsViewHolder.setIsRecyclable(false);
                 final String PostKey = getRef(position).getKey();
                 final ArrayList<String> urlImage = posts.getPostimage();
                 UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
@@ -422,7 +422,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
         private int countComments;
         private ViewPager postImages;
         private String currentUserId;
-//        private DatabaseReference LikesRef;
+        //        private DatabaseReference LikesRef;
         private DatabaseReference PostRef;
 
         public PostsViewHolder(@NonNull View itemView, int viewType) {
@@ -431,11 +431,11 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
             CommentPostButton = itemView.findViewById(R.id.comment_button);
             DisplayNoOfLikes = itemView.findViewById(R.id.display_no_of_likes);
             DisplayNoOfComments = itemView.findViewById(R.id.display_no_of_comments);
-            imageViewLike=itemView.findViewById(R.id.img_like);
+            imageViewLike = itemView.findViewById(R.id.img_like);
             optionButton = itemView.findViewById(R.id.post_option_button);
             postImages = itemView.findViewById(R.id.post_image);
-            linearLayoutLike=itemView.findViewById(R.id.linearLayoutLike);
-            linearLayoutCmt=itemView.findViewById(R.id.linearLayoutCmt);
+            linearLayoutLike = itemView.findViewById(R.id.linearLayoutLike);
+            linearLayoutCmt = itemView.findViewById(R.id.linearLayoutCmt);
             optionButton.setVisibility(View.GONE);
 
             /**

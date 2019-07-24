@@ -73,6 +73,7 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
             protected void onBindViewHolder(@NonNull final PostsViewHolder postsViewHolder, final int position, @NonNull Posts posts) {
 //                final Intent chatIntent=new Intent(getActivity(), NewsFeedFragment.class);
 
+                postsViewHolder.setIsRecyclable(false);
 
                 String idUserPost=posts.getUid();
                 UsersRef.child(idUserPost).addValueEventListener(new ValueEventListener() {
