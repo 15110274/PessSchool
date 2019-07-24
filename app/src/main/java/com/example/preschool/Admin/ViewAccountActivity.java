@@ -169,9 +169,18 @@ public class ViewAccountActivity extends AppCompatActivity {
 
                         }else {
                             userRole.setText("Quyền: Quản trị viên");
-                            userName.setText(dataSnapshot.child("username").getValue().toString());
-                            userProfName.setText(dataSnapshot.child("fullnameadmin").getValue().toString());
-                            userPhoneTeacher.setText(dataSnapshot.child("phonenumber").getValue().toString());
+                            if(dataSnapshot.hasChild("username")){
+                                userName.setText(dataSnapshot.child("username").getValue().toString());
+                            }
+                            if(dataSnapshot.hasChild("fullnameadmin")){
+                                userProfName.setText(dataSnapshot.child("fullnameadmin").getValue().toString());
+
+                            }
+                            if(dataSnapshot.hasChild("phonenumber")){
+                                userPhoneTeacher.setText(dataSnapshot.child("phonenumber").getValue().toString());
+
+                            }
+
                             userPhoneTeacher.setVisibility(View.VISIBLE);
                         }
                     }
