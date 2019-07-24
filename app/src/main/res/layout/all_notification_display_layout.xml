@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="user full name"
+        android:text="Giáo viên"
         android:textAlignment="textStart"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"

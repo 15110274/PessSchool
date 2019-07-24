@@ -79,10 +79,9 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                 UsersRef.child(idUserPost).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        postsViewHolder.setFullname(dataSnapshot.child("fullnameteacher").getValue().toString());
+                        postsViewHolder.setFullname("Giáo viên");
                         postsViewHolder.setProfileImage(dataSnapshot.child("profileimage").getValue().toString());
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -90,7 +89,7 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
                 });
 
                 final String PostKey = getRef(position).getKey();
-                postsViewHolder.setContent(" đã thêm một\n bài viết mới");
+                postsViewHolder.setContent(" đã thêm một bài viết mới");
                 postsViewHolder.setTime(posts.getTime());
 
                 postsViewHolder.itemView.setOnClickListener(new View.OnClickListener() {

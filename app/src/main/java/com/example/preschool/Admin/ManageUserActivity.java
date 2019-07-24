@@ -439,6 +439,7 @@ public class ManageUserActivity extends AppCompatActivity {
         FirebaseRecyclerAdapter<User, UsersViewHolder> adapter = new FirebaseRecyclerAdapter<User, UsersViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull final UsersViewHolder usersViewHolder, final int position, @NonNull final User model) {
+                usersViewHolder.setIsRecyclable(false);
                 //nếu chọn role thì sắp xếp theo role
                 if (!roleChoose.equals("Choose Role...")) {
                     //nếu ko chọn class thì sẽ hiển thị theo role
