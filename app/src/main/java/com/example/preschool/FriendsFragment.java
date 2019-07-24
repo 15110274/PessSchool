@@ -148,9 +148,10 @@ public class FriendsFragment extends Fragment {
                         }
                     }
                     if (user.getRole().equals("Parent")) {
-                        if(!user.getFullnamefather().equals("")){
-                            friendsViewHolder.user_name.setText(user.getFullnamefather());
-                        }else friendsViewHolder.user_name.setText(user.getFullnamemother());
+                        friendsViewHolder.user_name.setText(user.getUsername());
+//                        if(!user.getFullnamefather().equals("")){
+//                            friendsViewHolder.user_name.setText(user.getFullnamefather());
+//                        }else friendsViewHolder.user_name.setText(user.getFullnamemother());
                         ArrayList<String> temp = user.getMyclass();
                         for (String node : temp) {
                             if (node.equals(idClass)) {

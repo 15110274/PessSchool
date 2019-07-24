@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.preschool.Children.Children;
@@ -30,8 +31,10 @@ import com.squareup.picasso.Picasso;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ViewAccountActivity extends AppCompatActivity {
-    private TextView userPhone, userName, userProfName, userRole, userEmail;
+    private TextView userPhoneTeacher, userName, userProfName, userRole, userEmail, userAddress;
+    private TextView userFather, userMother,userPhoneParent;
     private TextView userClass;
+    private LinearLayout layoutParent;
     private RecyclerView recyclerView;
     private CircleImageView userProfileImage;
 
@@ -56,13 +59,19 @@ public class ViewAccountActivity extends AppCompatActivity {
         userName = findViewById(R.id.person_username);
         userEmail = findViewById(R.id.email);
         userProfName = findViewById(R.id.person_full_name);
-//        userParentof = findViewById(R.id.relationship_with_children);
-//        userBirthDay = findViewById(R.id.person_birthday);
-        userClass = findViewById(R.id.person_class1);
+        userClass = findViewById(R.id.class_name);
         userRole = findViewById(R.id.role);
-        userPhone = findViewById(R.id.phonenumber);
+        userPhoneTeacher = findViewById(R.id.phoneteacher);
+        userPhoneParent=findViewById(R.id.phonenumber);
+        userAddress = findViewById(R.id.address);
         EditButton = findViewById(R.id.edit_account);
-        recyclerView=findViewById(R.id.recycler_info_kid);
+
+        userFather = findViewById(R.id.father);
+        userMother = findViewById(R.id.mother);
+
+        layoutParent = findViewById(R.id.layout_parent);
+
+        recyclerView = findViewById(R.id.recycler_info_kid);
         recyclerView.setHasFixedSize(false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setReverseLayout(true);
@@ -80,72 +89,107 @@ public class ViewAccountActivity extends AppCompatActivity {
                     String myRole = dataSnapshot.child("role").getValue().toString();
                     if (myRole.equals("Teacher")) {
                         userClass.setVisibility(View.VISIBLE);
+                        try{
+                            userProfName.setText(dataSnapshot.child("fullnameteacher").getValue().toString());
+                        }catch (Exception e){userProfName.setText("Họ tên giáo viên");}
+                        try{
+                            userName.setText(dataSnapshot.child("username").getValue().toString());
+                        }catch (Exception e){userName.setText("Username Giáo viên");}
+
                         String myClass = dataSnapshot.child("classname").getValue().toString();
                         userClass.setText("Lớp: " + myClass);
-                    } else if (myRole.equals("Parent")) {
 
-                        Query mychildrenQuery = UsersRef.child("mychildren");
-                        final FirebaseRecyclerOptions<Children> options = new FirebaseRecyclerOptions.Builder<Children>().setQuery(mychildrenQuery, Children.class).build();
-                        FirebaseRecyclerAdapter adapter;
-                        adapter = new FirebaseRecyclerAdapter<Children, ViewAccountActivity.ChildrenViewHolder>(options){
+                        userPhoneTeacher.setVisibility(View.VISIBLE);
+                        userPhoneTeacher.setText("Sdt: "+dataSnapshot.child("phonenumber").getValue().toString());
 
-                            @NonNull
-                            @Override
-                            public ChildrenViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                                View view;
-                                // create a new view
-
-                                view = LayoutInflater.from(parent.getContext())
-                                        .inflate(R.layout.info_kid_items, parent, false);
-                                return new ViewAccountActivity.ChildrenViewHolder (view);
+                        userRole.setText("Quyền: Giáo viên");
+                    } else {
+                        if (myRole.equals("Parent")) {
+                            layoutParent.setVisibility(View.VISIBLE);
+                            try{
+                                userProfName.setText(dataSnapshot.child("username").getValue().toString());
+                            }catch (Exception e){}
+                            userName.setVisibility(View.GONE);
+                            try {
+                                userFather.setText("Tên cha: "+dataSnapshot.child("fullnamefather").getValue().toString());
+                            } catch (Exception e) {
                             }
+                            try {
+                                userMother.setText("Tên mẹ: "+dataSnapshot.child("fullnamemother").getValue().toString());
+                            } catch (Exception e) {
+                            }
+                            try {
+                                userPhoneParent.setText("Sdt: "+dataSnapshot.child("phonenumber").getValue().toString());
+                            } catch (Exception e) {
+                            }
+                            userRole.setText("Quyền: Phụ huynh");
 
-                            @Override
-                            protected void onBindViewHolder(@NonNull final ChildrenViewHolder childrenViewHolder, int i, @NonNull Children children) {
-                                String classKey = getRef(i).getKey();
-                                final String[] className = new String[1];
-                                ClassRef.child(classKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                            try {
+                                Query mychildrenQuery = UsersRef.child("mychildren");
+                                final FirebaseRecyclerOptions<Children> options = new FirebaseRecyclerOptions.Builder<Children>().setQuery(mychildrenQuery, Children.class).build();
+                                FirebaseRecyclerAdapter adapter;
+                                adapter = new FirebaseRecyclerAdapter<Children, ViewAccountActivity.ChildrenViewHolder>(options) {
+
+                                    @NonNull
                                     @Override
-                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                        childrenViewHolder.txtClass.setText("Lớp: "+dataSnapshot.child("classname").getValue(String.class));
+                                    public ChildrenViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                                        View view;
+                                        // create a new view
+
+                                        view = LayoutInflater.from(parent.getContext())
+                                                .inflate(R.layout.info_kid_items, parent, false);
+                                        return new ViewAccountActivity.ChildrenViewHolder(view);
                                     }
 
                                     @Override
-                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    protected void onBindViewHolder(@NonNull final ChildrenViewHolder childrenViewHolder, int i, @NonNull Children children) {
+                                        String classKey = getRef(i).getKey();
+                                        final String[] className = new String[1];
+                                        ClassRef.child(classKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                                childrenViewHolder.txtClass.setText("Lớp: " + dataSnapshot.child("classname").getValue(String.class));
+                                            }
 
+                                            @Override
+                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                        childrenViewHolder.txtName.setText("Bé: " + children.getName());
+                                        childrenViewHolder.txtBirthday.setText("Sinh nhật: " + children.getBirthday());
+                                        childrenViewHolder.txtGender.setText("Giới tính: " + children.getSex());
                                     }
-                                });
-                                childrenViewHolder.txtName.setText("Bé: "+ children.getName());
-                                childrenViewHolder.txtBirthday.setText("Sinh nhật: "+children.getBirthday());
+                                };
+                                adapter.startListening();
+                                adapter.notifyDataSetChanged();
+                                recyclerView.setAdapter(adapter);
+                            } catch (Exception e) {
                             }
-                        };
-                        adapter.startListening();
-                        adapter.notifyDataSetChanged();
-                        recyclerView.setAdapter(adapter);
+
+                        }else {
+                            userRole.setText("Quyền: Quản trị viên");
+                            userProfName.setText("Quản trị viên");
+                        }
                     }
-//
-                    userRole.setText("Role: " + myRole);
+
                 }
 
 
-                String myEmail = dataSnapshot.child("email").getValue().toString();
-                userEmail.setText("Email: " + myEmail);
-                if (dataSnapshot.hasChild("profileimage")) {
+                try{
+                    userEmail.setText(dataSnapshot.child("email").getValue().toString());
+                }catch (Exception e){
+
+                }
+                try{
+                    userAddress.setText("Địa chỉ: "+dataSnapshot.child("address").getValue().toString());
+                }catch (Exception e){}
+                try{
                     String myProfileImage = dataSnapshot.child("profileimage").getValue().toString();
                     Picasso.get().load(myProfileImage).placeholder(R.drawable.ic_person_black_50dp).into(userProfileImage);
-                }
-                if (dataSnapshot.hasChild("phonenumber")) {
-                    String phone = dataSnapshot.child("phonenumber").getValue().toString();
-                    userPhone.setText("Sdt: " + phone);
-                }
-                if (dataSnapshot.hasChild("fullname")) {
-                    String myProfileName = dataSnapshot.child("fullname").getValue().toString();
-                    userProfName.setText(myProfileName);
-                }
-                if (dataSnapshot.hasChild("username")) {
-                    String myUserName = dataSnapshot.child("username").getValue().toString();
-                    userName.setText(myUserName);
-                }
+                }catch (Exception e){}
+
+
             }
 
             @Override
@@ -244,13 +288,14 @@ public class ViewAccountActivity extends AppCompatActivity {
 
     public class ChildrenViewHolder extends RecyclerView.ViewHolder {
 
-        TextView txtClass, txtName, txtBirthday;
+        TextView txtClass, txtName, txtBirthday, txtGender;
 
         public ChildrenViewHolder(@NonNull View itemView) {
             super(itemView);
-            txtClass=itemView.findViewById(R.id.person_class);
-            txtName=itemView.findViewById(R.id.relationship_with_children);
-            txtBirthday=itemView.findViewById(R.id.person_birthday);
+            txtClass = itemView.findViewById(R.id.person_class);
+            txtName = itemView.findViewById(R.id.relationship_with_children);
+            txtBirthday = itemView.findViewById(R.id.person_birthday);
+            txtGender = itemView.findViewById(R.id.person_gender);
         }
     }
 }

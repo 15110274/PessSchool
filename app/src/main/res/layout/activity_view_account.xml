@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -44,7 +44,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/person_full_name"
-                android:text="User Name"
                 android:textAlignment="center"
                 android:textAllCaps="false"
                 android:textColor="@android:color/background_light"
@@ -64,64 +63,88 @@
 
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_info_kid"
+        <LinearLayout
+            android:id="@+id/layout_parent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        </androidx.recyclerview.widget.RecyclerView>
+            <TextView
+                android:id="@+id/father"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:drawableLeft="@drawable/ic_person"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:paddingStart="50dp"
+                android:paddingLeft="20dp"
+                android:text="Cha"
+                android:textColor="@color/textcolor"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/mother"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:drawableLeft="@drawable/ic_person"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:paddingStart="50dp"
+                android:paddingLeft="20dp"
+                android:text="Me"
+                android:textColor="@color/textcolor"
+                android:textStyle="bold" />
 
 
+            <TextView
+                android:id="@+id/phonenumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:drawableLeft="@drawable/ic_phone"
+                android:drawablePadding="10dp"
+                android:gravity="center"
+                android:paddingStart="50dp"
+                android:paddingLeft="20dp"
+                android:text="Số điện thoại"
+                android:textColor="@color/textcolor"
+                android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_info_kid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </LinearLayout>
 
 
         <TextView
-            android:id="@+id/person_class1"
+            android:id="@+id/class_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:drawableLeft="@drawable/ic_gender"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:paddingStart="50dp"
-            android:paddingLeft="20dp"
-            android:text="Tên lớp: "
-            android:textColor="@color/textcolor"
-            android:visibility="gone"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/relationship_with_children1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:drawableLeft="@drawable/ic_child"
+            android:drawableLeft="@drawable/ic_class"
             android:drawablePadding="10dp"
             android:gravity="left"
             android:paddingStart="50dp"
             android:paddingLeft="20dp"
-            android:text="Phụ huynh của: "
+            android:text="Lop"
             android:textColor="@color/textcolor"
-            android:visibility="gone"
-            android:textStyle="bold" />
-        <TextView
-            android:id="@+id/person_birthday1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:drawableLeft="@drawable/ic_dob"
-            android:drawablePadding="10dp"
-            android:gravity="center"
-            android:paddingStart="50dp"
-            android:paddingLeft="20dp"
-            android:text="Sinh nhật"
-            android:textColor="@color/textcolor"
-            android:visibility="gone"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <TextView
-            android:id="@+id/phonenumber"
+            android:id="@+id/phoneteacher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -130,9 +153,10 @@
             android:gravity="left"
             android:paddingStart="50dp"
             android:paddingLeft="20dp"
-            android:text="Số điện thoại"
+            android:text="phone"
             android:textColor="@color/textcolor"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/email"
@@ -145,6 +169,20 @@
             android:paddingStart="50dp"
             android:paddingLeft="20dp"
             android:text="Email"
+            android:textColor="@color/textcolor"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:drawableLeft="@drawable/ic_location"
+            android:drawablePadding="10dp"
+            android:gravity="left"
+            android:paddingStart="50dp"
+            android:paddingLeft="20dp"
+            android:text="Dia chi"
             android:textColor="@color/textcolor"
             android:textStyle="bold" />
 
@@ -170,10 +208,11 @@
             android:layout_marginTop="30dp"
             android:background="@drawable/buttonprofile"
             android:text="Sửa tài khoản"
+            android:layout_marginBottom="20dp"
             android:textColor="#fff" />
 
 
     </LinearLayout>
 
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

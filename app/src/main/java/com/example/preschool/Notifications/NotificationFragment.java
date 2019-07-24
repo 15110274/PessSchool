@@ -140,7 +140,7 @@ public class NotificationFragment extends Fragment implements SwipeRefreshLayout
 
         public void setProfileImage(String profileimage) {
             CircleImageView userImage = mView.findViewById(R.id.all_notification_profile_image);
-            Picasso.get().load(profileimage).resize(60,0).placeholder(R.drawable.ic_person_black_50dp).into(userImage);
+            Picasso.get().load(profileimage).resize(100,0).placeholder(R.drawable.ic_person_black_50dp).into(userImage);
 
         }
 
