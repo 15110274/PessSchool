@@ -15,12 +15,16 @@
         android:id="@+id/txt_rename_album"
         android:textColor="@android:color/black"
         android:layout_width="match_parent"
+        android:inputType="textCapSentences"
+        android:padding="8dp"
         android:layout_height="wrap_content"
         android:hint="Tên Album"/>
     <Button
         android:id="@+id/btn_rename_album"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/large_button"
         android:layout_marginBottom="10dp"
         android:text="OK" />
 
