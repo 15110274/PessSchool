@@ -151,7 +151,7 @@ public class DonNghiPhepActivity extends AppCompatActivity {
 
                 } else{
                     btnGui.setEnabled(true);
-                    Toast.makeText(DonNghiPhepActivity.this, "Bạn không thể tạo đơn trước, trùng ngàny hiện tại", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DonNghiPhepActivity.this, "Bạn không thể tạo đơn trước, trùng ngày hiện tại", Toast.LENGTH_SHORT).show();
                 }
 
 

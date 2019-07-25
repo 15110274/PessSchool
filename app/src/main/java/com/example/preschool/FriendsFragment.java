@@ -138,7 +138,7 @@ public class FriendsFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsViewHolder friendsViewHolder, int i, @NonNull final User user) {
                 String key = getRef(i).getKey();
-                friendsViewHolder.setIsRecyclable(false);
+//                friendsViewHolder.setIsRecyclable(false);
                 boolean view = false;
                 if (user.getRole().equals("Teacher")) {
                     if (user.getIdclass().equals(idClass) && key.equals(idTeacher)) {
