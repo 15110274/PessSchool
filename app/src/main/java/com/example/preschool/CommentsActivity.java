@@ -174,7 +174,7 @@ public class CommentsActivity extends AppCompatActivity {
                 });
             }
         });
-        clickPostRef.addValueEventListener(new ValueEventListener() {
+        clickPostRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -208,7 +208,7 @@ public class CommentsActivity extends AppCompatActivity {
 //                        }
 //                    });
 
-                    UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
+                    UsersRef.child(idTeacher).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {

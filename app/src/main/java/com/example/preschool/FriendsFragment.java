@@ -107,7 +107,7 @@ public class FriendsFragment extends Fragment {
         super.onResume();
 
 //        DisplayAllFriends();
-//        updateUserStatus("online");
+        updateUserStatus("online");
     }
 
     @Override
@@ -127,7 +127,7 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        updateUserStatus("offline");
+//        updateUserStatus("offline");
     }
 
     private void showAllFriend() {

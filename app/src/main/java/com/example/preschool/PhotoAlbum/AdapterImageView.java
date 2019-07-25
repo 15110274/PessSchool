@@ -9,12 +9,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.example.preschool.R;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.PagerAdapter;
 
 public class AdapterImageView extends PagerAdapter {
@@ -42,7 +42,7 @@ public class AdapterImageView extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View view = LayoutInflater.from(context).inflate(R.layout.view_image_progress_bar, container, false);
-        ImageView imageView = view.findViewById(R.id.imageView);
+        PhotoView imageView = view.findViewById(R.id.imageView);
         final ProgressBar progressBar=view.findViewById(R.id.progress_bar);
         Picasso.get()
                 .load(imageUrls.get(position))

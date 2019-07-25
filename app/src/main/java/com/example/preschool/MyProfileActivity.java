@@ -105,7 +105,7 @@ public class MyProfileActivity extends AppCompatActivity {
 
                         if (isTeacher) {
                             phoneNumberTeacher.setVisibility(View.VISIBLE);
-                            phoneNumberTeacher.setText(myphoneNumber);
+                            phoneNumberTeacher.setText("Sdt: "+myphoneNumber);
 
                             fullName=dataSnapshot.child("fullnameteacher").getValue(String.class);
                             parentFullName.setText(fullName);

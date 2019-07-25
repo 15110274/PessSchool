@@ -26,7 +26,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:gravity="center">
 
                 <!--<de.hdodenhof.circleimageview.CircleImageView-->
@@ -35,8 +35,9 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/icon_user"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_alignParentEnd="true"
                     android:scaleType="centerCrop"
                     android:layout_marginEnd="12dp"
@@ -45,16 +46,17 @@
                 <TextView
                     android:id="@+id/class_name"
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:gravity="center"
-                    android:textStyle="bold"
-                    android:layout_marginEnd="60dp"
-                    android:layout_marginStart="-10dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="8dp"
                     android:layout_alignParentEnd="true"
+                    android:layout_marginStart="-10dp"
+                    android:layout_marginEnd="60dp"
                     android:fontFamily="@font/lobster_regular"
+                    android:gravity="center"
                     android:text="Ten lop"
                     android:textColor="@color/background"
-                    android:textSize="22sp" />
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
 
             </RelativeLayout>

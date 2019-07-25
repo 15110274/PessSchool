@@ -442,7 +442,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-//        updateUserStatus("offline");
+        updateUserStatus("offline");
 //        Toast.makeText(this,"Main Stop",Toast.LENGTH_LONG).show();
     }
 

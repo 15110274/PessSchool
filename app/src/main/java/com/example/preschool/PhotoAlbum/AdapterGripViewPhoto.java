@@ -39,8 +39,8 @@ public class AdapterGripViewPhoto extends RecyclerView.Adapter<AdapterGripViewPh
     public void onBindViewHolder(@NonNull viewHolder holder, final int position) {
         holder.setIsRecyclable(false);
         Picasso.get().load(imageUrls.get(position))
-                .networkPolicy(NetworkPolicy.NO_CACHE)
-                .memoryPolicy(MemoryPolicy.NO_CACHE)
+//                .networkPolicy(NetworkPolicy.NO_CACHE)
+//                .memoryPolicy(MemoryPolicy.NO_CACHE)
                 .placeholder(R.drawable.ic_photo_black_50dp)
                 .resize(400,0)
                 .into(holder.imageView);

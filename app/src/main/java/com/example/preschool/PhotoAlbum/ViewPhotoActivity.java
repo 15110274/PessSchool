@@ -60,6 +60,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
         AdapterImageView adapter = new AdapterImageView(ViewPhotoActivity.this, uriList);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(position);
+        viewPager.clearOnPageChangeListeners();
 
     }
 
