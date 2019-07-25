@@ -2,10 +2,12 @@ package com.example.preschool;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
@@ -38,8 +40,11 @@ public class AdapterImagePost extends PagerAdapter {
 
     @NonNull
     @Override
-    public Object instantiateItem(@NonNull ViewGroup container, int position) {
-        final ImageView imageView = new ImageView(context);
+    public Object instantiateItem(@NonNull ViewGroup container, final int position) {
+        View view = LayoutInflater.from(context).inflate(R.layout.view_imagepost, container, false);
+        TextView stt=view.findViewById(R.id.stt_image);
+        stt.setText(String.valueOf(position+1)+"/"+String.valueOf(imageUrls.size()));
+        final ImageView imageView = view.findViewById(R.id.image);
         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         Picasso.get()
                 .load(imageUrls.get(position))
@@ -58,12 +63,13 @@ public class AdapterImagePost extends PagerAdapter {
                 ViewPager viewPager = dialogImage.findViewById(R.id.image_post_view);
                 AdapterImagePostView adapterImagePostView = new AdapterImagePostView(context, imageUrls);
                 viewPager.setAdapter(adapterImagePostView);
+                viewPager.setCurrentItem(position);
                 dialogImage.show();
             }
         });
-        container.addView(imageView);
+        container.addView(view);
 
-        return imageView;
+        return view;
     }
 
     @Override

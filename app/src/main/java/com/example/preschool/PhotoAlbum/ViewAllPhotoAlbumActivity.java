@@ -81,9 +81,11 @@ public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
 
         recyclerView=findViewById(R.id.recycler_view);
         recyclerView.hasFixedSize();
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
+
 
         albumEventListener= albumRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -92,6 +94,7 @@ public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
                 arrayListUrl=album.getImageUrlList();
                 getSupportActionBar().setTitle(album.getName());
                 AdapterGripViewPhoto adapter = new AdapterGripViewPhoto(getApplicationContext(),arrayListUrl);
+                adapter.notifyDataSetChanged();
                 recyclerView.setAdapter(adapter);
             }
 
@@ -104,7 +107,7 @@ public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
         fab = findViewById(R.id.fab);
         fab.setVisibility(View.INVISIBLE);
         if(isTeacher){
-            fab.setVisibility(View.VISIBLE);
+            fab.setVisibility(View.INVISIBLE);
         }
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +129,12 @@ public class ViewAllPhotoAlbumActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_option_album, menu);
         return true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 
     @Override

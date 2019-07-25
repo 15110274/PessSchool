@@ -29,6 +29,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
 
     private Bundle bundle;
     private ArrayList<String> uriList;
+    private int position;
     private TextView title;
 
     @Override
@@ -48,6 +49,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
 
         // get uirList
         uriList = getIntent().getStringArrayListExtra("IMAGE_LINK");
+        position=getIntent().getIntExtra("POSITION",0);
         getSupportActionBar().setTitle("");
 
 //        title=findViewById(R.id.position_photo);
@@ -57,7 +59,7 @@ public class ViewPhotoActivity extends AppCompatActivity {
         viewPager=findViewById(R.id.view_pager);
         AdapterImageView adapter = new AdapterImageView(ViewPhotoActivity.this, uriList);
         viewPager.setAdapter(adapter);
-
+        viewPager.setCurrentItem(position);
 
     }
 
