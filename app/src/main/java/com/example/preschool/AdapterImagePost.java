@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import com.github.chrisbanes.photoview.PhotoView;
 import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -101,7 +102,7 @@ public class AdapterImagePost extends PagerAdapter {
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
-            ImageView imageView = new ImageView(context);
+            PhotoView imageView = new PhotoView(context);
             Picasso.get()
                     .load(imageUrls.get(position))
                     .networkPolicy(NetworkPolicy.NO_CACHE)
