@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 
+import com.example.preschool.Admin.ViewPagerFixed;
 import com.example.preschool.R;
 import com.google.firebase.database.DatabaseReference;
 
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 public class ViewPhotoActivity extends AppCompatActivity {
 
     private RecyclerView myRecycleView;
-    private ViewPager viewPager;
+    private ViewPagerFixed viewPager;
     private DatabaseReference mPhotosRef;
     private String positionAlbum;
     private TextView nameAlbum;
