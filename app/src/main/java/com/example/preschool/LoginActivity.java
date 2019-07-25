@@ -115,8 +115,9 @@ public class LoginActivity extends AppCompatActivity {
                                                 loadingBar.dismiss();
                                             } else {
                                                 Toast.makeText(LoginActivity.this,
-                                                        "Fail to reset your password account",
+                                                        "Mail Không đúng",
                                                         Toast.LENGTH_LONG).show();
+                                                loadingBar.dismiss();
                                             }
                                         }
                                     });

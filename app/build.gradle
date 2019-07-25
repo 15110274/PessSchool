@@ -58,6 +58,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'sun.bob:mcalendarview:1.0.0'
     implementation 'com.github.jhonnyx2012:horizontal-picker:1.0.6'
+
 }
 configurations.all { //fix ClassNotFoundException : OnUnhandledKeyEventListener
     resolutionStrategy.eachDependency { details ->

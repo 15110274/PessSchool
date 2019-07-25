@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "222650059294",
-    "firebase_url": "https://preschool-f82ff.firebaseio.com",
-    "project_id": "preschool-f82ff",
-    "storage_bucket": "preschool-f82ff.appspot.com"
+    "project_number": "890647703232",
+    "firebase_url": "https://preschool-1d29f.firebaseio.com",
+    "project_id": "preschool-1d29f",
+    "storage_bucket": "preschool-1d29f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:222650059294:android:932bd34a5ad1ff53",
+        "mobilesdk_app_id": "1:890647703232:android:932bd34a5ad1ff53",
         "android_client_info": {
           "package_name": "com.example.preschool"
         }
       },
       "oauth_client": [
         {
-          "client_id": "222650059294-5ppv34v2d3tm71vb7sndt2o09ttt8b09.apps.googleusercontent.com",
+          "client_id": "890647703232-a9bmi15f43r60l9deojikqq6o67ug2re.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCI5NngIbCL2wbxfypF_eMHrcNL7Vx25vw"
+          "current_key": "AIzaSyC2u8PAHzGNvd2d3aBtHdfOrFUFzESAzYU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "222650059294-5ppv34v2d3tm71vb7sndt2o09ttt8b09.apps.googleusercontent.com",
+              "client_id": "890647703232-a9bmi15f43r60l9deojikqq6o67ug2re.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
