@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 loadingBar.dismiss();
                                             } else {
                                                 Toast.makeText(LoginActivity.this,
-                                                        "Mail Không đúng",
+                                                        "Mail chưa đăng ký",
                                                         Toast.LENGTH_LONG).show();
                                                 loadingBar.dismiss();
                                             }

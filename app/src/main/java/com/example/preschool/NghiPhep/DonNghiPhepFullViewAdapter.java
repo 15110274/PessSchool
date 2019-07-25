@@ -30,8 +30,9 @@ public class DonNghiPhepFullViewAdapter extends RecyclerView.Adapter<DonNghiPhep
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
+        holder.setIsRecyclable(false);
         try {
-            holder.tenHocSinh.setText(list.get(i).getKidName());
+            holder.tenHocSinh.setText("Bé: "+list.get(i).getKidName());
             holder.ngayNghi.setText("Ngày nghỉ: " + list.get(i).getNgayNghi());
             holder.soNgayNghi.setText("Số ngày: " + list.get(i).getSoNgay());
             holder.lyDo.setText("Lý do: " + list.get(i).getLyDo());

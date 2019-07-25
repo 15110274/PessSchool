@@ -115,7 +115,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
 
                     }
                 }, hour, minute, true);//Yes 24 hour time
-                mTimePicker.setTitle("Select Time");
+                mTimePicker.setTitle("Chọn giờ");
                 mTimePicker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 mTimePicker.show();
 
@@ -139,7 +139,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
                         }
                     }
                 }, hour, minute, true);//Yes 24 hour time
-                mTimePicker.setTitle("Select Time");
+                mTimePicker.setTitle("Chọn giờ");
                 mTimePicker.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 mTimePicker.show();
 
@@ -252,7 +252,7 @@ public class TimeTableActivity extends AppCompatActivity implements DatePickerLi
                                     "Xóa"
                             };
                             final AlertDialog.Builder builder = new AlertDialog.Builder(TimeTableActivity.this);
-                            builder.setTitle("Select Option");
+                            builder.setTitle("Tùy chọn");
 
                             builder.setItems(options, new DialogInterface.OnClickListener() {
                                 @Override

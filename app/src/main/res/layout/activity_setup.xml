@@ -148,7 +148,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_marginTop="8dp"
-                android:ems="10"
                 android:hint="Địa chỉ"
                 android:inputType="textCapSentences"
                 android:padding="14dp" />

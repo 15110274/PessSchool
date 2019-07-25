@@ -145,7 +145,7 @@ public class NewsFeedFragment extends Fragment implements SwipeRefreshLayout.OnR
 
             @Override
             protected void onBindViewHolder(@NonNull final PostsViewHolder postsViewHolder, int position, @NonNull Posts posts) {
-                postsViewHolder.setIsRecyclable(false);
+//                postsViewHolder.setIsRecyclable(false);
                 final String PostKey = getRef(position).getKey();
                 final ArrayList<String> urlImage = posts.getPostimage();
                 UsersRef.child(idTeacher).addValueEventListener(new ValueEventListener() {
