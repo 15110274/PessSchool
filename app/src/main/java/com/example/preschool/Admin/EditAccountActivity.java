@@ -427,7 +427,7 @@ public class EditAccountActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             HashMap userMap = new HashMap();
                                             if(role.equals("Parent")){
-                                                userMap.put("fullnameparent", father);
+                                                userMap.put("fullnamefather", father);
                                                 userMap.put("fullnamemother", mother);
                                             }
                                             if(role.equals("Teacher")){
@@ -473,7 +473,7 @@ public class EditAccountActivity extends AppCompatActivity {
         else{
             HashMap userMap = new HashMap();
             if(role.equals("Parent")){
-                userMap.put("fullnameparent", father);
+                userMap.put("fullnamefather", father);
                 userMap.put("fullnamemother", mother);
             }
             if(role.equals("Teacher")){
