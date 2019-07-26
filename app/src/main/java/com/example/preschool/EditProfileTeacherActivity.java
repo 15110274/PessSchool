@@ -74,7 +74,7 @@ public class EditProfileTeacherActivity extends AppCompatActivity {
         UpdateAccountSettingButton = findViewById(R.id.update_account_settings_button);
         loadingBar = new ProgressDialog(this);
 //
-        EditUserRef.addValueEventListener(new ValueEventListener() {
+        EditUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
