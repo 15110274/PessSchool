@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity
         UsersRef.child("mychildren").child(idClass).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.exists() && !isTeacher){
+                if(!dataSnapshot.exists() && !isTeacher&& !currentUserID.equals("9nTFWm43IpbpSHzbucpL2zSgoZ43")){
                     setupChildren();
                 }
             }

@@ -108,6 +108,11 @@ public class ViewMenuActivity extends AppCompatActivity implements DatePickerLis
                 txtXe.setText("");
             }
         }
+        else {
+            txtSang.setText("Chưa có thông tin");
+            txtTrua.setText("Chưa có thông tin");
+            txtXe.setText("Chưa có thông tin");
+        }
 
     }
 }
