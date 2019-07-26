@@ -383,8 +383,33 @@ public class ManageUserActivity extends AppCompatActivity {
                                                                     final HashMap userMap = new HashMap();
                                                                     userMap.put("role", role.get(roleChoose));
                                                                     if (roleChoose == 1 || roleChoose == 2) {
-                                                                        userMap.put("idclass", classId.get(classChoose));
-                                                                        userMap.put("classname", className.get(classChoose));
+                                                                        if (roleChoose == 1) {
+                                                                            if (classCheckBox.isChecked() == true) {
+                                                                                for (int i = 0; i < checkList.size(); i++) {
+                                                                                    if (checkList.get(i).equals("1")) {
+                                                                                        userMap.put("classname", className.get(i));
+                                                                                        userMap.put("idclass", classId.get(i));
+                                                                                        break;
+                                                                                    }
+                                                                                }
+                                                                                ArrayList<String> temp = new ArrayList<>();
+                                                                                for (int i = 0; i < checkList.size(); i++) {
+                                                                                    if (checkList.get(i).equals("1")) {
+                                                                                        temp.add(classId.get(i));
+                                                                                    }
+                                                                                }
+                                                                                userMap.put("myclass", temp);
+                                                                            } else {
+                                                                                userMap.put("classname", className.get(classChoose));
+                                                                                userMap.put("idclass", classId.get(classChoose));
+                                                                                ArrayList<String> temp = new ArrayList<>();
+                                                                                temp.add(classId.get(classChoose));
+                                                                                userMap.put("myclass", temp);
+                                                                            }
+                                                                        } else {
+                                                                            userMap.put("classname", className.get(classChoose));
+                                                                            userMap.put("idclass", classId.get(classChoose));
+                                                                        }
                                                                     }
                                                                     ref.child(children.getKey()).updateChildren(userMap).addOnCompleteListener(new OnCompleteListener() {
                                                                         @Override
